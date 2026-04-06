@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modeling &amp; Simulation Lecture Material</title>
     <style>
-        body { font-family: "Helvetica Neue", Arial, "Hiragino Sans", "Yu Gothic", sans-serif; line-height: 1.6; }
+        * { box-sizing: border-box; }
+        body { font-family: "Helvetica Neue", Arial, "Hiragino Sans", "Yu Gothic", sans-serif; line-height: 1.6; margin: 0; }
         h1 { color: #2c3e50; font-size: 2rem; line-height: 1.2; }
         h2 { color: #2c3e50; font-size: 1.5rem; line-height: 1.3; }
-        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
+        .container { width: min(100%, 960px); margin: 0 auto; padding: clamp(16px, 3vw, 28px); }
         .page-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 1em; }
         .page-title { margin: 0; flex: 1 1 auto; font-size: 2rem; line-height: 1.2; }
         .lang-switcher { display: flex; gap: 8px; flex: 0 0 auto; }

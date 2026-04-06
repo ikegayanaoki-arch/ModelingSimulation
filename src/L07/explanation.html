@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>L07 Program Explanation / L07 プログラム解説</title>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: sans-serif; line-height: 1.6; }
+        h1, h2, h3, h4 { color: #2c3e50; }
+        pre { background-color: #f4f4f4; padding: 1em; border-radius: 5px; border: 1px solid #ddd; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
+        .lang-jump { display: inline-block; margin-bottom: 1em; padding: 0.5em 1em; border: 1px solid #3498db; border-radius: 999px; color: #3498db; font-size: 1rem; }
+        .lang-ja { margin-top: 2em; border-top: 2px solid #3498db; padding-top: 1em; }
+        img { max-width: 100%; height: auto; border: 1px solid #ddd; }
+        .img-gallery { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .img-gallery img { max-width: 48%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- English Version -->
+        <div lang="en">
+            <h1>L07 Program Explanation</h1>
+            <a class="lang-jump" href="#japanese-section">日本語</a>
+            <h2>Script Links</h2>
+            <ul>
+                <li><a href="cavity.py"><code>cavity.py</code></a></li>
+                <li><a href="cavityAns.py"><code>cavityAns.py</code></a></li>
+            </ul>
+            <p>This lesson covers a program that simulates cavity flow by solving the incompressible Navier-Stokes equations using the <strong>SMAC (Simplified Marker and Cell)</strong> method.</p>
+
+            <h2>Execution Results (from <code>demo</code>)</h2>
+            <p>The simulation is run for different Reynolds numbers (Re). As Re increases, the flow becomes more complex, and secondary vortices appear in the corners.</p>
+            <div class="img-gallery">
+                <figure>
+                    <img src="demo/1.0.gif" alt="Re=1.0">
+                    <figcaption>Re = 1.0</figcaption>
+                </figure>
+                <figure>
+                    <img src="demo/10.0.gif" alt="Re=10.0">
+                    <figcaption>Re = 10.0</figcaption>
+                </figure>
+                <figure>
+                    <img src="demo/1000.0.gif" alt="Re=1000.0">
+                    <figcaption>Re = 1000.0</figcaption>
+                </figure>
+                <figure>
+                    <img src="demo/10000.0.gif" alt="Re=10000.0">
+                    <figcaption>Re = 10000.0</figcaption>
+                </figure>
+            </div>
+
+            <h2>Code Explanation (<code>cavityAns.py</code>)</h2>
+            <p>The core of the SMAC method involves a three-step process within each time loop: Prediction, solving the Poisson equation for pressure, and Correction.</p>
+            <pre><code># ... (Parameter & Grid Setup) ...
+
+# Time step loop
+for n in range(NO):
+    # --- 1. Prediction Step ---
+    # Calculate an intermediate velocity (u*, v*) without considering the pressure gradient term.
+    # This velocity field does not satisfy the continuity equation.
+    for i in range(1,N+1):
+        for j in range(1,N+1):
+            u[j,i] = (...) # Navier-Stokes without pressure term
+            v[j,i] = (...) # Navier-Stokes without pressure term
+    
+    # --- 2. Pressure Poisson Equation ---
+    # Iteratively solve the Poisson equation for the pressure correction 'p'.
+    # The source term of this equation is the divergence of the intermediate velocity field.
+    pp[:,:]=0.0
+    flg = 1
+    while flg == 1:
+       flg=0
+       for i in range(1,N+1): 
+           for j in range(1,N+1): 
+               # Solve for pressure 'p'
+               p[j,i] = ( ... - (( u[j,i+1] - u[j,i] )*dl + ( v[j+1,i] - v[j,i] )*dl )/dt ) / cd[j,i]
+       
+       # ... (Convergence Check) ...
+       pp=cp.copy(p)
+    
+    # --- 3. Correction Step ---
+    # Correct the intermediate velocity using the calculated pressure gradient
+    # to obtain the final velocity for the time step, which satisfies the continuity equation.
+    for i in range(2,N+1):
+        u[1:N,i] = u[1:N,i] - dt*(p[1:N,i]-p[1:N,i-1])/dl 
+        v[i,1:N] = v[i,1:N] - dt*(p[i,1:N]-p[i-1,1:N])/dl
+
+    # Update pressure and store old velocities for the next time step
+    p[:,:]=pn[:,:]+p[:,:]
+    uo=cp.copy(u)
+    vo=cp.copy(v)
+
+    # ... (Interpolation and storing for animation) ...
+# ... (Visualization) ...
+</code></pre>
+        </div>
+
+        <!-- Japanese Version -->
+        <div id="japanese-section" lang="ja" class="lang-ja">
+            <h1>L07 プログラム解説</h1>
+            <h2>スクリプト一覧</h2>
+            <ul>
+                <li><a href="cavity.py"><code>cavity.py</code></a></li>
+                <li><a href="cavityAns.py"><code>cavityAns.py</code></a></li>
+            </ul>
+            <p>このレッスンでは、非圧縮性ナビエ・ストークス方程式を<strong>SMAC法 (Simplified Marker and Cell)</strong> を用いて解き、キャビティ流れをシミュレーションするプログラムを扱います。</p>
+
+            <h2>実行結果 (<code>demo</code>より)</h2>
+            <p>レイノルズ数(Re)を変えてシミュレーションを実行した結果です。レイノルズ数が大きくなるにつれて流れが複雑になり、角に二次渦が発生する様子が確認できます。</p>
+            <div class="img-gallery">
+                <figure>
+                    <img src="demo/1.0.gif" alt="Re=1.0">
+                    <figcaption>Re = 1.0</figcaption>
+                </figure>
+                <figure>
+                    <img src="demo/10.0.gif" alt="Re=10.0">
+                    <figcaption>Re = 10.0</figcaption>
+                </figure>
+                <figure>
+                    <img src="demo/1000.0.gif" alt="Re=1000.0">
+                    <figcaption>Re = 1000.0</figcaption>
+                </figure>
+                <figure>
+                    <img src="demo/10000.0.gif" alt="Re=10000.0">
+                    <figcaption>Re = 10000.0</figcaption>
+                </figure>
+            </div>
+
+            <h2>コード解説 (<code>cavityAns.py</code>)</h2>
+            <p>SMAC法の核心は、各時間ステップにおける「予測子」「圧力のポアソン方程式」「修正子」の3つのステップです。</p>
+            <pre><code># ... (パラメータと格子の設定は省略) ...
+
+# 時間発展ループ
+for n in range(NO):
+    # --- 1. 予測子 (Prediction) ステップ ---
+    # 圧力勾配項を無視して、中間的な速度 (u*, v*) を計算する。
+    # この速度場は、連続の式を満たさない。
+    for i in range(1,N+1):
+        for j in range(1,N+1):
+            u[j,i] = (...) # 圧力項を無視したナビエ・ストークス方程式
+            v[j,i] = (...) # 圧力項を無視したナビエ・ストークス方程式
+    
+    # --- 2. 圧力のポアソン方程式 ---
+    # 圧力補正量 'p' に関するポアソン方程式を反復計算で解く。
+    # この方程式のソース項は、中間速度の発散 (div u*) である。
+    pp[:,:]=0.0
+    flg = 1
+    while flg == 1:
+       flg=0
+       for i in range(1,N+1): 
+           for j in range(1,N+1): 
+               # 圧力 'p' を計算
+               p[j,i] = ( ... - (( u[j,i+1] - u[j,i] )*dl + ( v[j+1,i] - v[j,i] )*dl )/dt ) / cd[j,i]
+       
+       # ... (収束判定) ...
+       pp=cp.copy(p)
+    
+    # --- 3. 修正子 (Correction) ステップ ---
+    # 計算された圧力勾配を使って中間速度を修正し、
+    # 連続の式を満たす最終的な速度場を得る。
+    for i in range(2,N+1):
+        u[1:N,i] = u[1:N,i] - dt*(p[1:N,i]-p[1:N,i-1])/dl 
+        v[i,1:N] = v[i,1:N] - dt*(p[i,1:N]-p[i-1,1:N])/dl
+
+    # 次の時間ステップのため、圧力の更新と古い速度の保存を行う
+    p[:,:]=pn[:,:]+p[:,:]
+    uo=cp.copy(u)
+    vo=cp.copy(v)
+
+    # ... (アニメーションのための補間とデータ保存) ...
+# ... (可視化) ...
+</code></pre>
+        </div>
+    </div>
+</body>
+</html>

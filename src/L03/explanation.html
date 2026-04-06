@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>L03 Program Explanation / L03 プログラム解説</title>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: sans-serif; line-height: 1.6; }
+        h1, h2, h3, h4 { color: #2c3e50; }
+        pre { background-color: #f4f4f4; padding: 1em; border-radius: 5px; border: 1px solid #ddd; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
+        .lang-jump { display: inline-block; margin-bottom: 1em; padding: 0.5em 1em; border: 1px solid #3498db; border-radius: 999px; color: #3498db; font-size: 1rem; }
+        .lang-ja { margin-top: 2em; border-top: 2px solid #3498db; padding-top: 1em; }
+        img { max-width: 100%; height: auto; border: 1px solid #ddd; }
+        .img-gallery { display: flex; gap: 10px; justify-content: center; }
+        .img-gallery img { max-width: 32%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- English Version -->
+        <div lang="en">
+            <h1>L03 Program Explanation</h1>
+            <a class="lang-jump" href="#japanese-section">日本語</a>
+            <h2>Script Links</h2>
+            <ul>
+                <li><a href="1d.py"><code>1d.py</code></a></li>
+                <li><a href="1dAns.py"><code>1dAns.py</code></a></li>
+            </ul>
+            <p>This lesson covers programs that solve the 1D steady-state heat conduction equation using the finite difference method.</p>
+
+            <h2>1. Basic Exercise (<code>1dAns.py</code>)</h2>
+            <p>This program solves a simple 1D steady-state heat conduction problem with a uniform internal heat source. The numerical solution (red line) is compared with the theoretical solution (dashed black line).</p>
+            <h3>Execution Result</h3>
+            <img src="1dhce.png" alt="Execution result of 1dAns.py">
+
+            <h3>Code Explanation (<code>1dAns.py</code>)</h3>
+            <pre><code>import numpy as np
+import matplotlib.pyplot as plt
+
+# --- (Omitted: Parameter Definitions) ---
+L    = 1.0
+N    = 20 
+dl   = L/N
+TL   = 300.0
+TH   = 500.0
+crit = 0.01
+lm    = 209.5
+
+# --- (Omitted: Grid and Coefficient Setup) ---
+# ... ce, cw, co are calculated here ...
+
+T          = np.zeros(N+2)
+Tp         = np.zeros(N+2) # Predicted (previous step) temperature
+q          = np.zeros(N+2)
+
+# Set Initial and Boundary Conditions
+T[:]    = TL  # Initial guess
+T[0]    = TL  # BC at x=0
+T[N+1]  = TH  # BC at x=L
+Tp[:]   = T[:] 
+
+# Iteration loop for convergence
+flg = 1 
+l   = 0 
+while flg == 1:
+   l+=1
+   flg=0
+   for i in range(1,N+1): 
+       # Set heat source term q
+       q[i] = 2/L**2*(TH-TL) # Corresponds to Case 2
+       
+       # Calculate temperature T[i] using the finite difference equation (Jacobi method)
+       T[i] = (ce[i] * Tp[i+1] + cw[i] * Tp[i-1] - dx[i] * q[i]) / co[i]
+ 
+   # Check for convergence
+   for i in range(1,N+1):
+       if(np.abs(T[i]-Tp[i])>crit):
+           flg=1 # If not converged, continue the loop
+             
+   Tp[:]=T[:] # Update the predicted temperature for the next iteration
+
+# Theoretical solution for Case 2
+Tth = x**2/L * (TH-TL) + TL
+
+# --- (Omitted: Visualization Code) ---
+# ... Plotting T and Tth ...
+</code></pre>
+
+            <hr>
+            
+            <h2>2. Advanced Exercise (<code>demo/1dAnsCases.py</code>)</h2>
+            <p>A more practical simulation that solves three different cases by taking a command-line argument.</p>
+            <h3>Execution Results</h3>
+            <div class="img-gallery">
+                <figure>
+                    <img src="demo/case1.png" alt="Result for Case 1">
+                    <figcaption>Case 1: No heat source</figcaption>
+                </figure>
+                <figure>
+                    <img src="demo/case2.png" alt="Result for Case 2">
+                    <figcaption>Case 2: Uniform heat source</figcaption>
+                </figure>
+                <figure>
+                    <img src="demo/case3.png" alt="Result for Case 3">
+                    <figcaption>Case 3: Heat dissipation</figcaption>
+                </figure>
+            </div>
+
+            <h3>Code Explanation (<code>demo/1dAnsCases.py</code>)</h3>
+            <p>This code solves different cases based on the 'case' argument.</p>
+            <pre><code>import sys
+# ... (imports) ...
+
+# Select case from command-line argument
+if len(sys.argv) ==1:
+  case="default"
+else:
+  case=sys.argv[1]
+
+# ... (Omitted: Parameter and Grid Setup) ...
+
+# --- Coefficient setup based on case ---
+for i in range(1,N+1):
+    ce[i] = 1.0/(0.5*(dx[i]+dx[i+1]))
+    cw[i] = 1.0/(0.5*(dx[i]+dx[i-1]))
+for i in range(1,N+1):
+    if case == "case1" or case == "case2" : 
+        co[i]=(ce[i]+cw[i])
+    elif case == "case3":
+        # For case 3, a heat dissipation term is added
+        co[i]=(ce[i]+cw[i] + 2.0*h*dx[i]/lm/R)
+    # ...
+
+# --- Iteration loop ---
+while flg == 1:
+   # ...
+   for i in range(1,N+1): 
+       # Set heat source q based on the case
+       if case=="case1":
+           q[i]  = 0                     # Case 1: No heat source
+       elif case=="case2":
+           q[i] = 2.0*lm*(TH-TL)/L**2    # Case 2: Uniform heat source
+       elif case=="case3":
+           q[i] = -2.0*h*Ta/R            # Case 3: Part of dissipation term
+       
+       # Finite difference equation
+       T[i] = ( ce[i] * Tp[i+1] + cw[i] * Tp[i-1] - q[i]/lm*dx[i] ) / co[i]
+   # ... (Convergence check) ...
+
+# --- Theoretical solution based on case ---
+if case=="case1":
+    Tth = (TH-TL)/L * (x-L) + TH 
+elif case=="case2":
+    Tth = (TH-TL)*(x/L)**2 + TL
+elif case=="case3":
+    A=np.sqrt(2.0*h/lm/R)
+    dTH=TH-Ta
+    dTL=TL-Ta
+    de=np.exp(A*L)-np.exp(-A*L)
+    Tth = Ta + dTH * (np.exp(A*x) - np.exp(-A*x))/de
+
+# ... (Visualization) ...
+</code></pre>
+        </div>
+
+        <!-- Japanese Version -->
+        <div id="japanese-section" lang="ja" class="lang-ja">
+            <h1>L03 プログラム解説</h1>
+            <h2>スクリプト一覧</h2>
+            <ul>
+                <li><a href="1d.py"><code>1d.py</code></a></li>
+                <li><a href="1dAns.py"><code>1dAns.py</code></a></li>
+            </ul>
+            <p>このレッスンでは、1次元定常熱伝導方程式を有限差分法で解くプログラムを扱います。</p>
+
+            <h2>1. 基本演習 (<code>1dAns.py</code>)</h2>
+            <p>一様な内部発熱を持つ、単純な1次元定常熱伝導問題を解きます。数値解（赤線）と理論解（黒破線）を比較します。</p>
+            <h3>実行結果</h3>
+            <img src="1dhce.png" alt="1dAns.py の実行結果">
+
+            <h3>コード解説 (<code>1dAns.py</code>)</h3>
+            <pre><code>import numpy as np
+import matplotlib.pyplot as plt
+
+# --- (パラメータ定義は省略) ---
+L    = 1.0
+N    = 20 
+dl   = L/N
+TL   = 300.0
+TH   = 500.0
+crit = 0.01
+lm    = 209.5
+
+# --- (格子および係数の設定は省略) ---
+# ... ここで ce, cw, co が計算される ...
+
+T          = np.zeros(N+2)
+Tp         = np.zeros(N+2) # 1ステップ前の温度
+q          = np.zeros(N+2)
+
+# 初期条件と境界条件の設定
+T[:]    = TL  # 初期推測値
+T[0]    = TL  # x=0 での境界条件
+T[N+1]  = TH  # x=L での境界条件
+Tp[:]   = T[:] 
+
+# 収束計算のループ
+flg = 1 
+l   = 0 
+while flg == 1:
+   l+=1
+   flg=0
+   for i in range(1,N+1): 
+       # 熱源項 q を設定
+       q[i] = 2/L**2*(TH-TL) # Case 2 に相当
+       
+       # 有限差分法（ヤコビ法）による温度計算
+       T[i] = (ce[i] * Tp[i+1] + cw[i] * Tp[i-1] - dx[i] * q[i]) / co[i]
+ 
+   # 収束判定
+   for i in range(1,N+1):
+       if(np.abs(T[i]-Tp[i])>crit):
+           flg=1 # 収束していなければループを継続
+             
+   Tp[:]=T[:] # 次の計算のため、現在の温度を Tp にコピー
+
+# Case 2 の理論解
+Tth = x**2/L * (TH-TL) + TL
+
+# --- (可視化のコードは省略) ---
+# ... T と Tth をプロット ...
+</code></pre>
+
+            <hr>
+
+            <h2>2. 応用演習 (<code>demo/1dAnsCases.py</code>)</h2>
+            <p>コマンドライン引数で3つの異なるケースを解き分ける、より実践的なシミュレーションです。</p>
+            <h3>実行結果</h3>
+            <div class="img-gallery">
+                <figure>
+                    <img src="demo/case1.png" alt="ケース1の結果">
+                    <figcaption>ケース1: 熱源なし</figcaption>
+                </figure>
+                <figure>
+                    <img src="demo/case2.png" alt="ケース2の結果">
+                    <figcaption>ケース2: 一様熱源</figcaption>
+                </figure>
+                <figure>
+                    <img src="demo/case3.png" alt="ケース3の結果">
+                    <figcaption>ケース3: 熱放散あり</figcaption>
+                </figure>
+            </div>
+
+            <h3>コード解説 (<code>demo/1dAnsCases.py</code>)</h3>
+            <p>引数 'case' の値に応じて、異なる条件で計算を行います。</p>
+            <pre><code>import sys
+# ... (import文) ...
+
+# コマンドライン引数からケースを選択
+if len(sys.argv) ==1:
+  case="default"
+else:
+  case=sys.argv[1]
+
+# ... (パラメータと格子の設定は省略) ...
+
+# --- ケースに応じた係数の設定 ---
+for i in range(1,N+1):
+    ce[i] = 1.0/(0.5*(dx[i]+dx[i+1]))
+    cw[i] = 1.0/(0.5*(dx[i]+dx[i-1]))
+for i in range(1,N+1):
+    if case == "case1" or case == "case2" : 
+        co[i]=(ce[i]+cw[i])
+    elif case == "case3":
+        # Case 3 では熱放散の項が追加される
+        co[i]=(ce[i]+cw[i] + 2.0*h*dx[i]/lm/R)
+    # ...
+
+# --- 反復計算ループ ---
+while flg == 1:
+   # ...
+   for i in range(1,N+1): 
+       # ケースに応じて熱源項 q を設定
+       if case=="case1":
+           q[i]  = 0                     # Case 1: 熱源なし
+       elif case=="case2":
+           q[i] = 2.0*lm*(TH-TL)/L**2    # Case 2: 一様な熱源
+       elif case=="case3":
+           q[i] = -2.0*h*Ta/R            # Case 3: 熱放散項の一部
+       
+       # 有限差分式の計算
+       T[i] = ( ce[i] * Tp[i+1] + cw[i] * Tp[i-1] - q[i]/lm*dx[i] ) / co[i]
+   # ... (収束判定) ...
+
+# --- ケースに応じた理論解 ---
+if case=="case1":
+    Tth = (TH-TL)/L * (x-L) + TH 
+elif case=="case2":
+    Tth = (TH-TL)*(x/L)**2 + TL
+elif case=="case3":
+    A=np.sqrt(2.0*h/lm/R)
+    dTH=TH-Ta
+    dTL=TL-Ta
+    de=np.exp(A*L)-np.exp(-A*L)
+    Tth = Ta + dTH * (np.exp(A*x) - np.exp(-A*x))/de
+
+# ... (可視化) ...
+</code></pre>
+        </div>
+    </div>
+</body>
+</html>

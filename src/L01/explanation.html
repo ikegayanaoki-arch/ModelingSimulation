@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>L01 Program Explanation / L01 プログラム解説</title>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: sans-serif; line-height: 1.6; }
+        h1, h2, h3, h4 { color: #2c3e50; }
+        pre { background-color: #f4f4f4; padding: 1em; border-radius: 5px; border: 1px solid #ddd; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
+        .lang-jump { display: inline-block; margin-bottom: 1em; padding: 0.5em 1em; border: 1px solid #3498db; border-radius: 999px; color: #3498db; font-size: 1rem; }
+        .lang-ja { margin-top: 2em; border-top: 2px solid #3498db; padding-top: 1em; }
+        img { max-width: 100%; height: auto; border: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- English Version -->
+        <div lang="en">
+            <h1>L01 Program Explanation</h1>
+            <a class="lang-jump" href="#japanese-section">日本語</a>
+            <h2>Script Links</h2>
+            <ul>
+                <li><a href="2dImage.py"><code>2dImage.py</code></a></li>
+                <li><a href="run.sh"><code>run.sh</code></a></li>
+            </ul>
+            <h2>2dImage.py</h2>
+            <p>This is a sample program to verify the installation. It creates 2D dummy data and visualizes it as a contour plot using the <code>matplotlib</code> library.</p>
+            
+            <h3>Execution Result</h3>
+            <p>Running this script will produce the following image:</p>
+            <img src="t_001.png" alt="Execution result of 2dImage.py">
+
+            <h3>Code Explanation</h3>
+            <p>Below is the full code with explanations for key parts.</p>
+            <pre><code>## Sample program for checking installation
+import copy as cp
+import numpy as np
+import matplotlib.pyplot as plt
+
+## definition
+L    = 1.0    #cavity length [m] 
+N    = 40     #number of girds [-]
+dl   = L/N    #grid spacing [m]
+
+## grid
+# Create arrays for grid coordinates and spacing
+x  = np.zeros(N+2)
+dx = np.zeros(N+2)
+x[0]      = 0.0 
+dx[0]     = 0.0
+dx[N+1]   = 0.0
+dx[1:N+1] = dl ##Note that 1 to N, but not N+1 in python
+# Calculate the coordinate of each grid point (cell center)
+for i in range(1,N+2):
+    x[i]=x[i-1]+0.5*(dx[i]+dx[i-1])
+dy = cp.copy(dx) # Create a copy for the y-axis
+y  = cp.copy(x)
+
+## dummy data
+# Create a 2D array for temperature and fill it with dummy values
+t = np.zeros((N+2,N+2))
+for j in range(1,N+1): 
+    for i in range(1,N+1): 
+        t[j,i] = j*i
+
+## visualization & save image
+# Create a figure
+fig=plt.figure(figsize=(6.0,6.0))
+# Generate a filled contour plot
+img=plt.contourf(x,y,t, cmap="Blues")
+# Set aspect ratio to equal
+plt.gca().set_aspect('equal')
+# Add a color bar
+cbar=plt.colorbar(img)
+cbar.set_label('Temperature [K]')
+# Set titles and labels
+plt.title('Temperature distribution')
+plt.xlabel('x [m]')
+plt.ylabel('y [j]')
+# Display the plot
+plt.show()
+# Save the figure to a file
+k=1
+fn='t_' + '{:03}'.format(k) + '.png'
+fig.savefig(fn)
+</code></pre>
+        </div>
+
+        <!-- Japanese Version -->
+        <div id="japanese-section" lang="ja" class="lang-ja">
+            <h1>L01 プログラム解説</h1>
+            <h2>スクリプト一覧</h2>
+            <ul>
+                <li><a href="2dImage.py"><code>2dImage.py</code></a></li>
+                <li><a href="run.sh"><code>run.sh</code></a></li>
+            </ul>
+            <h2>2dImage.py</h2>
+            <p>これは、インストールの確認用のサンプルプログラムです。2次元のダミーデータを作成し、<code>matplotlib</code>ライブラリを使ってコンター図として可視化します。</p>
+
+            <h3>実行結果</h3>
+            <p>このスクリプトを実行すると、以下の画像が生成されます。</p>
+            <img src="t_001.png" alt="2dImage.py の実行結果">
+
+            <h3>コード解説</h3>
+            <p>以下に、主要な部分に解説を加えたプログラム全体を示します。</p>
+            <pre><code>## Sample program for checking installation
+import copy as cp
+import numpy as np
+import matplotlib.pyplot as plt
+
+## definition
+# 定数の定義
+L    = 1.0    #cavity length [m] (計算領域の長さ)
+N    = 40     #number of girds [-] (格子点数)
+dl   = L/N    #grid spacing [m] (格子間隔)
+
+## grid
+# グリッド座標と間隔のための配列を作成
+x  = np.zeros(N+2)
+dx = np.zeros(N+2)
+x[0]      = 0.0 
+dx[0]     = 0.0
+dx[N+1]   = 0.0
+dx[1:N+1] = dl ##Note that 1 to N, but not N+1 in python
+# 各グリッドポイント（セル中心）の座標を計算
+for i in range(1,N+2):
+    x[i]=x[i-1]+0.5*(dx[i]+dx[i-1])
+dy = cp.copy(dx) # y軸用にコピーを作成
+y  = cp.copy(x)
+
+## dummy data
+# 温度用の2次元配列を作成し、ダミーデータで埋める
+t = np.zeros((N+2,N+2))
+for j in range(1,N+1): 
+    for i in range(1,N+1): 
+        t[j,i] = j*i
+
+## visualization & save image
+# 描画オブジェクトを作成
+fig=plt.figure(figsize=(6.0,6.0))
+# 塗りつぶしコンター図を生成
+img=plt.contourf(x,y,t, cmap="Blues")
+# アスペクト比を1:1に設定
+plt.gca().set_aspect('equal')
+# カラーバーを追加
+cbar=plt.colorbar(img)
+cbar.set_label('Temperature [K]')
+# タイトルと軸ラベルを設定
+plt.title('Temperature distribution')
+plt.xlabel('x [m]')
+plt.ylabel('y [j]')
+# プロットを表示
+plt.show()
+# 図をファイルに保存
+k=1
+fn='t_' + '{:03}'.format(k) + '.png'
+fig.savefig(fn)
+</code></pre>
+        </div>
+    </div>
+</body>
+</html>

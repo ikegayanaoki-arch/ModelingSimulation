@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>L06 Program Explanation / L06 プログラム解説</title>
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: sans-serif; line-height: 1.6; }
+        h1, h2, h3, h4 { color: #2c3e50; }
+        pre { background-color: #f4f4f4; padding: 1em; border-radius: 5px; border: 1px solid #ddd; white-space: pre-wrap; word-wrap: break-word; }
+        code { font-family: monospace; }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
+        .lang-jump { display: inline-block; margin-bottom: 1em; padding: 0.5em 1em; border: 1px solid #3498db; border-radius: 999px; color: #3498db; font-size: 1rem; }
+        .lang-ja { margin-top: 2em; border-top: 2px solid #3498db; padding-top: 1em; }
+        img { max-width: 100%; height: auto; border: 1px solid #ddd; }
+        .img-gallery { display: flex; gap: 10px; justify-content: center; }
+        .img-gallery img { max-width: 48%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- English Version -->
+        <div lang="en">
+            <h1>L06 Program Explanation</h1>
+            <a class="lang-jump" href="#japanese-section">日本語</a>
+            <h2>Script Links</h2>
+            <ul>
+                <li><a href="2dAns.py"><code>2dAns.py</code></a></li>
+                <li><a href="2duExp.py"><code>2duExp.py</code></a></li>
+                <li><a href="2duExpAns.py"><code>2duExpAns.py</code></a></li>
+                <li><a href="2duImp.py"><code>2duImp.py</code></a></li>
+                <li><a href="2duImpAns.py"><code>2duImpAns.py</code></a></li>
+                <li><a href="htmlIndex.sh"><code>htmlIndex.sh</code></a></li>
+                <li><a href="run.sh"><code>run.sh</code></a></li>
+            </ul>
+            <p>This lesson covers programs that solve the 2D <strong>unsteady</strong> heat conduction equation using both explicit and implicit methods.</p>
+
+            <h2>1. Explicit Method (<code>2duExpAns.py</code>)</h2>
+            <p>The temperature at the current time step is calculated directly from the known temperatures of the previous time step.</p>
+            <h3>Execution Result</h3>
+            <img src="explicit.gif" alt="Result of Explicit Method">
+            <h3>Code Explanation</h3>
+            <pre><code># ... (Parameter & Grid Setup) ...
+
+# Time step loop
+for n in range(NO):
+    # Store data for animation at specified stride
+    if(np.mod(n,ST)==0):
+        tmp=cp.copy(T)
+        Ts.append(tmp)
+
+    # Loop through all internal grid points
+    for j in range(1,N+1): 
+        for i in range(1,N+1): 
+            # T[j,i] is calculated using temperatures from the previous step, To.
+            # This is a direct calculation for each cell.
+            T[j,i] = (ce[i]*To[j,i+1]+cw[i]*To[j,i-1]+cn[j]*To[j+1,i]+cs[j]*To[j-1,i]+(co[j,i]-ce[i]-cw[i]-cn[j]-cs[j])*To[j,i] ) / co[j,i]
+    
+    # Update the temperature of the previous step for the next calculation
+    To=cp.copy(T)
+
+# ... (Visualization & Animation) ...
+</code></pre>
+
+            <h2>2. Implicit Method (<code>2duImpAns.py</code>)</h2>
+            <p>This method formulates a system of linear equations for the unknown temperatures at the current time step and solves it iteratively.</p>
+            <h3>Execution Result</h3>
+            <img src="implicit.gif" alt="Result of Implicit Method">
+            <h3>Code Explanation</h3>
+            <pre><code># ... (Parameter & Grid Setup, including 'cd' coefficient) ...
+
+# Time step loop
+for n in range(NO):
+    # Store data for animation
+    if(np.mod(n,ST)==0):
+        tmp=cp.copy(T)
+        Ts.append(tmp)
+
+    # Inner loop for iterative convergence at the current time step
+    flg = 1
+    while flg == 1:
+       flg=0
+       for j in range(1,N+1): 
+           for i in range(1,N+1): 
+               # T[j,i] is calculated using the temperatures of the previous step (To) 
+               # and the predicted temperatures of the current step (Tp).
+               T[j,i] = (ce[i]*Tp[j,i+1]+cw[i]*Tp[j,i-1]+cn[j]*Tp[j+1,i]+cs[j]*Tp[j-1,i]+co[j,i]*To[j,i] ) / cd[j,i]
+
+       # ... (Convergence check between T and Tp) ...
+       Tp=cp.copy(T) # Update prediction
+
+    # Update the temperature of the previous step for the next time step
+    To=cp.copy(T)
+
+# ... (Visualization & Animation) ...
+</code></pre>
+        </div>
+
+        <!-- Japanese Version -->
+        <div id="japanese-section" lang="ja" class="lang-ja">
+            <h1>L06 プログラム解説</h1>
+            <h2>スクリプト一覧</h2>
+            <ul>
+                <li><a href="2dAns.py"><code>2dAns.py</code></a></li>
+                <li><a href="2duExp.py"><code>2duExp.py</code></a></li>
+                <li><a href="2duExpAns.py"><code>2duExpAns.py</code></a></li>
+                <li><a href="2duImp.py"><code>2duImp.py</code></a></li>
+                <li><a href="2duImpAns.py"><code>2duImpAns.py</code></a></li>
+                <li><a href="htmlIndex.sh"><code>htmlIndex.sh</code></a></li>
+                <li><a href="run.sh"><code>run.sh</code></a></li>
+            </ul>
+            <p>このレッスンでは、2次元の<strong>非定常</strong>熱伝導方程式を、陽解法と陰解法で解くプログラムを扱います。</p>
+
+            <h2>1. 陽解法 (<code>2duExpAns.py</code>)</h2>
+            <p>現在のタイムステップの温度を、計算済みの前ステップの温度分布のみから直接計算します。</p>
+            <h3>実行結果</h3>
+            <img src="explicit.gif" alt="陽解法の結果">
+            <h3>コード解説</h3>
+            <pre><code># ... (パラメータと格子の設定は省略) ...
+
+# 時間発展ループ
+for n in range(NO):
+    # 指定した間隔でアニメーション用のデータを保存
+    if(np.mod(n,ST)==0):
+        tmp=cp.copy(T)
+        Ts.append(tmp)
+
+    # 全ての内部格子点をループ
+    for j in range(1,N+1): 
+        for i in range(1,N+1): 
+            # 前のステップの温度 To を使って現在のステップの T[j,i] を計算
+            # 各セルについて直接的な計算を行う
+            T[j,i] = (ce[i]*To[j,i+1]+cw[i]*To[j,i-1]+cn[j]*To[j+1,i]+cs[j]*To[j-1,i]+(co[j,i]-ce[i]-cw[i]-cn[j]-cs[j])*To[j,i] ) / co[j,i]
+    
+    # 次の計算のため、前ステップの温度を更新
+    To=cp.copy(T)
+
+# ... (可視化とアニメーション化) ...
+</code></pre>
+
+            <h2>2. 陰解法 (<code>2duImpAns.py</code>)</h2>
+            <p>現在のタイムステップの未知の温度について連立方程式を立て、それを反復計算で解きます。</p>
+            <h3>実行結果</h3>
+            <img src="implicit.gif" alt="陰解法の結果">
+            <h3>コード解説</h3>
+            <pre><code># ... (パラメータと格子の設定、係数'cd'を含む) ...
+
+# 時間発展ループ
+for n in range(NO):
+    # アニメーション用データを保存
+    if(np.mod(n,ST)==0):
+        tmp=cp.copy(T)
+        Ts.append(tmp)
+
+    # 現ステップ内での収束計算のための内部ループ
+    flg = 1
+    while flg == 1:
+       flg=0
+       for j in range(1,N+1): 
+           for i in range(1,N+1): 
+               # 前ステップの温度(To)と、現ステップの推測値(Tp)を使って T[j,i] を計算
+               T[j,i] = (ce[i]*Tp[j,i+1]+cw[i]*Tp[j,i-1]+cn[j]*Tp[j+1,i]+cs[j]*Tp[j-1,i]+co[j,i]*To[j,i] ) / cd[j,i]
+
+       # ... (T と Tp の収束判定) ...
+       Tp=cp.copy(T) # 推測値を更新
+
+    # 次の時間ステップのため、前ステップの温度を更新
+    To=cp.copy(T)
+
+# ... (可視化とアニメーション化) ...
+</code></pre>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Modeling &amp; Simulation #01</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style_rec.css" />
+    <style>
+      .hero { padding: 48px 20px 28px; }
+      .meta-grid { display: grid; gap: 10px; color: var(--muted); }
+      .summary-block { margin: 0 0 16px; white-space: normal; }
+      .summary-block:last-child { margin-bottom: 0; }
+      .summary-block br { line-height: 1.9; }
+      .transcript-date { font-family: var(--mono); color: var(--muted); margin-bottom: 8px; }
+      .transcript-entry .dialog { white-space: normal; }
+      @media (max-width: 720px) {
+        .transcript-entry { padding-left: 0; padding-top: 32px; }
+        .transcript-entry .time { position: static; display: inline-block; margin-bottom: 6px; }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="lang-switcher"><a href="index_jp.html" class="current">日本語</a><a href="index_en.html">English</a></nav>
+
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="eyebrow">Modeling and Simulation Lecture Record</div>
+        <h1>Modeling &amp; Simulation #01</h1>
+        <p class="lead">機械生成のサイト・翻訳のため，内容に誤りがある場合があります．講義内容を思い出す程度の参考資料として活用し，文脈から内容を判断してください．</p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section id="summary" class="card">
+        <div class="card-header">
+          <h2>サマリー</h2>
+        </div>
+        <div class="card-body">
+          <div class="summary-stack">
+            <article class="summary-entry">
+              <div class="summary-head">
+                <h3 class="summary-title">講義前半: モデリング・シミュレーションの基礎（Python、CFD、テンソル表記）</h3>
+                <dl class="summary-meta">
+                  <div class="summary-meta-item">
+                    <dt>日時</dt>
+                    <dd>2026-04-10 08:40:33</dd>
+                  </div>
+                  <div class="summary-meta-item">
+                    <dt>場所</dt>
+                    <dd>総理工1</dd>
+                  </div>
+                  <div class="summary-meta-item">
+                    <dt>担当教員</dt>
+                    <dd>Naoki Ikegaya</dd>
+                  </div>
+                </dl>
+              </div>
+              <div class="summary-layout">
+                <section class="summary-panel summary-panel-wide">
+                  <h4>要約</h4>
+                  <div class="summary-block">2026-04-10 08:40:33 の講義では、Naoki Ikegaya 先生（MSC 機械系）による英語開講の春学期科目「Modeling and Simulation」が紹介された。講義は金曜午前に 6 回または 7 回行われ、8:40 開始の連続する 2 コマで構成され、途中に短い休憩を入れつつ 11:30 頃の終了を目指す。2 コマは一体の授業であり、両方への出席が必要で、クォーター修了で 2 単位となる。授業では、輸送方程式の基礎と数値計算手法（主に Python）を扱い、1 次元問題から 2 次元シミュレーションへ段階的に進み、最終的には 2 次元キャビティ流れの CFD に到達する。単なるコード生成ではなく、数値シミュレーションを支える数学と物理の理解を重視し、AI ツールの利用も理解を助ける範囲で推奨された。学生は Moodle に登録し、Python を実行できるノート PC を持参し、講義と演習の両方に取り組む必要がある。資料は PDF で提供され、希望者には印刷版も用意される。英語の文字起こしと AI 生成の翻訳版（日本語や場合によっては中国語）も提供予定だが、正確性は保証しない。講義では、ベクトル、行列、テンソル（添字）表記、アインシュタインの総和規約、クロネッカーのデルタ、レヴィ・チヴィタ記号、および微分演算子（勾配、発散、ラプラシアン、回転）の簡潔な表し方を復習し、連続の式とナビエ・ストークス方程式が添字表記でどのように簡潔に書けるかを説明した。教員は、授業に真剣に取り組む姿勢と積極的な参加を求め、背景の異なる学生にも配慮して支援する方針を示したうえで、後半の物理パートに進む前に短い休憩を取ると述べた。</div>
+                </section>
+                <section class="summary-panel">
+                  <h4>知識ポイント</h4>
+                  <div class="summary-block">1. 授業の構成と運営<br />
+- 日程と形式<br />
+  - 春学期の金曜午前に 6 回または 7 回実施。8:40 開始の連続 2 コマで、途中に短い休憩を入れ、11:30 頃の終了を目指す。時間調整は毎回案内する。<br />
+  - 2 コマとも出席が必要で、片方だけの履修はできない。<br />
+  - クォーター修了で 2 単位を取得できる。<br />
+- 教室と収容人数<br />
+  - Wi-Fi と収容人数の都合で教室を変更済み。必要なら再変更し、その場合は告知する。<br />
+  - 初回は座席数にも注意が必要だった。<br />
+- 言語と受講者<br />
+  - 授業と資料は英語で実施。<br />
+  - 機械系、Earth Systems、Materials、Device、Chemistry、Plasma など多様なバックグラウンドの学生を想定。<br />
+- 姿勢と期待<br />
+  - 真剣な受講を求める。理解できないのは教員の責任だが、学ぶ姿勢がないのは学生側の責任であると説明。授業は「難しいのではなく、真剣な授業」と位置づけた。<br />
+2. 資料、ツール、準備<br />
+- Moodle と資料<br />
+  - Moodle に登録し、日付付きの PDF 資料をダウンロードする。<br />
+  - Moodle 上には AI 生成のプログラム資料と説明もあり、英語版と日本語版がある。不自然な部分があれば内容を確認すること。<br />
+- 印刷版とデジタル版<br />
+  - 無駄を避けるため、印刷版は希望者にのみ配布。基本は PDF を端末で利用する。<br />
+- 端末とソフトウェア<br />
+  - Python を実行できる PC / ノート PC を持参すること。iPad でもコードが実行できるなら可。<br />
+  - Python 未導入なら次回までにインストールする。<br />
+- 開発環境のセットアップ<br />
+  - 使用言語は Python。<br />
+  - macOS: Homebrew を入れてから Python をインストール。<br />
+  - Windows: Anaconda と Jupyter Notebook を利用。必要なら講義中に準備する。<br />
+- Wi-Fi と見やすさ<br />
+  - 資料の取得には Wi-Fi を使う。以前の教室は Wi-Fi が弱かったため変更した。<br />
+  - 画面の見やすさも教室運営上の確認事項だった。<br />
+3. 授業内容と進め方<br />
+- 中心となるテーマと目標<br />
+  - 輸送方程式の基礎と、偏微分方程式を解く数値シミュレーション手法を扱う。対象は空気流れ（ナビエ・ストークス）、熱伝導、一般的な収支方程式。<br />
+  - 最終課題の到達点は 2 次元キャビティ流れの CFD。<br />
+  - 1 次元の簡単な問題から 2 次元シミュレーションへ段階的に進む。<br />
+- 技術的手法の重視<br />
+  - 深い物理直感よりも、方程式をどう解くかという数学的・技術的手法を重視。<br />
+  - 理解が最優先であり、AI を使っても理解が伴わなければ意味がない。<br />
+- 講義と演習の構成<br />
+  - 前半は教員の iPad 書き込みに基づく講義。学生の書き込みは必須ではないが推奨。<br />
+  - 後半はサンプルプログラムを使った演習。初心者にも個別に対応する。<br />
+4. モデリングとシミュレーションの数学的基礎<br />
+- ベクトルと座標<br />
+  - 3 次元直交座標 (x, y, z) と速度成分 (u, v, w) を使用。太字はベクトルを表す。内積と外積は既知として進める。<br />
+- 微分演算子と表記<br />
+  - 支配方程式は偏微分方程式として与えられる。ナブラ ∇ の各成分を ∂i と書き、ラプラシアン ∇² は ∂i∂i と表せる。<br />
+  - 勾配はスカラー φ に対する (∂i φ)、発散は ∂i ui でスカラー、回転は εijk ∂j uk でベクトルになる。<br />
+- スカラー量とベクトル量<br />
+  - 内積、ラプラシアン、発散はスカラー。<br />
+  - 外積、勾配、回転はベクトル。<br />
+- 行列とテンソル<br />
+  - 行列成分は Aij、単位行列は E。<br />
+  - ベクトルの外積 xi yj は 9 成分の 2 階テンソルになり、内積 x・y と区別する必要がある。<br />
+  - 速度勾配テンソル ∇u は 2 階テンソル、発散 ∂i ui はスカラーである。<br />
+- テンソル表記と添字<br />
+  - ベクトルを xi（i=1,2,3）、行列を aij と書くことで導出や記述が簡潔になる。<br />
+- クロネッカーのデルタとレヴィ・チヴィタ記号<br />
+  - δij は i=j のとき 1、それ以外は 0。<br />
+  - εijk は偶置換で 1、奇置換で -1、添字が重なれば 0。<br />
+- アインシュタインの総和規約<br />
+  - 同じ添字が 1 項に 2 回現れたら総和を意味する。例: xi yi = x1y1 + x2y2 + x3y3。<br />
+  - 2 回現れる添字はダミー添字、1 回だけのものは自由添字。<br />
+- 添字の縮約と恒等式<br />
+  - δ を使うと xi δij → xj のように添字を縮約できる。<br />
+  - δ と ε の関係を使うと外積や回転の式変形がしやすくなる。<br />
+5. 添字表記で書く連続の式とナビエ・ストークス方程式<br />
+- 連続の式<br />
+  - 発散項は ∂j uj と簡潔に書ける。蓄積項も添字表記で書ける。<br />
+  - 非圧縮（密度一定）の場合は ∂j uj = 0。ダミー添字は i, j, k のどれでもよい。<br />
+- ナビエ・ストークス方程式の各項<br />
+  - 3 つの運動量方程式を添字表記で 1 つの形にまとめられる。<br />
+  - 時間微分は ∂t ui、移流項はダミー添字を使って簡潔に表され、圧力勾配は ∂i p、拡散項は ∂j ∂j ui と表される。<br />
+  - 展開形と比較することで、各項の物理的意味を理解できる。<br />
+6. 評価と参考文献<br />
+- 評価方法<br />
+  - 学期末に最終プログラムレポート課題を課す。詳細は最終回で説明する。<br />
+- 教科書<br />
+  - 推奨書籍は『An Introduction to Computational Fluid Dynamics』英語版。日本語訳もあるが、中国語版はない。</div>
+                </section>
+                <section class="summary-panel">
+                  <h4>課題</h4>
+                  <div class="summary-block">- Moodle に登録し、当日の PDF 資料をダウンロードする。<br />
+- 印刷版が必要なら希望を伝える。不要なら PDF を使う。<br />
+- Python を実行できる端末を準備し、Python をインストールする。<br />
+- 配布されたサンプルで環境を確認する。<br />
+- ベクトル、行列、演算子、テンソル表記、δ、ε、アインシュタインの総和規約と、それらの連続の式・ナビエ・ストークス方程式への適用を復習する。<br />
+- AI ツールは理解を助けるために適切に使う。<br />
+- 毎週金曜午前の 2 コマ両方に出席し、時間変更や教室変更の案内を確認する。<br />
+- 講義と演習に積極的に参加し、最終プログラムレポートに向けて進める。</div>
+                </section>
+              </div>
+            </article>
+
+            <article class="summary-entry">
+              <div class="summary-head">
+                <h3 class="summary-title">講義後半: 輸送現象と支配方程式</h3>
+                <dl class="summary-meta">
+                  <div class="summary-meta-item">
+                    <dt>日時</dt>
+                    <dd>2026-04-10 09:54:38</dd>
+                  </div>
+                  <div class="summary-meta-item">
+                    <dt>場所</dt>
+                    <dd>総理工1</dd>
+                  </div>
+                  <div class="summary-meta-item">
+                    <dt>担当教員</dt>
+                    <dd>[氏名を記入]</dd>
+                  </div>
+                </dl>
+              </div>
+              <div class="summary-layout">
+                <section class="summary-panel summary-panel-wide">
+                  <h4>要約</h4>
+                  <div class="summary-block">この講義では、熱と流体運動の物理的基礎として、輸送現象における基本的な支配方程式を扱った。まず、離散的な分子を連続体として扱う連続体仮定を説明し、それによって 3 次元空間の任意の点で速度、温度、濃度といった巨視的物理量を定義できることを示した。次に、蓄積項・移流項・拡散項からなる一般輸送方程式を提示し、質量保存（連続の式）、運動量保存（ニュートン流体に対するナビエ・ストークス方程式）、内部エネルギー保存（熱方程式）の収支式を導出した。目的は、今後の講義でこれらの方程式を解くための理論的基礎を与えることである。最後に、Python 環境を整え、配布されたスクリプトを実行して動作確認するという実践課題が示された。</div>
+                </section>
+                <section class="summary-panel">
+                  <h4>知識ポイント</h4>
+                  <div class="summary-block">1. 輸送現象の基本概念<br />
+- 授業後半の主題<br />
+  - 後半では、熱、内部エネルギー、流体運動の支配方程式の物理を扱う。<br />
+  - 次週以降は、これらの方程式を実際に解いていく。<br />
+- 三次元場の解析<br />
+  - 室内の温度分布のような三次元場の現象を対象にする。<br />
+  - 3 次元直交座標系 (x, y, z) で場の任意点を表す。<br />
+  - その点で速度 (u, v, w)、温度 T、濃度 C などの物理量を定義できる。<br />
+  - これらは巨視的状態量として扱う。<br />
+- 連続体仮定<br />
+  - 支配方程式導出の出発点。<br />
+  - 実際には分子は離散的でランダムに運動しているが、1 モルあたり約 10^23 個という膨大な粒子数のため、連続体として近似できる。<br />
+  - その結果、ある点の速度や温度を、多数の分子の平均的ふるまいを表す単一の値として扱える。<br />
+2. 一般輸送方程式<br />
+- 一般形<br />
+  - 任意の輸送量 φ に対する支配方程式は次のように書ける。<br />
+  - ∂φ/∂t + uⱼ(∂φ/∂xⱼ) = D(∂²φ/∂xⱼ²) + F<br />
+  - ここで t は時間、xᵢ は空間座標、D は拡散係数 (m²/s)、F はソース項またはシンク項。<br />
+- 各項の意味<br />
+  - 第1項: 蓄積項<br />
+    - ∂φ/∂t は固定点での時間変化を表す。<br />
+  - 第2項: 移流項<br />
+    - uⱼ(∂φ/∂xⱼ) は流体のバルク運動による輸送を表す。<br />
+  - 第3項: 拡散項<br />
+    - D(∂²φ/∂xⱼ²) は分子のランダム運動による高いところから低いところへの輸送を表す。<br />
+- 普遍性と適用先<br />
+  - この形は温度、速度、濃度などに共通して現れる。<br />
+  - 温度では D は熱拡散率 α。<br />
+  - 運動量では D は動粘性係数 ν で、さらに圧力項が加わる。<br />
+  - 授業では、まず単純な拡散方程式から始め、後で移流を含む問題へ進む。<br />
+3. 収支式の導出<br />
+- 方法: 検査体積法<br />
+  - 小さな固定領域（コントロールボリューム）を取り、その中への流入、流出、蓄積を考えて支配方程式を導出する。<br />
+- 連続の式（質量保存）<br />
+  - 質量保存を表す。<br />
+  - 流入・流出・蓄積をつり合わせることで導かれる。<br />
+- 運動量収支式<br />
+  - ニュートンの第2法則「運動量変化率 = 力」に基づく。<br />
+  - 蓄積項: 検査体積内の運動量（質量×速度）の時間変化。<br />
+  - 移流項: 流れによって運ばれる運動量で、ρu², ρuv, ρuw などの項が現れる。<br />
+  - 作用する力<br />
+    - 圧力: 各面の圧力差による力。<br />
+    - 粘性力（応力）: 内部摩擦による力。応力 τ は単位面積あたりの力であり、τyx は y 面に作用する x 方向の力を表す。<br />
+  - これらをまとめた一般形が運動量の収支式である。<br />
+- ナビエ・ストークス方程式<br />
+  - 一般の運動量方程式には未知の応力テンソル τij が含まれる。<br />
+  - ニュートン流体では、応力は速度勾配に比例するという粘性法則を用いる。<br />
+  - これを代入すると、CFD ソフトウェアが解くナビエ・ストークス方程式が得られる。<br />
+- 内部エネルギー収支式（熱方程式）<br />
+  - 熱力学第一法則「内部エネルギー変化 = 正味の熱 + 仕事」に基づく。<br />
+  - 蓄積項: 検査体積内の内部エネルギーの時間変化。<br />
+  - 熱伝導（拡散）: フーリエの法則に従い、温度勾配に比例する熱流束で表される。<br />
+  - 移流項: 流体運動によって運ばれるエネルギー。<br />
+  - 圧力仕事や粘性散逸を含む一般形から、よく使う温度輸送方程式へ簡略化される。<br />
+4. 重要な支配方程式の整理<br />
+- 流体と熱に関する主要 3 方程式<br />
+  1. 連続の式: 質量保存<br />
+  2. ナビエ・ストークス方程式: 運動量保存<br />
+  3. 温度（内部エネルギー）方程式: エネルギー保存<br />
+- 拡散係数の考え方<br />
+  - 拡散項はいずれも類似した数学的形を持つ。<br />
+  - その係数が diffusivity（拡散率）である。<br />
+  - 運動量では動粘性係数 ν。<br />
+  - 熱では熱拡散率 α。<br />
+  - いずれも単位は m²/s で、どれだけ広がりやすいかを表す。<br />
+5. 授業の実践準備<br />
+- 必要なソフトウェア環境<br />
+  - Python をインストールし、実行環境を整える必要がある。<br />
+- 確認課題<br />
+  - 授業サイトから「Lesson 1」の資料をダウンロードする。<br />
+  - `2dimage.py` を実行する。<br />
+  - Mac では Terminal から `python 2dimage.py` を実行する。<br />
+  - Windows では Jupyter Notebook で `exec(open(&quot;filename.py&quot;).read())` の形で実行する。<br />
+  - 正しく動けば 2D 画像のポップアップが表示される。<br />
+  - ライブラリ不足のエラーが出たら必要なものを再インストールする。<br />
+  - 次回までに必ず環境を整える。</div>
+                </section>
+                <section class="summary-panel">
+                  <h4>質問・課題</h4>
+                  <div class="summary-block">質問<br />
+- [質問や不明点を記入]<br /><br />
+課題<br />
+- 1. 授業サイトにアクセスし、必要なソフトウェアをダウンロードして Python 環境を構築する。<br />
+- 2. 「Lesson 1」の資料をダウンロードする。<br />
+- 3. 配布された Python スクリプト（`2dimage.py`）を実行し、ポップアップ画像が表示されることを確認する。<br />
+- 4. インストールやライブラリの問題があれば次回までに解消する。<br />
+- 5. 導出された方程式を見直し、物理現象がどのように数式で記述されるかを確認する。</div>
+                </section>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="transcript" class="card">
+        <div class="card-header">
+          <h2>トランスクリプト</h2>
+        </div>
+        <div class="card-body transcript">
+          <p class="transcript-date">2026.04.10</p>
+<h3 class="qa-title">Part I</h3>
+<div class="transcript-entry"><span class="time">00:00:02</span><span class="speaker">講師</span><p class="dialog">はい。授業に来てくれてありがとうございます。告知した通り、すみません、たぶん自分の専攻の学生にしか言っていなかったかもしれませんが、この授業は基本的に英語で行います。資料も説明も英語です。そしてこの授業はモデリングとシミュレーションの授業です。春学期の金曜午前に 6 回か 7 回あります。いいですか。</p></div>
+<div class="transcript-entry"><span class="time">00:00:34</span><span class="speaker">講師</span><p class="dialog">私は MSC 専攻の池谷直樹です。この授業を担当します。実際、教室を変更しました。以前はもっと大きい別の部屋でしたが、ここに変えました。かなり学生が多いので、もしこの部屋に全員入りきらないようなら、まだ来ていない学生もいるかもしれませんし、その場合はまた教室を変更するかもしれません。そのときは皆さんに連絡します。</p></div>
+<div class="transcript-entry"><span class="time">00:01:06</span><span class="speaker">講師</span><p class="dialog">今日は初回なので、まず簡単に講義内容を説明して、それからこの授業の基礎的な部分を扱います。Moodle サイトはもう開けるようにしてあるので、PC がある人は準備してください。iPad でも大丈夫です。Moodle のページを開いてください。画面にも映しますので、こちらを見てください。</p></div>
+<div class="transcript-entry"><span class="time">00:01:43</span><span class="speaker">講師</span><p class="dialog">まだ空いている席がありますね。では、このサイトにアクセスして、まだなら登録してください。授業名は Modeling and Simulation、春クォーター、金曜午前です。</p></div>
+<div class="transcript-entry"><span class="time">00:02:14</span><span class="speaker">講師</span><p class="dialog">これは連続した 2 コマの授業です。片方だけ受けることはできません。この 2 コマはつながっていて、1 クォーターで 2 単位取れます。なので両方受けてください。基本的には 1 限目の 8:40 から始めて、途中で短い休憩を入れます。すみません、席が足りないので、どこかに座ってください。</p></div>
+<div class="transcript-entry"><span class="time">00:02:49</span><span class="speaker">講師</span><p class="dialog">1 コマ目と 2 コマ目の間に短い休憩を入れますが、それを少し短くして、11:30 くらいには少し早めに終われるようにしたいと思っています。毎回その都度案内しますが、1 限と 2 限の両方に出席してください。</p></div>
+<div class="transcript-entry"><span class="time">00:03:22</span><span class="speaker">講師</span><p class="dialog">資料は基本的に PDF で配布します。たとえば今日の授業なら、ここに今日の日付の資料があります。ここから PDF をダウンロードできます。ただ、印刷版のほうがいい人にはそれも用意できます。今日は基礎部分なので基本的には一方向の説明だけですが、次回以降は授業中に書き込んでもらう部分がたくさんあります。印刷版が欲しい人には用意します。</p></div>
+<div class="transcript-entry"><span class="time">00:03:57</span><span class="speaker">講師</span><p class="dialog">でも不要なら、たとえば iPad を使う人なら PDF のほうが便利でしょうし、私は印刷しません。なぜこんなことを聞くかというと、最初の年に全員分印刷したらかなり余ってしまったからです。多くの学生は印刷版を受け取りませんでした。なので、必要ないなら用意しません。印刷版が欲しい人はいますか。印刷版のほうがいい人は手を挙げてください。</p></div>
+<div class="transcript-entry"><span class="time">00:04:31</span><span class="speaker">講師</span><p class="dialog">手を挙げてもらって大丈夫です。以前は全部印刷していたのですが、みんな受け取らなくて、たくさん余ってしまってお金の無駄になりました。なので、希望する分だけ印刷します。資料は必ずしも紙で受け取る必要はありません。iPad でも見られますし、余白が多いので iPad で書き込んでもよいです。</p></div>
+<div class="transcript-entry"><span class="time">00:05:30</span><span class="speaker">講師</span><p class="dialog">それから、iPad だけでなく自分の PC も用意してください。講義のあとにいくつか例題を提供するからです。前半は私が書きながら説明する講義で、そのあとサンプルプログラムを使った演習があります。なので自分でコードを動かせる環境が必要です。PC を準備してください。もし iPad でプログラムを動かせるならそれでも構いません。</p></div>
+<div class="transcript-entry"><span class="time">00:06:01</span><span class="speaker">講師</span><p class="dialog">とにかく、プログラムを実行できる端末が必要です。使用言語は Python です。今日も少し説明しますが、まだ Python を入れていない人は次回までに準備してください。では、概要を見てください。すみません、まずこの授業で何をするかを簡単に説明します。</p></div>
+<div class="transcript-entry"><span class="time">00:06:36</span><span class="speaker">講師</span><p class="dialog">この授業は、数値シミュレーションによって支配方程式を解くことをベースにしています。支配方程式というのは、空気の流れの運動方程式や熱伝導方程式のことです。非常に基礎的な内容ですが、もし皆さんの専門が流体力学や CFD なら必修レベルの内容です。ただし、皆さんの多く、いや多くではないですが半分くらいは違うバックグラウンドですよね。</p></div>
+<div class="transcript-entry"><span class="time">00:07:08</span><span class="speaker">講師</span><p class="dialog">その場合は少し追いにくいかもしれませんが、主眼は物理の理解そのものではなく、むしろ技術的な部分です。つまり、方程式をどう解くかが中心です。なので、背景が違っていても皆が追えるよう、できるだけ噛み砕いて説明します。授業の中心は輸送方程式の基礎と、それを解く数値解法、つまり数値シミュレーション手法です。</p></div>
+<div class="transcript-entry"><span class="time">00:07:43</span><span class="speaker">講師</span><p class="dialog">流体力学の背景知識があればとてもよいですが、なくても心配いりません。プログラムもたくさん使います。基本的にサンプルは私が用意しますが、経験がないと全部を追うのは少し大変かもしれません。その場合は、いろいろな手段を使って技術的にプログラムを理解してください。授業中には演習時間を十分取りますし、この部屋に残ってくれれば個別にも教えられます。学ぶ時間は十分あるので心配しなくて大丈夫です。</p></div>
+<div class="transcript-entry"><span class="time">00:08:20</span><span class="speaker">講師</span><p class="dialog">始める前に、皆さんのバックグラウンドを確認したいです。どれくらい私が皆さんの背景を把握できているか知りたいので。専攻は 6 つありますよね。私は機械工学専攻です。機械工学の人はどれくらいいますか。ほかはよく覚えていませんが、近いのは Earth Systems だったと思います。</p></div>
+<div class="transcript-entry"><span class="time">00:08:57</span><span class="speaker">講師</span><p class="dialog">そのほかに Materials and Devices があります。日本語の正式名称はわかりませんが、Materials and Devices の人もいますね。Chemistry の人もいますね。Device の人はどうですか。Device 専攻だけですか。そして Plasma。Plasma 何とかという専攻ですね。はい、わかりました。</p></div>
+<div class="transcript-entry"><span class="time">00:09:34</span><span class="speaker">講師</span><p class="dialog">Mechanical と Earth System の学生は背景がかなり近いと思います。皆さん全員にとって心配する必要はありませんが、Device と Plasma の学生はかなり近い分野ですね。Plasma も同じように流れを扱うのでたぶん大丈夫でしょう。ただ、Materials や Chemistry の人は背景が十分ではないかもしれません。そういう人にとっては、今日の内容は基礎理解として重要です。ただ、来週以降の技術的なシミュレーションの部分は専門に依存せず、方程式を解く技術、つまり数学的スキルのほうが重要になります。</p></div>
+<div class="transcript-entry"><span class="time">00:10:09</span><span class="speaker">講師</span><p class="dialog">ですので、あまり心配しないでください。では、purpose を見てください。この授業の目的は 2 つあります。1 つ目は輸送方程式に関する基礎知識の復習です。皆さんは輸送方程式を知っているかもしれません。今日はこちらを扱います。後半は数値シミュレーション手法の学習です。</p></div>
+<div class="transcript-entry"><span class="time">00:10:40</span><span class="speaker">講師</span><p class="dialog">私たちが扱う支配方程式はすべて連続体の形で書かれています。たとえばナビエ・ストークス方程式、熱伝導方程式、あるいは何らかの量の収支方程式です。どれも偏微分方程式として書かれます。方程式の組はたくさんあります。運動方程式も同じで、粒子の運動は力に等しい、つまりニュートンの第 2 法則です。これは単純な微分方程式で表されます。</p></div>
+<div class="transcript-entry"><span class="time">00:11:13</span><span class="speaker">講師</span><p class="dialog">そして、その微分方程式は紙と手で解けることもありますよね。でも別の場合、ほとんどの場合は解くのが非常に難しいです。境界条件や与えられた条件がとても特殊で多様で、一般解がないからです。その場合、唯一の方法は数値シミュレーションに基づいて方程式を解くことです。この授業では、基本的に、支配方程式自体は既知であると仮定します。つまり、現象を記述する式はすでに与えられているとします。</p></div>
+<div class="transcript-entry"><span class="time">00:11:45</span><span class="speaker">講師</span><p class="dialog">物理的には解はその方程式に与えられている、ということです。そこには未知はありません。しかし、その方程式をどう解くかには未知があります。そこがこの授業の中心です。ですから、数値シミュレーションを学ぶことは非常に基礎的である一方、皆さんの多くにとって必須でとても重要です。</p></div>
+<div class="transcript-entry"><span class="time">00:12:16</span><span class="speaker">講師</span><p class="dialog">資料はここに書いてあります。授業の書き込みは基本的に私の書き込みに基づきます。iPad を使って画面に映しますので、皆さんも資料に書き込んでください。必須ではありませんが、授業に参加するうえで重要です。それから、先ほども言ったように Moodle に登録し、ノート PC を持ってきてください。</p></div>
+<div class="transcript-entry"><span class="time">00:12:49</span><span class="speaker">講師</span><p class="dialog">皆さんはもう修士課程ですよね。教育的なお説教というわけではないですが、ここにいる皆さんはもう修士学生です。博士課程の学生はいますか。全員修士ですか。修士学生ですよね。つまり、自分で学び続けることを選んでここに来ているわけです。なので、ここで時間を無駄にしないでください。この授業で学ぶ意思がないなら、この授業から出ていってください。出席しないでください。</p></div>
+<div class="transcript-entry"><span class="time">00:13:20</span><span class="speaker">講師</span><p class="dialog">この授業は学びたい学生のためのものです。私は教育するというより、皆さんがどう理解できるかを教えたいと思っています。皆さんが理解できないのは私の責任です。でも学ぼうとしていないのなら、それは皆さんの責任です。なので、その場合はこの授業に出ないでください。厳しい授業ではありますが、難しい授業ではありません。ただ真剣な授業だということです。では補助資料についてです。</p></div>
+<div class="transcript-entry"><span class="time">00:13:50</span><span class="speaker">講師</span><p class="dialog">授業資料は印刷版も用意していますが、元の資料は教科書に基づいています。シミュレーションにはよい教科書があります。これを参照してください。英語の本で、『An Introduction to Computational Fluid Dynamics』です。とてもよい本です。もう一つよい点は、日本語版の翻訳もあることです。内容は全く同じですが日本語で書かれています。</p></div>
+<div class="transcript-entry"><span class="time">00:14:23</span><span class="speaker">講師</span><p class="dialog">中国語版はありません。すみません。でも、その場合は英語版を使ってください。それから Moodle にもう一つ資料があります。ここにプログラム資料があります。ここからサンプル資料をダウンロードできます。</p></div>
+<div class="transcript-entry"><span class="time">00:14:56</span><span class="speaker">講師</span><p class="dialog">サンプルプログラムといくつかの説明がここに書いてあります。これも参照してください。全部ダウンロードしてもよいし、Web サイト上で参照するだけでもかまいません。日本語版もあります。英語の授業ではありますが、英語を教える授業ではありません。内容が理解できればよいので、日本語版のほうがよければそれを使ってください。ただし、これは実は AI 生成です。</p></div>
+<div class="transcript-entry"><span class="time">00:15:32</span><span class="speaker">講師</span><p class="dialog">プログラムや資料自体は私が用意しましたが、このサイトや構成は本当に AI で生成したものです。なので、一部は少し変かもしれません。その場合は、書かれている説明が正しいかどうかを、別の Web サイトや別の方法も使って確認してください。これが今日の内容です。各回の授業では、そのうちの一つを取り上げて、特定のシミュレーションをどう行うかを説明します。</p></div>
+<div class="transcript-entry"><span class="time">00:16:04</span><span class="speaker">講師</span><p class="dialog">たとえばそこに行くと、これはダミーですが、このようなサンプルやサンプルプログラムを見ることができます。ダウンロードして試すことができます。</p></div>
+<div class="transcript-entry"><span class="time">00:17:07</span><span class="speaker">講師</span><p class="dialog">今日を含めて 6 回か 7 回の授業があります。内容はここに一覧があります。毎週、1 回ごとに完結した 1 セットの授業です。毎週テーマが違い、少しずつ難しい内容に進みます。今日は 1 回目です。いろいろなタイプのシミュレーションを試します。</p></div>
+<div class="transcript-entry"><span class="time">00:17:40</span><span class="speaker">講師</span><p class="dialog">そして、実際の最終目標はこの 2 次元キャビティ流れです。これは非常に単純な CFD、計算流体力学シミュレーションの一種です。これが実際の最終目的です。もともとはこれだけを、細かい部分に分解しながら教えていたのですが、それでは一部の学生には難しすぎました。そこで、1 次元から 2 次元へと、より簡単な内容を含めるようにしました。知識がなくても、段階的に理解できるようにしています。</p></div>
+<div class="transcript-entry"><span class="time">00:18:12</span><span class="speaker">講師</span><p class="dialog">では、評価について。評価は春学期末の最終プログラムレポート課題に基づきます。詳細はここでまた案内するかもしれませんが、最終回に説明します。</p></div>
+<div class="transcript-entry"><span class="time">00:18:50</span><span class="speaker">講師</span><p class="dialog">ここまでで、何か質問や確認したいことはありますか。英語でも日本語でも大丈夫です。評価方法や授業の進め方について質問はありますか。中国語はだめです。私はわかりません。大丈夫ですか。</p></div>
+<div class="transcript-entry"><span class="time">00:19:23</span><span class="speaker">講師</span><p class="dialog">はい、大丈夫ですね。では、今日の資料をダウンロードして、今日の内容を説明していきます。</p></div>
+<div class="transcript-entry"><span class="time">00:20:00</span><span class="speaker">講師</span><p class="dialog">今日のトピックは、実際には数値シミュレーションそのものというより、全員の理解をそろえるためのものです。なので、流体力学に関する基礎的な数学と物理を扱います。多くの人はすでに知っていると思いますが、Modeling and Simulation 1 に進みましょう。では開きます。</p></div>
+<div class="transcript-entry"><span class="time">00:21:04</span><span class="speaker">講師</span><p class="dialog">少し小さいですね。これでちょうどいいサイズかな。</p></div>
+<div class="transcript-entry"><span class="time">00:21:48</span><span class="speaker">講師</span><p class="dialog">変わりませんね。少し小さいですが見えますか。後ろの席から。大丈夫ですか。少し小さいけれど見えますか。はい、ではこれでいきます。</p></div>
+<div class="transcript-entry"><span class="time">00:22:30</span><span class="speaker">講師</span><p class="dialog">少しファイルが小さいですね。もし何人か履修をやめたら、その分は助かります。皆さんが受講してくれるなら私にもありがたいです。ファイルをダウンロードするには Wi-Fi を使う必要がありますよね。それから、わからないことがあればプログラムを検索する必要もあります。以前は別の部屋を使っていましたが、その部屋は Wi-Fi がとても弱かったのです。</p></div>
+<div class="transcript-entry"><span class="time">00:23:03</span><span class="speaker">講師</span><p class="dialog">多くの学生が接続に困っていました。だから変更を依頼しました。これでよいかどうか見てみましょう。始める前に、英語教育の経験とプログラム教育の経験を確認したいです。</p></div>
+<div class="transcript-entry"><span class="time">00:23:39</span><span class="speaker">講師</span><p class="dialog">これまでに何かプログラミング言語を学んだことがありますか。Python、C++、Fortran など、何でも構いません。ありますか。もしない人は手を挙げてください。学んだことがない人です。</p></div>
+<div class="transcript-entry"><span class="time">00:24:10</span><span class="speaker">講師</span><p class="dialog">手を挙げないと、あなたを助けませんよ。なので、そういう経験がない学生には、今日は少なくとも環境やプログラム環境を確認するための例を出します。今日の授業中に、少なくとも開発環境を準備してください。ほかの学生は少なくとも何らかの経験がありますよね。その場合はそこまで心配しなくてよいと思います。</p></div>
+<div class="transcript-entry"><span class="time">00:24:44</span><span class="speaker">講師</span><p class="dialog">では、英語の授業についてはどうですか。英語で授業を受けたことはありますか。英語で論文やレポートなどを書いたことはありますか。ありますか。英語の授業を以前に受けたことはありますか。あるはずですよね。</p></div>
+<div class="transcript-entry"><span class="time">00:25:21</span><span class="speaker">講師</span><p class="dialog">反応がないのは典型的な日本人学生の態度なので、何かしら反応してください。理解を助けるために言っておくと、私たちの多くはネイティブスピーカーではありません。もちろん母語は日本語です。私も当然日本語のほうが流暢です。それから、中国からの学生もたくさんいますよね。他の国からの学生もいますよね。</p></div>
+<div class="transcript-entry"><span class="time">00:25:52</span><span class="speaker">講師</span><p class="dialog">彼らにとっては難しい場合もあります。もちろん母語は中国語ですが、私は中国語でサポートできません。日本人学生にとっても難しいです。そこで、今年から一つ試したいことがあります。ここで話すことを全部書き起こして、あとで理解できるようにしたいと思っています。まず一つよい点は、英語のトランスクリプトがあれば、私や皆さんが話していることを追えるということです。</p></div>
+<div class="transcript-entry"><span class="time">00:26:24</span><span class="speaker">講師</span><p class="dialog">もう一つよい点は、AI を使えば直接翻訳ができることです。内容が完全に正しいとは保証しませんが、あとで日本語版を提供します。中国語がよければそれも考えます。先ほど言ったように、英語で授業をすること、あるいはすべてを英語で理解することが主目的ではありません。主目的は、プログラム言語のスキル、数値シミュレーションのスキル、そして知識を身につけることです。</p></div>
+<div class="transcript-entry"><span class="time">00:26:57</span><span class="speaker">講師</span><p class="dialog">なので、特に英語の授業に不安を感じている人には、できるだけ理解しやすいように助けたいと思っています。あまり心配しないでください。それからもう一つ言いたいことがあります。最近、皆さんの世代を見ると、私にはとても新鮮に見えます。私は皆さんを AI 世代だと思っています。</p></div>
+<div class="transcript-entry"><span class="time">00:27:31</span><span class="speaker">講師</span><p class="dialog">今は何でも AI が作り出します。私たちの世代は少し違っていて、プログラムも Web ページも、自分ですべて書かなければなりませんでした。でも皆さんの場合は、AI を使うことを好むというより、実際かなり AI に頼っています。それは実際よいことでもあります。</p></div>
+<div class="transcript-entry"><span class="time">00:28:03</span><span class="speaker">講師</span><p class="dialog">たとえば、さっき見せた Web サイトも完全に AI で生成したものです。私は何も書いていません。Web サイトを生成するように指示しただけです。すると、すべて AI が生成しました。なので本当に非常に強力です。Codex を知っていますか。C-O-D-E-X、Codex です。あるいは Gemini CLI などです。</p></div>
+<div class="transcript-entry"><span class="time">00:28:36</span><span class="speaker">講師</span><p class="dialog">そのような AI ベースのコーディングは本当にとても強力です。最後の最後に、その部分も少しは扱いたいと思っています。全部ではありませんが、それがどれほど強力かは理解できると思います。ほとんどの場合、自分でコードを書く必要はあまりありません。</p></div>
+<div class="transcript-entry"><span class="time">00:29:07</span><span class="speaker">講師</span><p class="dialog">ただし重要なのは、この授業ではコード生成やコードを書くこと自体が主目的ではないということです。主目的は皆さんの理解です。私たちは演習をしているのであって、何か未知のものを作らせるわけではありません。1 次元熱伝導や 2 次元熱伝導を解くことは、あくまで演習です。</p></div>
+<div class="transcript-entry"><span class="time">00:29:45</span><span class="speaker">講師</span><p class="dialog">AI を使うのはもちろん構いませんが、理解していなければ意味がありません。なので、AI をどう使うかを考えてください。私は何かを提出させることを主眼にしているのではなく、皆さんに理解してほしいのです。それがこの授業の中心です。評価はそこまで厳しくありません。態度のほうがこの授業では重要です。</p></div>
+<div class="transcript-entry"><span class="time">00:30:19</span><span class="speaker">講師</span><p class="dialog">先ほど言ったように Python を使います。もし環境がない人は、今日の内容を説明している間にダウンロードして準備してください。時間がかかるかもしれないので、PC にソフトウェアをインストールしてください。少し見せます。私は macOS を使っています。もし macOS ならインストールは簡単です。手順はここに書いてあります。これに従ってください。</p></div>
+<div class="transcript-entry"><span class="time">00:31:06</span><span class="speaker">講師</span><p class="dialog">macOS で Python を入れていない人はこれをやってください。Homebrew を知っていますか。このパッケージ管理ソフトを入れると、いろいろなものをかなり簡単にインストールできます。まずこれを入れてください。ここに URL があるのでコピーして、ターミナルを開いてください。このようなターミナルです。そこに貼り付ければインストールできます。</p></div>
+<div class="transcript-entry"><span class="time">00:31:39</span><span class="speaker">講師</span><p class="dialog">そうすれば Mac に入ります。macOS のほうが簡単です。その後 Python を探してインストールすれば大丈夫です。Windows ユーザーは少し難しく、方法がいろいろあります。どう環境を作るかはかなり各自に任されますが、標準的なのはこれです。環境がない人はそこに進んでください。</p></div>
+<div class="transcript-entry"><span class="time">00:32:27</span><span class="speaker">講師</span><p class="dialog">Anaconda を入れて、Jupyter Notebook を開いてください。私の講義や説明を聞いている間にダウンロードしてインストールしてください。Web サイトにも同じ内容が書いてあります。すでに持っている人はそれで問題ありません。</p></div>
+<div class="transcript-entry"><span class="time">00:33:02</span><span class="speaker">講師</span><p class="dialog">今日の内容は 2 つの部分に分かれています。1 つは数学的背景です。かなり数学的で、皆さんには不要なくらい基本的かもしれませんが、復習として扱います。一部の専攻では大学院入試で数学を課していない場合もあるので、念のため基礎をフォローしたいのです。後半は流体力学と熱伝導のより専門的な部分です。</p></div>
+<div class="transcript-entry"><span class="time">00:33:40</span><span class="speaker">講師</span><p class="dialog">これも、連続の式、ナビエ・ストークス方程式、熱伝導方程式をどう導出し、どう理解するかという非常に基礎的な内容です。少なくとも内容自体は追いやすいと思います。この空気感と講義スタイルに慣れてもらうためにも、今日は少し大きめに扱いたいと思います。では始めましょう。学部生にも同じ講義をしていますので、皆さんには簡単すぎるかもしれませんが、復習として全部追ってください。</p></div>
+<div class="transcript-entry"><span class="time">00:34:16</span><span class="speaker">講師</span><p class="dialog">講義中にこのような記法を使うので、念のため確認しておきたいのです。まずベクトルです。ベクトルと行列の定義です。ベクトルは皆さん大丈夫ですよね。ここでは常に 3 次元の x, y, z を考え、速度成分として u, v, w があります。常にこの 3 次元座標ベクトル x を使い、成分は 1 から 3、そして大きさはこのように定義します。また、3 方向の単位ベクトル i, j, k も定義します。</p></div>
+<div class="transcript-entry"><span class="time">00:34:51</span><span class="speaker">講師</span><p class="dialog">私の手書きでは i, j, k を使わずに太字を使うかもしれません。太字で書かれているものはベクトルだと思ってください。内積と外積は大丈夫ですよね。では、支配方程式は通常、偏微分方程式で書かれます。さまざまな微分演算子が出てくるので、それも確認します。</p></div>
+<div class="transcript-entry"><span class="time">00:35:20</span><span class="speaker">講師</span><p class="dialog">ナブラの定義は知っていますよね。ナブラは 3 方向の勾配で、i, j, k 方向に対してこの形で書かれます。ベクトル成分としてこう書けます。ただ、このような記法に慣れているかはわかりませんが、意味は同じです。ある方向についての偏微分は、毎回書くと時間がかかるので、簡略化して書きます。</p></div>
+<div class="transcript-entry"><span class="time">00:36:00</span><span class="speaker">講師</span><p class="dialog">ここで使っているのは partial 1、partial 2、partial 3 という簡略形で、これはそれぞれ x1, x2, x3 に関する偏微分を意味します。ラプラシアンや発散や回転も同じように表せます。</p></div>
+<div class="transcript-entry"><span class="time">00:36:33</span><span class="speaker">講師</span><p class="dialog">日本人学生向けに言うと、通常これは「U3 を X3 で偏微分したもの」と読みます。少し長いですが、そのように読みます。念のためです。</p></div>
+<div class="transcript-entry"><span class="time">00:37:07</span><span class="speaker">講師</span><p class="dialog">短い言い方では、単に partial U3 と言うこともあります。partial U3 は U3 の X3 に関する偏微分と同じ意味です。これが発散です。そしてもう一つが回転です。回転はナブラとベクトル場の外積です。</p></div>
+<div class="transcript-entry"><span class="time">00:37:39</span><span class="speaker">講師</span><p class="dialog">ナブラ cross ベクトル u はこのように定義されます。ここではすでに partial 1, partial 2, partial 3 と簡略化されていますが、もちろん意味は同じで、ある量を x1 で偏微分するという意味です。非常に基礎的な部分です。</p></div>
+<div class="transcript-entry"><span class="time">00:38:09</span><span class="speaker">講師</span><p class="dialog">この区別は重要です。スカラー積というのは、得られる量がスカラーになるものです。もちろんそうですね。ベクトル積というのは、何らかの操作をした結果の量がベクトルになるものです。内積、ラプラシアン、発散は、ベクトルに対する内積や、スカラー量に対するスカラー演算に近いので、結果は常にスカラーです。</p></div>
+<div class="transcript-entry"><span class="time">00:38:40</span><span class="speaker">講師</span><p class="dialog">一方、ベクトル積、勾配、回転では、結果はベクトルです。勾配はナブラをスカラー量に作用させるのでベクトルになります。回転は外積なのでやはりベクトルです。これらを区別してください。これでベクトルの部分は終わりです。次は行列です。これも非常に基礎的です。</p></div>
+<div class="transcript-entry"><span class="time">00:39:10</span><span class="speaker">講師</span><p class="dialog">行列 A はこのように定義し、単位行列 E はこのように定義します。すでに知っていますよね。そうでなければここにはいません。行列の積はこのように書きます。これは皆さんがすでに知っている定義です。</p></div>
+<div class="transcript-entry"><span class="time">00:39:44</span><span class="speaker">講師</span><p class="dialog">そして、もしかすると少し新しいかもしれないのが、2 つのベクトルからつくる 2 階テンソルです。これは内積ではないので区別してください。x dot y は内積ですが、dot を付けない x y は 2 階テンソルで、9 成分を持ちます。ここに 9 成分が見えますね。3 成分と 3 成分を掛け合わせるので 9 成分です。</p></div>
+<div class="transcript-entry"><span class="time">00:40:38</span><span class="speaker">講師</span><p class="dialog">各成分を交差的に掛けることで 9 成分ができます。これを 2 つのベクトルから作る 2 階テンソルと呼びます。ときどき使います。内積とは区別してください。内積は x1 y1 + x2 y2 + x3 y3 のように和を取るものです。</p></div>
+<div class="transcript-entry"><span class="time">00:41:19</span><span class="speaker">講師</span><p class="dialog">これを明確に区別するために、cross や circle のような記法を使うこともあります。しかし多くの場合、流体力学では dot なしで表すことが多いです。特に速度勾配テンソルではこの記法がよく出ます。つまり nabla u です。これは連続の式ではありません。ここを区別してください。</p></div>
+<div class="transcript-entry"><span class="time">00:41:50</span><span class="speaker">講師</span><p class="dialog">連続の式は divergence of U = 0 の形です。しかしこの equation 17 は発散ではなく、2 階テンソルです。では、この簡略表記を補うために、テンソル表記のルールを大まかに説明したいと思います。なじみがない人もいるかもしれませんが、線形代数ではベクトルと行列が非常に基本ですよね。</p></div>
+<div class="transcript-entry"><span class="time">00:42:29</span><span class="speaker">講師</span><p class="dialog">しかし、それをテンソル表記に拡張すると、書くのも導出するのもかなり簡単になります。手書きの式からも理解しやすくなります。少し補足しておきたいと思います。テンソルは知っていますよね。添字で表される量のことです。x ベクトル、太字の x はベクトルですが、これは 3 つの成分を持っていますよね。</p></div>
+<div class="transcript-entry"><span class="time">00:43:01</span><span class="speaker">講師</span><p class="dialog">x1, x2, x3 です。それらすべてをまとめて表すために xi を使います。i は 1, 2, 3 を取ると考えます。つまり xi は一見 1 つのスカラー量ですが、3 成分全体を代表しているのです。これがテンソル表記です。同じことが行列にも当てはまります。</p></div>
+<div class="transcript-entry"><span class="time">00:43:32</span><span class="speaker">講師</span><p class="dialog">行列は 9 成分ありますよね。テンソルを使うと aij と書きます。i も j も 1, 2, 3 です。考えている次元にもよりますが、ここではそうです。したがって aij は 9 成分のいずれか 1 成分を表しています。これをテンソル表記と呼びます。</p></div>
+<div class="transcript-entry"><span class="time">00:44:10</span><span class="speaker">講師</span><p class="dialog">このテンソル表記で式を書くときに役立つ定義が 2 つあります。1 つはクロネッカーのデルタ δij、もう 1 つは置換記号です。クロネッカーのデルタ δij はこのように定義されます。i=j のとき 1、そうでなければ 0 です。単なる定義なので、この記号が出てきたら思い出してください。</p></div>
+<div class="transcript-entry"><span class="time">00:44:45</span><span class="speaker">講師</span><p class="dialog">置換記号は epsilon ijk と呼びます。ijk が偶置換なら 1、奇置換なら -1 です。偶置換とは 1,2,3 の順に増える並び、つまり 1,2,3 や 2,3,1 や 3,1,2 のことです。順番が 1,2,3 の向きで回っていれば偶置換です。</p></div>
+<div class="transcript-entry"><span class="time">00:45:17</span><span class="speaker">講師</span><p class="dialog">日本語では偶置換、奇置換と呼びます。奇置換は逆向き、つまり 3,2,1 や 1,3,2 や 2,1,3 です。左から右に読んで 3 から 1 に向かうような順序なら奇置換です。</p></div>
+<div class="transcript-entry"><span class="time">00:45:54</span><span class="speaker">講師</span><p class="dialog">アラビア圏のように逆向きに読む文化もあるので少し混乱しますが、通常は左から右に読むので、その順序に基づいて 1、-1、0 が決まります。ときどき使います。それからもう一つ重要なルールがあります。アインシュタインの総和規約です。</p></div>
+<div class="transcript-entry"><span class="time">00:46:25</span><span class="speaker">講師</span><p class="dialog">アインシュタインの総和規約は単純です。1 つの項の中で同じ添字が現れたら、それは各成分の総和を意味します。たとえば x i y i と書けば、i に関する総和、つまり x1 y1 + x2 y2 + x3 y3 を意味します。</p></div>
+<div class="transcript-entry"><span class="time">00:47:02</span><span class="speaker">講師</span><p class="dialog">この総和を毎回書くのは時間がかかるので省略し、同じ添字を 2 回書くだけで表します。これがアインシュタインの総和規約です。</p></div>
+<div class="transcript-entry"><span class="time">00:47:35</span><span class="speaker">講師</span><p class="dialog">アインシュタインは知っていますよね。一般相対性理論を導くときに多くの式を書いたので、たくさんの文字を省く必要があり、この形式を使ったのだと思います。実際、流れの支配方程式を書くのにとても便利です。私たちは 3 次元の場、たとえば空気の流れや水の流れを考えています。</p></div>
+<div class="transcript-entry"><span class="time">00:48:08</span><span class="speaker">講師</span><p class="dialog">この部屋の中でも、もちろん x, y, z の 3 次元座標を考えます。そして各方向に u, v, w の 3 つの速度成分があります。常に 3 方向を表す 3 成分が出てくるので、この総和規約は頻繁に現れます。だからこの記法を省略したいのです。</p></div>
+<div class="transcript-entry"><span class="time">00:48:41</span><span class="speaker">講師</span><p class="dialog">同じ添字 i が 1 項の中に 2 回現れたとき、それはダミー添字と呼ばれます。値を選ぶことはできず、3 成分の和を取ることを意味します。一方、i が 1 回だけ現れるときは自由添字です。この場合 xi は 3 成分を表しますが、i を 1,2,3 のどれにしてもよい、つまり成分を指定できます。そこを区別してください。</p></div>
+<div class="transcript-entry"><span class="time">00:49:11</span><span class="speaker">講師</span><p class="dialog">これらのテンソル表現を使うと、ベクトル、行列、外積、そして微分演算子などを簡単に書けます。難しいことではなく、定義と記法の話ですが、この表記に慣れてください。</p></div>
+<div class="transcript-entry"><span class="time">00:49:52</span><span class="speaker">講師</span><p class="dialog">たとえばベクトル x は太字なので 3 成分を持ちます。添字を付けると xi という 1 成分を取り出せます。これがテンソル表記で、もとの太字がベクトル表記です。行列も同様です。そしてこの記法と総和規約を使うと、たとえば行列とベクトルの積は非常に簡単に書けます。</p></div>
+<div class="transcript-entry"><span class="time">00:50:26</span><span class="speaker">講師</span><p class="dialog">A multiplied by x は aij xj と書けます。j はもちろん総和です。展開したければアインシュタインの規約を使えばよく、Ai1 x1 + Ai2 x2 + Ai3 x3 になります。これは A x の i 成分です。つまり、行列演算を 1 項で書けるので非常に強力です。</p></div>
+<div class="transcript-entry"><span class="time">00:51:01</span><span class="speaker">講師</span><p class="dialog">同じことは行列や内積や外積にも当てはまります。内積は皆さん大丈夫でしょう。成分の総和ですから ai bi のようになります。i が 2 回現れます。</p></div>
+<div class="transcript-entry"><span class="time">00:51:33</span><span class="speaker">講師</span><p class="dialog">外積は少しややこしいですが、この記法を使うと簡単です。外積はベクトル量ですよね。i 成分を取ると epsilon i j k a j b k と書けます。覚える必要はありますが簡単です。i 成分を取ったら、まず epsilon の最初に i を置き、最初のベクトルの成分には次の添字 j、後ろのベクトルには最後の添字 k を使うだけです。</p></div>
+<div class="transcript-entry"><span class="time">00:52:03</span><span class="speaker">講師</span><p class="dialog">かなり簡単です。そして微分演算子もこのテンソル表記を使って簡略に表せます。</p></div>
+<div class="transcript-entry"><span class="time">00:52:38</span><span class="speaker">講師</span><p class="dialog">たとえば nabla はベクトル量なので、i 成分を取れば partial i と書けます。これはすでに簡略形で、もちろん xi に関する偏微分と同じです。</p></div>
+<div class="transcript-entry"><span class="time">00:53:09</span><span class="speaker">講師</span><p class="dialog">同様にラプラシアンは partial i partial i です。i はアインシュタイン規約なので、partial 1 squared、partial 2 squared、partial 3 squared の和を意味します。勾配、発散、回転も同じです。回転は少し補足します。rotation of u はベクトル量です。</p></div>
+<div class="transcript-entry"><span class="time">00:54:01</span><span class="speaker">講師</span><p class="dialog">ベクトル量なので i 成分を取れます。外積のルールに基づき epsilon ijk を置きます。rotation はナブラとベクトル場の外積なので、最初の成分は partial j、後ろの成分は u の k 成分 uk です。したがって epsilon i j k partial j uk という形になります。</p></div>
+<div class="transcript-entry"><span class="time">00:55:13</span><span class="speaker">講師</span><p class="dialog">では、ほとんど終わりです。最後は添字の縮約です。</p></div>
+<div class="transcript-entry"><span class="time">00:55:44</span><span class="speaker">講師</span><p class="dialog">これまで説明したルールを適用すると式を簡略化できます。xi delta ij という形を見たら、総和規約により xi の添字を j に縮約できます。x1 delta 1j、x2 delta 2j、x3 delta 3j に展開すると、残るのは xj だけです。行列成分でも同じです。これを添字の縮約と呼びます。</p></div>
+<div class="transcript-entry"><span class="time">00:56:15</span><span class="speaker">講師</span><p class="dialog">同じ添字が 2 つ見えたらそれを j に変える、というようなルールです。それだけです。それから、delta と epsilon を組み合わせると重要な恒等式があります。</p></div>
+<div class="transcript-entry"><span class="time">00:56:49</span><span class="speaker">講師</span><p class="dialog">この 2 つの等価な形はこのように定義されます。少し複雑ですが、普段はそこまで使いません。ただし、この記法自体はとてもよく使います。覚え方もあります。</p></div>
+<div class="transcript-entry"><span class="time">00:57:24</span><span class="speaker">講師</span><p class="dialog">各項の定義を思い出してください。epsilon は 1 か -1、delta は 1 か 0 です。両方が偶置換または奇置換なら、積は正になります。つまり順序だけで符号が決まります。K がここ、L がその次、J が同じ順序、というように見れば符号がわかります。</p></div>
+<div class="transcript-entry"><span class="time">00:57:57</span><span class="speaker">講師</span><p class="dialog">同じ方向、同じ順序なら正になります。逆向きなら負になります。ですから、JL や IL の項が負になる、ということです。</p></div>
+<div class="transcript-entry"><span class="time">00:58:28</span><span class="speaker">講師</span><p class="dialog">この形を直接使わないかもしれませんが、外積を展開するときには非常に便利です。理解しておいてください。では、この記法を使って、これから解く支配方程式がどう表せるかを簡単に復習しましょう。</p></div>
+<div class="transcript-entry"><span class="time">00:58:59</span><span class="speaker">講師</span><p class="dialog">たとえば連続の式を完全な形で書くとこの 3 項ですが、ベクトルの発散を使えばこのように書けます。つまり、この項が divergence と同じです。したがってこの形に簡略化できます。さらにテンソル表記のルールを使えば、この項をこのように簡単に書けます。これは偏微分で、u, v, w が x, y, z に関して変化している形です。j と uj がつながっています。</p></div>
+<div class="transcript-entry"><span class="time">00:59:32</span><span class="speaker">講師</span><p class="dialog">まだ言っていませんでしたが、蓄積項、つまり t に関する偏微分も同じように簡略化できます。何かを t で偏微分することをこの形で表します。このような形で書けば、完全形よりずっと簡単ですよね。</p></div>
+<div class="transcript-entry"><span class="time">01:00:02</span><span class="speaker">講師</span><p class="dialog">これは 3 成分の総和を表しているので、テンソル表記を使うと 1 項に簡略化できます。かなり簡単です。非圧縮の場合、密度 rho が一定なら、この式はさらにこの形に簡略化できます。これも 3 成分 u, v, w を x, y, z で偏微分した総和です。</p></div>
+<div class="transcript-entry"><span class="time">01:00:39</span><span class="speaker">講師</span><p class="dialog">したがって partial j uj と書けます。j はすでにダミー添字なので、別の添字を使っても意味は同じです。partial i ui でも partial k uk でも同じです。ここでの k, i, j には特別な意味はなく、単に 3 方向の総和を取るための添字です。</p></div>
+<div class="transcript-entry"><span class="time">01:01:13</span><span class="speaker">講師</span><p class="dialog">同じことはナビエ・ストークス方程式にも使われます。後半でこの式をどう導くか説明しますが、今はテンソル表記でどう書くかだけに注目してください。ナビエ・ストークス方程式は運動量の支配方程式で、3 方向に 3 つの式、u, v, w の式があります。</p></div>
+<div class="transcript-entry"><span class="time">01:02:20</span><span class="speaker">講師</span><p class="dialog">ここに 3 つの式が書いてあります。これが u 方程式、これが v 方程式、これが w 方程式です。3 つの方向に対して、各項も 3 方向ずつあります。ベクトル表記でも簡略化できますが、各項の意味はややわかりにくいです。テンソル表記のほうが式全体の構造をはるかに簡単に表せます。</p></div>
+<div class="transcript-entry"><span class="time">01:02:51</span><span class="speaker">講師</span><p class="dialog">最初の項は partial t ui です。ui は u, v, w を表すので、3 つの式をまとめて表しています。次の項、移流項も 3 成分あり、ダミー添字を使って書けます。圧力 p も同じで、粘性項も同じです。</p></div>
+<div class="transcript-entry"><span class="time">01:03:24</span><span class="speaker">講師</span><p class="dialog">partial j partial j は x, y, z 方向の総和を表し、ui は 3 方向の速度成分 u, v, w を表します。私はたぶんこの表記を最もよく使います。この表記で式を簡略化します。</p></div>
+<div class="transcript-entry"><span class="time">01:04:01</span><span class="speaker">講師</span><p class="dialog">もし各項の意味がわからなければ、ここに戻って完全な表記と見比べてください。そうすれば項の意味がわかります。単なる記法のルールです。</p></div>
+<div class="transcript-entry"><span class="time">01:04:32</span><span class="speaker">講師</span><p class="dialog">残りは、流体力学でよく現れる項をどう書くかというサンプルです。講義では使わないかもしれませんが、参考のために載せてあります。</p></div>
+<div class="transcript-entry"><span class="time">01:05:03</span><span class="speaker">講師</span><p class="dialog">ここまでが数学パートの復習です。ほとんどは非常に基本的な内容で、皆さんは慣れていると思います。テンソル表記だけは人によって少し新しいかもしれませんが、難しいものではなく定義の問題です。なので、この表記に慣れてください。ここまでで何か質問はありますか。たぶん大丈夫ですよね。では短い休憩を取りましょう。</p></div>
+<div class="transcript-entry"><span class="time">01:06:08</span><span class="speaker">講師</span><p class="dialog">少し早いですが、少し早めに終えるつもりなので、5 分休憩でよいでしょうか。もっと長いほうがよければそうしますが。では、9:55 に再開しましょう。残りは物理のパートです。再び講義をします。</p></div>
+<h3 class="qa-title">Part II</h3>
+<div class="transcript-entry"><span class="time">00:00:08</span><span class="speaker">講師</span><p class="dialog">ありがとうございました。</p></div>
+<div class="transcript-entry"><span class="time">00:00:52</span><span class="speaker">講師</span><p class="dialog">では後半を再開します。後半は、熱や内部エネルギー、そして流体運動の基本支配方程式に関する物理の話です。来週以降、この授業ではこうした方程式を実際に解いていきます。そのために基本的な支配方程式を理解してもらいたいので、この部分をフォローします。</p></div>
+<div class="transcript-entry"><span class="time">00:01:27</span><span class="speaker">講師</span><p class="dialog">講義内容に入る前に、概念を理解するための非常に基本的な部分を補足したいと思います。先ほど言ったように、mechanical major や Earth system major の学生には必須ではないかもしれませんが、materials や chemistry の人には、少なくとも概念自体がまだあいまいかもしれません。なので、私たちが何を扱うのか、その基本概念を説明します。</p></div>
+<div class="transcript-entry"><span class="time">00:01:57</span><span class="speaker">講師</span><p class="dialog">私たちが考えるのは三次元の場です。通常、こうした現象に対して与えられる支配方程式を解きたいわけです。ここでいう transport とは、運動量、温度、そして汚染物質の輸送です。たとえば、この部屋の温度分布を解きたい状況を考えてください。あそこに空調があり、ドアがあり、人がいて熱を発生していて、ドアから空気も入ってきます。こういう場を想像してください。</p></div>
+<div class="transcript-entry"><span class="time">00:02:29</span><span class="speaker">講師</span><p class="dialog">そして、この場で何が起きているのかを解きたいわけです。これが基本概念です。この現象を記述するために、三次元座標を使います。もちろん x, y, z の直交座標です。</p></div>
+<div class="transcript-entry"><span class="time">00:03:07</span><span class="speaker">講師</span><p class="dialog">そして、この場の中のある一点を取り上げます。その一点で物理量を定義します。たとえば速度成分 u, v, w です。</p></div>
+<div class="transcript-entry"><span class="time">00:03:47</span><span class="speaker">講師</span><p class="dialog">速度成分の単位はもちろん m/s です。それから、たとえば温度 T です。温度の単位はケルビンです。そして何らかの濃度 C です。</p></div>
+<div class="transcript-entry"><span class="time">00:04:19</span><span class="speaker">講師</span><p class="dialog">濃度には目的によっていろいろな単位がありますが、多くの場合は kg/m^3 を使います。ある一点で、こうした物理量を定義できます。これを量の巨視的状態、macrostate と呼びます。</p></div>
+<div class="transcript-entry"><span class="time">00:04:58</span><span class="speaker">講師</span><p class="dialog">このような量を記述するために支配方程式を導きます。では実際の現象を考えてください。この場で何が起きているでしょうか。空気の一部分を取り出すと、わかりやすいのは濃度かもしれません。</p></div>
+<div class="transcript-entry"><span class="time">00:05:28</span><span class="speaker">講師</span><p class="dialog">汚染物質が中にあると仮定すると、通常、濃度は 1 つの変数 C で表します。もちろん C は X, Y, Z、場合によっては T の関数です。つまり空間の関数です。しかし、実際の contaminant は個々の粒子から成っています。非常に細かく見ると、すべて粒子、つまり分子です。ここにもたくさん分子があります。</p></div>
+<div class="transcript-entry"><span class="time">00:06:01</span><span class="speaker">講師</span><p class="dialog">したがって本来は、すべての粒子をラグランジュ的な運動方程式で個別に扱わなければなりません。しかしもちろんそれはできません。わかりやすい例は湿度です。ここで湿度がある値だとしますが、湿度とは H2O 分子の含有量です。H2O 分子がここにもあそこにもあります。</p></div>
+<div class="transcript-entry"><span class="time">00:06:32</span><span class="speaker">講師</span><p class="dialog">すべての分子を数えることで、この点の湿度濃度がある値だと考えることができます。つまり実際には、すべての量は離散値で、人間のようにそれぞれ独立しています。しかし、粒子や分子が非常にたくさんあるので、それらが連続しているとみなします。速度も同じです。</p></div>
+<div class="transcript-entry"><span class="time">00:07:03</span><span class="speaker">講師</span><p class="dialog">空気の速度とは粒子の運動です。粒子とは空気を構成する分子のことです。空気は窒素や水蒸気、CO2、O2 などからできています。つまりそれぞれの分子粒子がそこに存在し、独立に、あるいはランダムに動いています。しかし、それら全体をまとめると、この空気塊の速度をある方向の量として定義できます。</p></div>
+<div class="transcript-entry"><span class="time">00:07:36</span><span class="speaker">講師</span><p class="dialog">つまり、分子全体の速度を U という速度量で表すという、非常に巨視的な見方をしているわけです。これが現象を理解するための基本概念です。これを連続体仮定と呼びます。Continuum assumption です。少し発音しにくいですね。</p></div>
+<div class="transcript-entry"><span class="time">00:08:11</span><span class="speaker">講師</span><p class="dialog">仮定です。補足として日本語も書いておきます。連続体近似、連続体近似です。この仮定を使います。これが基本的な出発点です。たとえば materials 系の人なら、原子レベルの像などで非常に小さな分子を見ていると思います。</p></div>
+<div class="transcript-entry"><span class="time">00:08:44</span><span class="speaker">講師</span><p class="dialog">その場合、見えるのは個々の粒子、個々の分子です。しかし私たちはそうは見ません。非常にたくさん粒子があると仮定して、たとえばこの部分の速度を表すために、ここにあるレベルを置けると考えます。それはここに非常に多くの分子があるからです。1 モルは 10 の 23 乗くらいですよね。</p></div>
+<div class="transcript-entry"><span class="time">00:09:16</span><span class="speaker">講師</span><p class="dialog">つまり、この少しの領域だけでも非常に多くの分子があります。たとえば 10 の 20 乗くらいあるかもしれません。個々は独立した粒子ですが、ある意味で連続しているとみなせます。だからこそ、速度成分として u, v, w を使えます。温度も数値レベルとして扱えます。温度は実際には運動エネルギー、内部エネルギーですよね。</p></div>
+<div class="transcript-entry"><span class="time">00:09:49</span><span class="speaker">講師</span><p class="dialog">これが、現象をどう記述しようとしているかを理解するための基本概念です。日本語は読みにくくてすみません。連続体近似です。あまり変わらないですが。</p></div>
+<div class="transcript-entry"><span class="time">00:10:58</span><span class="speaker">講師</span><p class="dialog">Continuum Assumption です。連続体仮定を置いたら、つまり速度 u, v, w や温度 T、濃度 C などにある値を置けるとしたら、それらが空間と時間でどう変化するかを表現できます。その現象を記述する式、つまり governing equation を通常は支配方程式と呼びます。</p></div>
+<div class="transcript-entry"><span class="time">00:11:30</span><span class="speaker">講師</span><p class="dialog">この場合、何らかの物理量がある方向に移動すると考えているので、これを transport equation、輸送方程式と呼びます。日本語でも輸送方程式と呼びます。</p></div>
+<div class="transcript-entry"><span class="time">00:12:11</span><span class="speaker">講師</span><p class="dialog">どんな量でも構いません。物理量を一般に phi で表します。phi は u, v, w、T、C、あるいは空気中で定義できる他のどんな量でもかまいません。</p></div>
+<div class="transcript-entry"><span class="time">00:12:41</span><span class="speaker">講師</span><p class="dialog">このとき支配方程式、輸送方程式は実際には同じ形をしています。常にこの輸送方程式に従います。つまり phi の t に関する偏微分、uj と phi の xj に関する偏微分の積、そしてそれが、phi の xj に関する 2 階偏微分、つまりラプラシアン項に等しい、という形です。</p></div>
+<div class="transcript-entry"><span class="time">00:13:18</span><span class="speaker">講師</span><p class="dialog">そして場合によっては追加のソース項もあります。この非常に一般的な形で、どんな量でも表せます。変数も定義しておきます。t は時間、xi は位置座標です。</p></div>
+<div class="transcript-entry"><span class="time">00:14:07</span><span class="speaker">講師</span><p class="dialog">ここで i=1,2,3 で x, y, z を表します。D は拡散率で、単位は m^2/s です。</p></div>
+<div class="transcript-entry"><span class="time">00:14:39</span><span class="speaker">講師</span><p class="dialog">D は、ある量がどれくらい一方向に広がるか、拡散するかを表します。F は source または sink、つまり式に追加で影響を与える項です。これが定義です。</p></div>
+<div class="transcript-entry"><span class="time">00:15:18</span><span class="speaker">講師</span><p class="dialog">常に 1、2、3 の 3 つの項があり、この形で表します。どんな量もこの形で表されます。第 1 項は storage、蓄積項と呼ばれます。日本語では蓄積項です。</p></div>
+<div class="transcript-entry"><span class="time">00:16:00</span><span class="speaker">講師</span><p class="dialog">名前のとおり意味がわかりますよね。t に関する偏微分なので、ある量が時間とともに変化することを意味します。phi の時間変化があるからこの項が現れます。量が蓄積されたり放出されたりするわけです。通常この項を蓄積項と呼びます。第 2 項は advection term、移流項です。</p></div>
+<div class="transcript-entry"><span class="time">00:16:35</span><span class="speaker">講師</span><p class="dialog">Advection は日本語では移流です。そして最後の第 3 項が diffusion term、拡散項です。</p></div>
+<div class="transcript-entry"><span class="time">00:18:05</span><span class="speaker">講師</span><p class="dialog">したがって、この形でほとんどすべてをカバーできます。ほとんどどんな量もこの形で表されます。</p></div>
+<div class="transcript-entry"><span class="time">00:18:43</span><span class="speaker">講師</span><p class="dialog">たとえば phi が温度 T なら、時間項は同じで、この D は熱の拡散率、つまり熱拡散率になります。速度を考えるなら phi は u, v, w の 3 成分ですが、運動量の場合には圧力の追加項があります。ただし基本形は同じ移流拡散方程式です。</p></div>
+<div class="transcript-entry"><span class="time">00:19:15</span><span class="speaker">講師</span><p class="dialog">たとえば未知量が u, v, w なら、その場合も記法は同じです。速度 u, v, w の場合、この D はやはり拡散率ですが、流体力学では分子拡散あるいは動粘性係数として扱い、通常は ν を使います。</p></div>
+<div class="transcript-entry"><span class="time">00:19:45</span><span class="speaker">講師</span><p class="dialog">もちろん、解く量によって物理量の意味は変わりますが、方程式の基本形は非常に普遍的です。濃度も同じ方程式に従います。この授業ではまず単純なものから解きます。移流は実際には解くのがとても難しいので、まずは単純な拡散方程式から始めます。さらに最初はもっと単純で、これだけです。</p></div>
+<div class="transcript-entry"><span class="time">00:20:19</span><span class="speaker">講師</span><p class="dialog">定常状態の拡散方程式から始めます。定常状態とは、温度やその他の量が時間で変化しないことです。そのあとで時間変化を考え、最後のキャビティ流れでは移流も含めます。例としては 1 次元熱伝導方程式、2 次元熱伝導、そしてキャビティ流れです。非常に単純ですが、どの分野でもこうした支配方程式が出てくるので、皆さんの研究の理解にも役立つと思います。</p></div>
+<div class="transcript-entry"><span class="time">00:20:56</span><span class="speaker">講師</span><p class="dialog">では、後半はこれらの式をより正確にどう表すかです。これも物理の復習なので、数学的に理解できている人には必須ではありません。ただ、背景を知らない学生のために説明します。</p></div>
+<div class="transcript-entry"><span class="time">00:21:32</span><span class="speaker">講師</span><p class="dialog">残りは運動量、温度、質量の収支方程式です。まずは質量から始めます。2.1 の continuity equation を見てください。連続の式は質量収支です。さきほど示した形とほとんど同じですが、質量には拡散項がありません。では、一般形の質量の連続の式から始めましょう。</p></div>
+<div class="transcript-entry"><span class="time">00:22:06</span><span class="speaker">講師</span><p class="dialog">連続の式はすでに学部レベルの内容ですが、確認しておきます。どんな量の収支を考えるときも、このような control volume を考えます。後半でも、数値シミュレーションで同じ考え方を使います。この概念は非常に重要です。支配方程式を考えるときには、ある小さな部分を取ります。</p></div>
+<div class="transcript-entry"><span class="time">00:22:40</span><span class="speaker">講師</span><p class="dialog">それを control volume と呼びます。その体積にどれだけ量が入ってきて、どれだけ出ていくかを考えることで、その量の収支が得られます。この場合、速度は u, v, w と定義し、この体積を仮定して、流体の質量がどれだけ出入りするかを考えます。</p></div>
+<div class="transcript-entry"><span class="time">00:23:16</span><span class="speaker">講師</span><p class="dialog">この面では量がここで定義されています。ここでは速度があり、位置 x では量は u と rho で表されます。そしてこの方向に delta x だけずれた位置では、そこでも u と rho で表されます。</p></div>
+<div class="transcript-entry"><span class="time">00:23:48</span><span class="speaker">講師</span><p class="dialog">通常のやり方で、ここからどれだけ質量が入って、どれだけ出ていくかを考えます。各面でその差を表せます。つまり、この面から入る量は u times rho、出る量はずれた位置での u times rho です。y 方向、z 方向も同じです。この記法を使えば式をこのように簡単にできます。</p></div>
+<div class="transcript-entry"><span class="time">00:24:22</span><span class="speaker">講師</span><p class="dialog">この形は質量の時間変化と釣り合うはずです。したがって、これは質量の時間変化、こちらは体積からの流入流出で、delta t で割れば連続の式が得られます。これが continuity equation、つまり質量の支配方程式です。とても単純です。全く同じ考え方で、運動量収支方程式も導けます。</p></div>
+<div class="transcript-entry"><span class="time">00:24:57</span><span class="speaker">講師</span><p class="dialog">考え方は全く同じです。一定体積の一部を取り、その中の運動量が時間とともにどう変化するか、そして面にどれだけの力が作用するかを考えます。ここでは i 方向だけを考えます。基本の支配式はニュートンの第 2 法則です。覚えていますよね。</p></div>
+<div class="transcript-entry"><span class="time">00:25:30</span><span class="speaker">講師</span><p class="dialog">ある質量 m があり、ある方向に動いていて、その物体に力が作用するなら、運動方程式は「運動量の時間変化 = 力」です。これがニュートンの第 2 法則です。これを流体運動に適用すると、支配方程式を導けます。</p></div>
+<div class="transcript-entry"><span class="time">00:26:00</span><span class="speaker">講師</span><p class="dialog">運動量の蓄積項は式 8 で表されます。同様に移流項は、その場所に出入りする運動量の収支として考えられます。ここにその模式図があります。再び、位置 x と x + delta x にあるこのような体積を考え、量を u(x) と u(x + delta x) として表します。</p></div>
+<div class="transcript-entry"><span class="time">00:26:35</span><span class="speaker">講師</span><p class="dialog">空気流はこの方向に動き、運動量は質量 times 速度です。これが運動量の定義です。そのため、この部分での運動量を考えるには、流れ込んでくる質量を考えなければなりません。delta t の間にこの場に入ってくる体積は、面積 times 速度 times delta t です。つまり速度と面積 delta y delta z と時間 delta t を掛けると体積になります。</p></div>
+<div class="transcript-entry"><span class="time">00:27:08</span><span class="speaker">講師</span><p class="dialog">ここで質量は体積密度を掛けたもの、つまり rho です。rho times u(x) times delta y delta z delta t で質量になります。そしてこの成分に速度を掛けると、その位置での運動量になります。つまり rho u squared などが得られます。もう一方の面でも同じです。</p></div>
+<div class="transcript-entry"><span class="time">00:27:49</span><span class="speaker">講師</span><p class="dialog">あちらの面でも、面積 times delta t times その位置での速度ですが、違うのは位置が delta x だけずれていることです。したがって速度成分は u(x) ではなく u(x + delta x) です。速度も質量も変わるので、それを掛けます。すると rho(x + delta x) と u squared(x + delta x) の形になります。違いはここだけです。</p></div>
+<div class="transcript-entry"><span class="time">00:28:20</span><span class="speaker">講師</span><p class="dialog">運動量差はこの 2 つの差です。この面で得られるのがこの項で、この体積から失うのがこの項です。違いは x か x + delta x かだけです。これは x 方向ですが、y 方向、z 方向にも同じことが適用されます。ただし一つ注意があります。</p></div>
+<div class="transcript-entry"><span class="time">00:28:58</span><span class="speaker">講師</span><p class="dialog">たとえば y 方向では、y 方向の体積流量は v 方向の速度で決まります。空気塊は v 方向に動いています。したがってその方向の質量流量は v と密度で決まりますが、私たちが考えているのは x 方向の運動量収支なので、そこで掛ける速度は x 方向の速度 u です。だから u times v times rho という項が出てきます。</p></div>
+<div class="transcript-entry"><span class="time">00:29:32</span><span class="speaker">講師</span><p class="dialog">同じことが鉛直方向にも当てはまります。質量は w と rho で定まりますが、考えている運動量は u 方向なので u を掛けます。最終的に u^2、uv、uw の項が出てきます。そして微分を取るとこれらの項が得られます。これが運動量変化です。さらに考えるべき項があります。</p></div>
+<div class="transcript-entry"><span class="time">00:30:09</span><span class="speaker">講師</span><p class="dialog">一つは圧力項です。圧力項は比較的簡単です。どんな体積でも、その表面には圧力が作用します。圧力は分子運動による衝撃ですよね。したがって、ある面があればその面に圧力が作用します。運動量収支を考えるときには圧力も考えなければいけません。先ほどと同じように、x と x + delta x の位置で control volume を取ります。</p></div>
+<div class="transcript-entry"><span class="time">00:30:40</span><span class="speaker">講師</span><p class="dialog">その面での圧力を p(x) と p(x + delta x) と定義すると、その面に働く実際の力が得られます。これは簡単です。圧力 times 面積を取るだけです。するとこの形になります。最後の項は粘性項です。</p></div>
+<div class="transcript-entry"><span class="time">00:31:42</span><span class="speaker">講師</span><p class="dialog">空気や水などの流れを考えるときには、通常、異なる位置間の拡散、つまり運動量のやりとりを考える必要があります。流れがこちらに動いていて、こちらにも流れがあり、縦方向に異なる速度、異なる力がある場合、それを流体では粘性や応力として考えます。この応力を考える必要があり、それを粘性応力と呼びます。</p></div>
+<div class="transcript-entry"><span class="time">00:32:14</span><span class="speaker">講師</span><p class="dialog">模式図を見るほうがよいでしょう。3 次元物体を考え、この control volume の各面にどんな力、応力が働くかを考えます。圧縮や引張りがそれぞれの方向に働き、側面にも応力が働き、底面にも力があります。たとえば tau xx や tau yx といった項が見えます。</p></div>
+<div class="transcript-entry"><span class="time">00:32:50</span><span class="speaker">講師</span><p class="dialog">tau yx を例に取ると、tau は応力を意味します。応力は通常、単位面積あたりに働く力で、単位は N/m^2 です。後ろの文字 x は力の方向を意味します。</p></div>
+<div class="transcript-entry"><span class="time">00:33:25</span><span class="speaker">講師</span><p class="dialog">前の y は面の向き、つまり face direction を意味します。これが応力の定義です。たとえばこの面を考えてみましょう。座標はここでは書いていませんが、x, y, z 方向があります。通常、y surface と言うと、その面の法線ベクトルが y 方向に向いている面のことです。</p></div>
+<div class="transcript-entry"><span class="time">00:33:57</span><span class="speaker">講師</span><p class="dialog">つまり座標に垂直な法線ベクトルがその方向を向いているので、その面を y-surface と呼びます。したがって tau yx とは、その y 面に作用する x 方向の力です。</p></div>
+<div class="transcript-entry"><span class="time">00:34:31</span><span class="speaker">講師</span><p class="dialog">つまりこの力のことです。同様に tau xx は x 面に作用する x 方向の力です。x 面はここです。tau zx は z 面に作用する x 方向の力です。</p></div>
+<div class="transcript-entry"><span class="time">00:35:10</span><span class="speaker">講師</span><p class="dialog">三次元場なので、このような力を各面で考えなければなりません。control volume は立方体なので、6 面を考える必要があります。微分の取り方は同じです。この面に働く力は tau xx(x) です。</p></div>
+<div class="transcript-entry"><span class="time">00:35:44</span><span class="speaker">講師</span><p class="dialog">x 位置での tau xx です。反対側は tau xx(x + delta x) です。その内訳がここに書いてあります。位置が少しずれているので、こちらに働く力とあちらに働く力は違います。だから微分を取る必要があります。</p></div>
+<div class="transcript-entry"><span class="time">00:36:15</span><span class="speaker">講師</span><p class="dialog">同じように、青いほうだったと思いますが、tau yx もこちらの側面と反対側の側面に働きます。こちらの面にはこの方向に働き、もう一方の面には反対向きに働きます。</p></div>
+<div class="transcript-entry"><span class="time">00:36:51</span><span class="speaker">講師</span><p class="dialog">z 方向も同じです。図には書いていませんが、tau zx がここに働きます。下側の位置は z、高さ z のところで tau zx(z) が働き、control volume の上側 z + delta z では tau zx(z + delta z) が働きます。</p></div>
+<div class="transcript-entry"><span class="time">00:37:32</span><span class="speaker">講師</span><p class="dialog">このように 3 方向の力を考えます。</p></div>
+<div class="transcript-entry"><span class="time">00:38:11</span><span class="speaker">講師</span><p class="dialog">各方向の力を全部足し合わせると、このように書けます。x 方向なら、この側面の力は tau xx、反対側は tau xx(x + delta x) です。同じことが側面や上下にも成り立ちます。したがって、2 つの値の差を偏微分の形で表せます。最終的にこの形になります。こうしてすべての項を考慮すると、運動量の収支、つまりニュートンの第 2 法則に基づく収支方程式はこのように書けます。</p></div>
+<div class="transcript-entry"><span class="time">00:38:45</span><span class="speaker">講師</span><p class="dialog">導出した各項を代入すると、この形が得られます。これが運動量の支配方程式の最終形です。よく知られた形ですよね。皆さんもこの形には親しみがあると思います。</p></div>
+<div class="transcript-entry"><span class="time">00:39:20</span><span class="speaker">講師</span><p class="dialog">ここでは u 方向だけを考えました。つまり x 方向の運動量 rho u です。しかし同じように v 方向と w 方向も考えなければなりません。そうすると独立な 3 つの式が得られます。ただし、この形を見れば他方向の式も推測できます。ここが u なら v に、x が y に、同様に w と z に置き換えればよいわけです。</p></div>
+<div class="transcript-entry"><span class="time">00:39:53</span><span class="speaker">講師</span><p class="dialog">そうすれば y 方向の式、z 方向の式が得られます。そして一般形としてこの式を得ることができます。</p></div>
+<div class="transcript-entry"><span class="time">00:40:27</span><span class="speaker">講師</span><p class="dialog">これが運動量収支において最も重要な式です。どんな物理量もこの支配方程式に従います。最後は、この式をナビエ・ストークス方程式に変える話です。</p></div>
+<div class="transcript-entry"><span class="time">00:41:02</span><span class="speaker">講師</span><p class="dialog">注意してほしいのは、これはまだナビエ・ストークス方程式ではないということです。これは単なる一般的な運動量の収支方程式です。どんな流体にも適用できます。しかしナビエ・ストークス方程式は、粘性についてニュートンの法則を使った特別な形です。</p></div>
+<div class="transcript-entry"><span class="time">00:41:36</span><span class="speaker">講師</span><p class="dialog">ここにある tau ij の項があります。私たちは速度成分 u, v, w を解きたいので、それらと密度 rho、そして圧力 p が未知量になります。しかしまだ tau ij が残っていて、これをどう表せばよいかがわかりません。これが一般形です。ところが、ある式を代入すると、これがナビエ・ストークス方程式になります。</p></div>
+<div class="transcript-entry"><span class="time">00:42:08</span><span class="speaker">講師</span><p class="dialog">そのとき tau はこのように表されます。この形を使う流体をニュートン流体と呼びます。tau ij は -mu eij と lambda theta delta ij で表されます。詳細はよいですが、重要なのはここに係数があり、e と theta という項があることです。</p></div>
+<div class="transcript-entry"><span class="time">00:42:45</span><span class="speaker">講師</span><p class="dialog">e はここに書いてあるように、uj や ui の速度勾配です。theta は ui の発散です。重要なのは、粘性項が速度で表されるということです。速度場がわかれば、この項も求まります。これがニュートン流体の基本です。これらを代入すると、最終的に equation 24 が得られます。suffix notation のルールに従って計算すればこの式になります。</p></div>
+<div class="transcript-entry"><span class="time">00:43:26</span><span class="speaker">講師</span><p class="dialog">これが 2 つ目の重要な式です。ニュートン流体については、この支配方程式であらゆる流体運動を表します。皆さんの中には、CFD ツール、たとえば Ansys Fluent のようなソフトを使ってナビエ・ストークス方程式を解いた経験がある人もいるでしょう。</p></div>
+<div class="transcript-entry"><span class="time">00:43:58</span><span class="speaker">講師</span><p class="dialog">そのようなソフトは基本的に、こうした支配方程式を解いています。すでにこれらの方程式があるからこそ、現象を推定したり記述したりできるのです。運動も輸送方程式によって記述されます。</p></div>
+<div class="transcript-entry"><span class="time">00:44:33</span><span class="speaker">講師</span><p class="dialog">では最後の部分です。運動エネルギーの部分は飛ばしますが、内部エネルギーを見ましょう。24 の部分です。同じように内部エネルギーの収支方程式も導けます。これも今後解く基本の一つです。内部エネルギーの支配方程式は熱力学第一法則に基づきます。全内部エネルギーは、正味の熱と仕事に等しい、というものです。</p></div>
+<div class="transcript-entry"><span class="time">00:45:04</span><span class="speaker">講師</span><p class="dialog">一般形はこのように書かれます。先ほどまで考えていた量は運動量でしたが、ここではその量を内部エネルギーに置き換えるだけです。内部エネルギーは小文字の e で表します。small e です。</p></div>
+<div class="transcript-entry"><span class="time">00:45:41</span><span class="speaker">講師</span><p class="dialog">同じやり方で収支方程式を導けます。各項がどう表されるかをざっと見ましょう。最初の蓄積項はこのようになります。比内部エネルギー、つまり単位質量あたりのエネルギーなので、全エネルギーは rho times e times volume です。その時間差が蓄積項です。</p></div>
+<div class="transcript-entry"><span class="time">00:46:27</span><span class="speaker">講師</span><p class="dialog">別の項は、体積に入ってくる熱源、あるいは熱流束です。熱流束は通常フーリエの法則で書き、このように表されます。基本形は本当にニュートン流体の場合と同じです。</p></div>
+<div class="transcript-entry"><span class="time">00:47:05</span><span class="speaker">講師</span><p class="dialog">ニュートン流体では tau ij = -mu eij で、これは uj や ui の空間微分で表されます。流体は 3 次元なので 2 つの添字がありますが、基本形は同じです。フーリエの法則は、空間的な温度勾配がその位置での熱流束を決める、というものです。</p></div>
+<div class="transcript-entry"><span class="time">00:47:44</span><span class="speaker">講師</span><p class="dialog">表面での収支を考えるとき、図はここにはありませんが、本当に同じです。2 つの異なる位置を考えれば、ここでの熱流束は q(x)、反対側へ出ていく熱流束は q(x + delta x) です。これらは equation 41 のように書けます。</p></div>
+<div class="transcript-entry"><span class="time">00:48:21</span><span class="speaker">講師</span><p class="dialog">そこから式 42 を導けて、さらにフーリエの法則を代入すると、内部エネルギーの支配方程式が得られます。興味があれば自分で導出してみてください。最終的な式は 46 です。</p></div>
+<div class="transcript-entry"><span class="time">00:48:52</span><span class="speaker">講師</span><p class="dialog">内部エネルギーの蓄積と移流が拡散に等しい、という一般形です。これは最初に示した一般形と同じです。さらに、運動エネルギー部分や流体の体積変化に由来する項もありますが、多くの場合はそれらを無視します。なので、熱の支配方程式は通常このように書かれます。</p></div>
+<div class="transcript-entry"><span class="time">00:49:28</span><span class="speaker">講師</span><p class="dialog">ここには書いていませんが、この形が熱の収支方程式を考えるときに最も重要な部分です。では、導いた内容をまとめると、重要な式は 3 つあります。</p></div>
+<div class="transcript-entry"><span class="time">00:49:59</span><span class="speaker">講師</span><p class="dialog">1 つは continuity equation です。連続の式はこれです。そしてナビエ・ストークス方程式はこの形です。T に関する Ui の偏微分が蓄積項で、移流項があり、圧力項と拡散項があります。</p></div>
+<div class="transcript-entry"><span class="time">00:50:44</span><span class="speaker">講師</span><p class="dialog">これがナビエ・ストークス方程式です。温度収支、あるいは内部エネルギー収支はこの形で表されます。実際、同じ形ですよね。温度 T の偏微分に温度の移流項があり、それが拡散項に等しい。拡散項の係数は通常 alpha で、温度の 2 階偏微分です。</p></div>
+<div class="transcript-entry"><span class="time">00:51:44</span><span class="speaker">講師</span><p class="dialog">もともとの一般形では D を使っていました。D は一般的な diffusivity です。しかし運動量の場合は mu、あるいは表記として ν に置き換えます。記法の問題です。もちろん単位は同じです。ただ名前が違うだけで、動粘性係数と呼びます。温度の場合は alpha を使い、熱拡散率と呼びます。</p></div>
+<div class="transcript-entry"><span class="time">00:52:32</span><span class="speaker">講師</span><p class="dialog">これは伝統的な理由で記号や名称が違うだけで、意味は同じです。いずれも diffusivity、つまりある量が一方向にどれだけ拡散し、広がるかを表しています。</p></div>
+<div class="transcript-entry"><span class="time">00:53:02</span><span class="speaker">講師</span><p class="dialog">これが私たちの出発点となる最も基本の部分です。今はまだ、どう離散化するか、どう分割するかはわからなくてもよいです。しかし、少なくとも、こうした方程式を使って現象をどう記述するかは理解しておく必要があります。そこをよく理解していると考えてください。主な部分はこれらの式を解くことです。これが基礎です。</p></div>
+<div class="transcript-entry"><span class="time">00:53:33</span><span class="speaker">講師</span><p class="dialog">iPad に書いているので、講義の後でこれも配布します。ですから写真を撮る必要はありません。勉強してほしい、というのが本当に私のお願いです。全部覚えて理解できるなら、何も書かなくても構いません。でも、積極的に関わりたいなら、書くことには意味があります。</p></div>
+<div class="transcript-entry"><span class="time">00:54:03</span><span class="speaker">講師</span><p class="dialog">ここまでが物理の基礎です。ここまでで後半について何か質問はありますか。では、残りの時間は、まだの人は環境構築をしてほしいと思います。来週から本格的に内容に入れるようにするためです。では、見せます。</p></div>
+<div class="transcript-entry"><span class="time">00:54:39</span><span class="speaker">講師</span><p class="dialog">Web サイトに行って、まだソフトウェアを入れていない人は、必要なものをすべてダウンロードしてインストールしてください。環境が正しいか確認するには、今日の資料、Lesson 1 を使ってください。これは 2 次元画像を表示するだけの簡単なものです。正しく実行できれば、このようなポップアップが表示されます。確認してください。では、少し見せます。まずダウンロードしてください。</p></div>
+<div class="transcript-entry"><span class="time">00:55:15</span><span class="speaker">講師</span><p class="dialog">少し暗いですね。見えますか。どこにダウンロードされるかは環境によるので、ファイルを適宜移動してください。名前は何だったかな。</p></div>
+<div class="transcript-entry"><span class="time">00:55:47</span><span class="speaker">講師</span><p class="dialog">名前は 2D image です。ポップアップ画像を出すだけのダミーファイルなので、中身はそれほど重要ではありません。時間に余裕があれば理解してみてください。Mac ユーザーなら、ここで Python を実行して動かしてください。名前は何でしたっけ。</p></div>
+<div class="transcript-entry"><span class="time">00:56:21</span><span class="speaker">講師</span><p class="dialog">そうすると、この 2D image が表示されます。ライブラリがないといったエラーが出たら、今日のうちに再インストールして、来週の内容を始められるようにしてください。Windows ユーザーについては、どうやるか私は詳しくありませんが、ここに書いてあると思います。</p></div>
+<div class="transcript-entry"><span class="time">00:56:57</span><span class="speaker">講師</span><p class="dialog">Jupyter Notebook を開いて、同じディレクトリにファイルを保存し、ここに書いてある手順に従ってください。New をクリックして Python 3 を選び、Notebook を選びます。そして保存したファイルを実行するには、このコマンドが必要です。あるいは中身を全部コピーしてもよいですが時間がかかります。なのでこちらを使ってください。ファイル名は現在のファイル名に変更してください。exec open file name and read something という形を書けば、正しければウィンドウが出ます。</p></div>
+<div class="transcript-entry"><span class="time">00:57:37</span><span class="speaker">講師</span><p class="dialog">では、残り時間でこれを試してください。いったん授業はここで閉じますが、インストールが確認できた人は、いつでも帰って構いません。今日は PC を持ってきていない学生もいると思います。その場合は研究室でやっても大丈夫です。質問があれば私が行きますので、手を挙げてください。もちろん友達同士で日本語、中国語、英語で相談しても構いません。</p></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>作成日: 2026年04月12日</p>
+    </footer>
+  </body>
+</html>

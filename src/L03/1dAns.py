@@ -37,8 +37,8 @@ dx[N+1]   = 0.0
 dx[1:N+1] = dl ## Note that 1 to N, but not N+1 in python
 
 ## Q1: Think the meaning next two lines##
-for i in range(1,N+2):
-    x[i]=x[i-1]+0.5*(dx[i]+dx[i-1])
+for i in range(1,N+2):  # Q1
+    x[i]=x[i-1]+0.5*(dx[i]+dx[i-1])  # Q1
     ##for debug
     #print(x[i])
 ## for debug
@@ -60,10 +60,10 @@ Tp         = np.zeros(N+2)
 q          = np.zeros(N+2)
 
 ## Q2: Write appropriate BC and IC for T and Tp. "0 is dummy value"
-T[:]    = TL  #IC
-T[0]    = TL #BC 
-T[N+1]  = TH #BC 
-Tp[:]   = T[:] 
+T[:]    = TL  #IC  # Q2
+T[0]    = TL #BC  # Q2
+T[N+1]  = TH #BC  # Q2
+Tp[:]   = T[:]  # Q2
 
 Tp = T*2
  
@@ -73,20 +73,20 @@ Tp = T*2
 flg = 1 #control flag
 l   = 0 #counter
 ## Q3: Add comments of meaning of next loop
-while flg == 1:
+while flg == 1:  # Q3
    l+=1
    flg=0
    ## Q4: Add comments of meaming of next loop
-   for i in range(1,N+1): 
+   for i in range(1,N+1):  # Q4
        ##calculation
        ## Q5: Define an appropriate value of q for case a, b, c 
        q[i]  = 0
-       q[i] = 2/L**2*(TH-TL)
+       q[i] = 2/L**2*(TH-TL)  # Q5
        #h=10.0
        #R=0.005
        #q[i] = 2*h/R*(T[i]-TL) # - Diverge
        ## Q6: Write correct equation to calculate T[i] using ce, cw, co, and q. The next lines are dummy.
-       T[i] = \
+       T[i] = \  # Q6
                 ( ce[i] * Tp[i+1]\
                 + cw[i] * Tp[i-1]\
                 - dx[i] * q[i]\
@@ -94,8 +94,8 @@ while flg == 1:
  
    ## Q7: Before reaching this line, what is the values of "flg"?
    ## Q8: When flg becomes 1?
-   for i in range(1,N+1):
-       if(np.abs(T[i]-Tp[i])>crit):
+   for i in range(1,N+1):  # Q7
+       if(np.abs(T[i]-Tp[i])>crit):  # Q8
            flg=1 #calculate again until reaching the converged values
              
    if(np.mod(l,10) == 0):  

@@ -15,8 +15,31 @@
         .lang-jump { display: inline-block; margin-bottom: 1em; padding: 0.5em 1em; border: 1px solid #3498db; border-radius: 999px; color: #3498db; font-size: 1rem; }
         .lang-ja { margin-top: 2em; border-top: 2px solid #3498db; padding-top: 1em; }
         img { max-width: 100%; height: auto; border: 1px solid #ddd; }
-        .img-gallery { display: flex; gap: 10px; justify-content: center; }
-        .img-gallery img { max-width: 32%; }
+        .inline-omission { display: block; margin: 0.2em 0; padding-left: 0.75em; border-left: 3px solid #9bb9d5; }
+        .inline-omission.indent-7 { margin-left: 7ch; }
+        .inline-omission-summary {
+            display: inline-block;
+            color: #4d6275;
+            cursor: pointer;
+            background: rgba(52, 152, 219, 0.08);
+            border: 1px solid #9bb9d5;
+            border-radius: 999px;
+            padding: 0.1em 0.7em;
+        }
+        .inline-omission-hidden { display: none; margin-top: 0.35em; }
+        .inline-omission.is-open .inline-omission-hidden { display: block; }
+        .img-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            align-items: start;
+        }
+        .img-gallery figure { margin: 0; }
+        .img-gallery img { width: 100%; max-width: none; }
+        .img-gallery figcaption { margin-top: 0.5em; text-align: center; }
+        @media (max-width: 720px) {
+            .img-gallery { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -28,16 +51,15 @@
             <h2>Script Links</h2>
             <ul>
                 <li><a href="1d.py"><code>1d.py</code></a></li>
-                <li><a href="1dAns.py"><code>1dAns.py</code></a></li>
             </ul>
             <p>This lesson covers programs that solve the 1D steady-state heat conduction equation using the finite difference method.</p>
 
-            <h2>1. Basic Exercise (<code>1dAns.py</code>)</h2>
+            <h2>1. Basic Exercise (<code>1d.py</code>)</h2>
             <p>This program solves a simple 1D steady-state heat conduction problem with a uniform internal heat source. The numerical solution (red line) is compared with the theoretical solution (dashed black line).</p>
             <h3>Execution Result</h3>
             <img src="1dhce.png" alt="Execution result of 1dAns.py">
 
-            <h3>Code Explanation (<code>1dAns.py</code>)</h3>
+            <h3>Code Explanation (<code>1d.py</code>)</h3>
             <pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
@@ -51,34 +73,34 @@ crit = 0.01
 lm    = 209.5
 
 # --- (Omitted: Grid and Coefficient Setup) ---
-# ... ce, cw, co are calculated here ...
+# ... ce, cw, co are calculated here ...  # Q1
 
 T          = np.zeros(N+2)
 Tp         = np.zeros(N+2) # Predicted (previous step) temperature
 q          = np.zeros(N+2)
 
 # Set Initial and Boundary Conditions
-T[:]    = TL  # Initial guess
-T[0]    = TL  # BC at x=0
-T[N+1]  = TH  # BC at x=L
-Tp[:]   = T[:] 
+<span class="inline-omission"><span class="inline-omission-summary" role="button" tabindex="0"># Show answer</span><span class="inline-omission-hidden">T[:]    = TL  # Initial guess  # Q2
+T[0]    = TL  # BC at x=0  # Q2
+T[N+1]  = TH  # BC at x=L  # Q2
+Tp[:]   = T[:]  # Q2</span></span>
 
 # Iteration loop for convergence
 flg = 1 
 l   = 0 
-while flg == 1:
+while flg == 1:  # Q3
    l+=1
    flg=0
-   for i in range(1,N+1): 
+   for i in range(1,N+1):  # Q4
        # Set heat source term q
-       q[i] = 2/L**2*(TH-TL) # Corresponds to Case 2
+<span class="inline-omission indent-7"><span class="inline-omission-summary" role="button" tabindex="0"># Show answer</span><span class="inline-omission-hidden">       q[i] = 2/L**2*(TH-TL) # Corresponds to Case 2  # Q5</span></span>
        
        # Calculate temperature T[i] using the finite difference equation (Jacobi method)
-       T[i] = (ce[i] * Tp[i+1] + cw[i] * Tp[i-1] - dx[i] * q[i]) / co[i]
+<span class="inline-omission indent-7"><span class="inline-omission-summary" role="button" tabindex="0"># Show answer</span><span class="inline-omission-hidden">       T[i] = (ce[i] * Tp[i+1] + cw[i] * Tp[i-1] - dx[i] * q[i]) / co[i]  # Q6</span></span>
  
    # Check for convergence
-   for i in range(1,N+1):
-       if(np.abs(T[i]-Tp[i])>crit):
+   for i in range(1,N+1):  # Q7
+       if(np.abs(T[i]-Tp[i])>crit):  # Q8
            flg=1 # If not converged, continue the loop
              
    Tp[:]=T[:] # Update the predicted temperature for the next iteration
@@ -173,16 +195,15 @@ elif case=="case3":
             <h2>スクリプト一覧</h2>
             <ul>
                 <li><a href="1d.py"><code>1d.py</code></a></li>
-                <li><a href="1dAns.py"><code>1dAns.py</code></a></li>
             </ul>
             <p>このレッスンでは、1次元定常熱伝導方程式を有限差分法で解くプログラムを扱います。</p>
 
-            <h2>1. 基本演習 (<code>1dAns.py</code>)</h2>
+            <h2>1. 基本演習 (<code>1d.py</code>)</h2>
             <p>一様な内部発熱を持つ、単純な1次元定常熱伝導問題を解きます。数値解（赤線）と理論解（黒破線）を比較します。</p>
             <h3>実行結果</h3>
             <img src="1dhce.png" alt="1dAns.py の実行結果">
 
-            <h3>コード解説 (<code>1dAns.py</code>)</h3>
+            <h3>コード解説 (<code>1d.py</code>)</h3>
             <pre><code>import numpy as np
 import matplotlib.pyplot as plt
 
@@ -196,34 +217,34 @@ crit = 0.01
 lm    = 209.5
 
 # --- (格子および係数の設定は省略) ---
-# ... ここで ce, cw, co が計算される ...
+# ... ここで ce, cw, co が計算される ...  # Q1
 
 T          = np.zeros(N+2)
 Tp         = np.zeros(N+2) # 1ステップ前の温度
 q          = np.zeros(N+2)
 
 # 初期条件と境界条件の設定
-T[:]    = TL  # 初期推測値
-T[0]    = TL  # x=0 での境界条件
-T[N+1]  = TH  # x=L での境界条件
-Tp[:]   = T[:] 
+<span class="inline-omission"><span class="inline-omission-summary" role="button" tabindex="0"># Show answer</span><span class="inline-omission-hidden">T[:]    = TL  # 初期推測値  # Q2
+T[0]    = TL  # x=0 での境界条件  # Q2
+T[N+1]  = TH  # x=L での境界条件  # Q2
+Tp[:]   = T[:]  # Q2</span></span>
 
 # 収束計算のループ
 flg = 1 
 l   = 0 
-while flg == 1:
+while flg == 1:  # Q3
    l+=1
    flg=0
-   for i in range(1,N+1): 
+   for i in range(1,N+1):  # Q4
        # 熱源項 q を設定
-       q[i] = 2/L**2*(TH-TL) # Case 2 に相当
+<span class="inline-omission indent-7"><span class="inline-omission-summary" role="button" tabindex="0"># Show answer</span><span class="inline-omission-hidden">       q[i] = 2/L**2*(TH-TL) # Case 2 に相当  # Q5</span></span>
        
        # 有限差分法（ヤコビ法）による温度計算
-       T[i] = (ce[i] * Tp[i+1] + cw[i] * Tp[i-1] - dx[i] * q[i]) / co[i]
+<span class="inline-omission indent-7"><span class="inline-omission-summary" role="button" tabindex="0"># Show answer</span><span class="inline-omission-hidden">       T[i] = (ce[i] * Tp[i+1] + cw[i] * Tp[i-1] - dx[i] * q[i]) / co[i]  # Q6</span></span>
  
    # 収束判定
-   for i in range(1,N+1):
-       if(np.abs(T[i]-Tp[i])>crit):
+   for i in range(1,N+1):  # Q7
+       if(np.abs(T[i]-Tp[i])>crit):  # Q8
            flg=1 # 収束していなければループを継続
              
    Tp[:]=T[:] # 次の計算のため、現在の温度を Tp にコピー
@@ -312,5 +333,19 @@ elif case=="case3":
 </code></pre>
         </div>
     </div>
+    <script>
+        document.querySelectorAll('.inline-omission-summary').forEach((button) => {
+            const toggle = () => {
+                button.parentElement.classList.toggle('is-open');
+            };
+            button.addEventListener('click', toggle);
+            button.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    toggle();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

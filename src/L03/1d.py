@@ -67,8 +67,8 @@ q          = np.zeros(N+2)
 ## Q2: Write appropriate BC and IC for T and Tp. "0 is dummy value"
 T[:]    = 0 
 T[0]    = 0
-T[N+1]  = TH
-Tp[:]   = T[:]
+T[N+1]  = 0 
+Tp[:]   = 0
 
 ##iteration loop
 flg = 1 #control flag

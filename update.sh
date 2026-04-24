@@ -2,10 +2,11 @@
 
  cp index.html _bk
 
- DATE=20260410-01
+ #DATE=20260410-01
+ DATE=20260417-02
  cp -r ../lec/$DATE/html ./$DATE
 
- codex exec \
+ codex exec --skip-git-repo-check \
     -C /Users/ikegaya/programs/LLMWorkSpace/git/lecMaterial.dev/MaS/site \
     --sandbox workspace-write \
     "このディレクトリ以下の ${DATE} の中の html/index_en.html へのリンクを index.html のLecture Recordsに追加．日本語も同様に更新"

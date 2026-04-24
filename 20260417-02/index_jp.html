@@ -1,0 +1,1942 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>会議概要: 04-17 講義: Pythonによる一次元定常熱伝導と対流熱損失モデルのFVM</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="lang-switcher">
+      <a href="index_jp.html" class="current">日本語</a>
+      <a href="index_en.html">English</a>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">Lecture Record</p>
+        <h1>04-17 講義: Pythonによる一次元定常熱伝導と対流熱損失モデルのFVM</h1>
+        <p class="lead">配布された要約全文を、そのまま読みやすいレイアウトに整理しています。</p>
+        <div class="meta-grid">
+<div class="meta-item">
+<span class="meta-label">日時</span>
+<p class="meta-value">2026-04-17 08:45:01</p>
+</div>
+<div class="meta-item">
+<span class="meta-label">場所</span>
+<p class="meta-value">[Soriko 2]</p>
+</div>
+<div class="meta-item">
+<span class="meta-label">講師</span>
+<p class="meta-value">[Ikegaya, Naoki]</p>
+</div>
+<div class="meta-item">
+<span class="meta-label">作成日</span>
+<p class="meta-value">2026-04-24 09:58:56 JST</p>
+</div>
+</div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <div class="card-header">
+          <h2>講義サマリー</h2>
+        </div>
+        <div class="card-body">
+          <p class="lead" style="margin: 0; max-width: none;">配布された要約全文を、そのまま読みやすいレイアウトに整理しています。</p>
+        </div>
+      </section>
+      <article class="card">
+<div class="card-header">
+<h2>パート 1: 04-17 講義: Pythonによる一次元定常熱伝導と対流熱損失モデルのFVM</h2>
+</div>
+<div class="card-body section-stack">
+<div class="subcard">
+<h3>要約</h3>
+<div class="rich-text"><p>この講義では、流体力学・熱伝導・数学の基礎事項の復習から、Python を用いた数値シミュレーションで支配方程式を解く技術的な段階へ移行した。先週扱った支配方程式（熱伝導方程式と Navier–Stokes 方程式）を復習した後、今日の主題として、有限体積法（FVM）を用いて、境界条件や熱損失条件の異なる一次元定常熱伝導方程式を導出し、数値的に解くことが示された。さらに、長い金属棒における熱伝導を示す NHK の実演映像（ステンレス、銅、アルミニウム、小型から20メートル規模まで、18〜20時間加熱）を題材に、熱移動と表面対流のモデル化の動機づけが行われた。講義では熱損失の3つのケース、すなわち断熱（損失なし）、位置に依存しない一定の対流的損失、位置依存の対流損失を設定し、それぞれについて両端温度固定条件（例: x=L で TH、x=0 で TL）の下で厳密解を導出する課題が与えられた。今後は FVM による離散化、Python による実装、境界条件の検討を進め、単純な定常拡散問題から時間依存項・移流項を含む問題へと発展させ、最終的に Navier–Stokes による CFD を目指すことが説明された。事務連絡として、講義PDFや穴埋め付きノート、録画・文字起こし・日本語訳（自動生成ゆえ不正確さあり）が提供されること、また日程の都合により翌週の講義が4月前に休講になることが伝えられた。</p></div>
+</div>
+<div class="subcard">
+<h3>知識ポイント</h3>
+<div class="rich-text"><ol>
+<li>授業運営と配布資料</li>
+</ol>
+<p>資料と録画の提供</p>
+<p>先週分のPDF資料と講義ノート（授業中に書き込める穴埋め版を含む）が配布され、復習用にダウンロードできる。</p>
+<p>講義は録画され、時間があるときには要約と全文トランスクリプトも提供される。日本語訳も用意されるが、自動文字起こし・自動翻訳のため不正確な箇所があり得るので、不明点は直接講師に確認すること。</p>
+<p>授業日程の変更</p>
+<p>講師の予定重複により翌週の授業は休講となる（「4月前に」）。休講は直近の次回授業のみ。</p>
+<ol>
+<li>支配方程式の復習（熱と流体）</li>
+</ol>
+<p>熱伝導方程式（一般形と簡略形）</p>
+<p>非定常形: rho cp ∂T/∂t = lambda ∇²T（1次元では rho cp ∂T/∂t = lambda ∂²T/∂x²）。</p>
+<p>定常形（時間変化なし）: ∇²T = 0（1次元では ∂²T/∂x² = 0）。</p>
+<p>記号: 温度は大文字 T、時間は t、lambda は熱伝導率、rho cp は密度と比熱。</p>
+<p>2次元熱伝導</p>
+<p>非定常: rho cp ∂T/∂t = lambda (∂²T/∂x² + ∂²T/∂y²)。</p>
+<p>定常: ∂²T/∂x² + ∂²T/∂y² = 0。定常でも T = T(x,y) なので偏微分を用いる。</p>
+<p>連続の式と Navier–Stokes 方程式（2次元）</p>
+<p>連続の式: ∂u/∂x + ∂v/∂y = 0。</p>
+<p>x方向運動量式（u式）: ∂u/∂t + u ∂u/∂x + v ∂u/∂y = −(1/rho) ∂p/∂x + nu (∂²u/∂x² + ∂²u/∂y²)。</p>
+<p>y方向運動量式（v式）: ∂v/∂t + u ∂v/∂x + v ∂v/∂y = −(1/rho) ∂p/∂y + nu (∂²v/∂x² + ∂²v/∂y²)。</p>
+<p>nu は動粘性係数を表し、圧力勾配は各方向に対応する。</p>
+<p>テンソル（添字）表記による一般形</p>
+<p>連続の式: ∂Ui/∂Xi = 0（i = 1..3、繰り返し添字は総和）。</p>
+<p>Navier–Stokes: ∂Ui/∂t + Uj ∂Ui/∂Xj = −(1/rho) ∂P/∂Xi + nu ∂²Ui/∂Xj∂Xj。</p>
+<p>内部エネルギー式（温度の移流拡散形）: ∂T/∂t + Uj ∂T/∂Xj = alpha ∂²T/∂Xj∂Xj。alpha は熱拡散率で、圧力項を除けば運動量式と同じ構造を持つ。</p>
+<p>概念的な構造: 移流拡散</p>
+<p>蓄積項（非定常項）、移流項、拡散項は、温度や濃度のようなスカラー量でも、速度のようなベクトル量でも共通する基本構造を持つ。圧力項は運動量式にのみ現れる。</p>
+<p>教育上の流れとしては、まず純粋な拡散（定常）から始め、次に時間依存項、さらに移流項を加え、最後に完全な Navier–Stokes へ進む。</p>
+<ol>
+<li>数値シミュレーションのロードマップ（Python と FVM）</li>
+</ol>
+<p>範囲と目的</p>
+<p>目標は、1次元定常熱伝導を数値的にシミュレーションし、異なる境界条件・熱損失条件のもとで観測された温度分布を再現し、厳密解と比較することである。</p>
+<p>難易度は段階的に上げ、最も単純な定常拡散から始め、ソース・シンク項（熱損失）を入れ、さらに2次元や Navier–Stokes CFD へ拡張する。</p>
+<p>離散化手法</p>
+<p>主たる手法として有限体積法（FVM）を扱い、有限差分法（FDM）との違いを明確にする。</p>
+<p>目的は、連続な PDE / ODE を計算機で扱える離散代数方程式へ変換し、保存則や境界条件を扱えるようにすること。</p>
+<ol>
+<li>物理実演と実験的背景（NHK映像）</li>
+</ol>
+<p>小規模な棒の実験</p>
+<p>ステンレス、銅、アルミニウムの棒にパラフィンを載せ、熱がどのように伝わるかを可視化し、サーモグラフィで熱の浸透を確認した。</p>
+<p>観察結果: 銅は熱の伝達が速く、ステンレスは遅い。表面のパラフィンはおよそ40〜50℃程度で溶け、棒に沿った温度分布を示す。</p>
+<p>大規模な棒の実験</p>
+<p>条件: 直径約10cm、長さ約20mの銅棒を用い、一端を強力なバーナーで加熱。</p>
+<p>時間発展: 約18〜20時間加熱しても、熱源近傍では銅が溶けそうになるほど高温になる一方、表面温度の上昇は数メートル（約3m）程度しか進まず、20m先までは到達しない。</p>
+<p>温度分布: 表面温度と位置の関係として示され、室温は約20℃。分布は線形ではなく下に凸の形となり、周囲への熱損失の重要性を示している。測定されているのは表面温度であり、内部温度は異なる可能性がある。</p>
+<p>モデル化上の解釈</p>
+<p>現実的な再現には、周囲空気への熱損失（対流）と境界条件の考慮が必要である。表面損失を考えない純粋熱伝導だけでは、実験で見た下に凸の温度分布と一致しない線形分布しか得られない。</p>
+<ol>
+<li>今日扱う一次元定常熱伝導の問題設定</li>
+</ol>
+<p>熱損失項を含む支配方程式</p>
+<p>出発点となる PDE: rho cp ∂T/∂t = lambda ∂²T/∂x² − Q。ここで Q は熱損失を表す（Q &gt; 0 なら損失）。</p>
+<p>定常化: 非定常項を落として整理すると ∂²T/∂x² = Q/lambda となる。</p>
+<p>境界条件（両端温度固定）</p>
+<p>x=0 で T = TL（低温側、例 25℃）。</p>
+<p>x=L で T = TH（加熱側、例 1000℃）。</p>
+<p>例として長さ L = 20m を想定。</p>
+<p>比較する3つの熱損失ケース</p>
+<p>ケース1: 断熱（完全断熱）</p>
+<p>物理仮定: 表面から熱が出ていかない（たとえば発泡スチロールのような断熱材で覆う）。このとき Q = 0。</p>
+<p>支配 ODE: ∂²T/∂x² = 0 → 温度分布 T(x)=Ax+B の線形分布。</p>
+<p>含意: この線形分布は実験で観測された下に凸の分布と一致しない。</p>
+<p>ケース2: 位置に依存しない一定の対流的熱損失</p>
+<p>単純化した仮定: 棒全体の代表的温度差（たとえば「最高温度−最低温度」）に比例する一定の熱損失として扱い、一定係数 H を用いた対流を抽象化する。Q は x に依存しない定数とする。</p>
+<p>支配 ODE: ∂²T/∂x² = Q/lambda（Q は一定）→ 二次関数的な温度分布。</p>
+<p>狙い: 位置依存を入れずに非線形な分布形状を表現すること。</p>
+<p>ケース3: 位置依存の対流熱損失（より現実的）</p>
+<p>物理モデル: 局所的な対流熱損失は、局所表面温度と周囲温度との差に比例する。q_conv(x)=h [T(x)−TL]。h は熱伝達係数（単位 J·m⁻²·s⁻¹·K⁻¹）で、流体種別・流れ・形状に依存する伝熱効率を表す。</p>
+<p>支配 ODE: ∂²T/∂x² = (h/lambda)[T(x)−TL]。右辺に T が含まれる線形常微分方程式であり、高温側ほど損失が大きくなる下に凸の分布を表現できる。</p>
+<p>注: h は空気か水か、自然対流か強制対流かなどで変わり得るが、ここでは扱いやすさのため一定とする。</p>
+<ol>
+<li>解析解可能性と講義内演習</li>
+</ol>
+<p>厳密解とその役割</p>
+<p>定常1次元のケース1〜3は、与えられた境界条件の下で解析的に解ける常微分方程式であり、数値解法のベンチマークになる。</p>
+<p>ケース1: ∂²T/∂x² = 0 から線形解。</p>
+<p>ケース2: 定数右辺から二次解。</p>
+<p>ケース3: 定係数2階線形 ODE で、TL を基準に平行移動した指数関数型の解が得られる。</p>
+<p>講義中の課題</p>
+<p>休憩前（10:10前）に約15分与えられ、ケース1〜3の理論解を与えられた境界条件で導出する。ケース2では簡単化した定数形、ケース3では右辺に T(x)−TL を持つ対流損失モデルを使う。</p>
+<p>この導出により、離散化と数値シミュレーションの前提理解を固める。</p>
+<ol>
+<li>記号・単位・係数</li>
+</ol>
+<p>記号の意味</p>
+<p>T（温度）、t（時間）、x（位置）、u, v（速度成分）、p（圧力）、rho（密度）、cp（比熱）、lambda（熱伝導率）、nu（動粘性係数）、alpha（熱拡散率）、h（熱伝達係数）、Q（熱損失項。損失は正で、時間依存方程式ではマイナス符号で現れる）。</p>
+<p>単位と解釈</p>
+<p>熱伝達係数 h: 単位面積・単位時間・単位温度差あたりのエネルギー移動量で、J·m⁻²·s⁻¹·K⁻¹。</p>
+<p>熱拡散率 alpha と動粘性係数 nu は同じ次元を持ち、熱と運動量の拡散における類似性を示す。</p>
+<ol>
+<li>教育上の段階づけと言語支援</li>
+</ol>
+<p>学習の順序</p>
+<p>最初は拡散のみの定常問題（蓄積項・移流項なし）から始める。</p>
+<p>次に非定常項を加える。</p>
+<p>その後、移流項を加える。</p>
+<p>最後に完全な Navier–Stokes CFD へ進む。</p>
+<p>言語面の配慮</p>
+<p>特に日本語話者・中国語話者など非母語話者の困難に配慮し、資料・録画・翻訳を提供する。ただし自動生成物には誤りがあり得る。</p></div>
+</div>
+<div class="subcard">
+<h3>質問</h3>
+<div class="rich-text"><p>[挿入された質問・困惑]</p></div>
+</div>
+<div class="subcard">
+<h3>課題</h3>
+<div class="rich-text"><ol>
+<li>先週の資料と今日の「contents 2」の PDF をダウンロードして確認し、授業中に書き込める穴埋め版を持参すること。</li>
+<li>1ページ目のクイックレビューを完成させること。先週扱った支配方程式（1次元・2次元熱伝導、定常化、2次元連続の式と Navier–Stokes、連続・運動量・内部エネルギーのテンソル表記一般形）を書き出す。</li>
+<li>境界条件 T(0)=TL, T(L)=TH の下で、定常1次元熱伝導の解析解を導出すること:</li>
+</ol>
+<p>ケース1: 断熱（Q=0）→ ∂²T/∂x² = 0 を解く。</p>
+<p>ケース2: 一定熱損失 Q（位置非依存）→ ∂²T/∂x² = Q/lambda を解く。</p>
+<p>ケース3: 位置依存の対流損失 → ∂²T/∂x² = (h/lambda)(T−TL) を解く。</p>
+<ol>
+<li>導出した分布形状を NHK 実験の観測結果（線形か、下に凸か）と比較し、どのケースが最も適しているか議論すること。</li>
+<li>有限体積法を用いた一次元定常熱伝導ソルバを Python で実装する準備をすること（離散化、境界条件、ケース1〜3のソース項）。</li>
+<li>境界条件の選び方と、一定損失か位置依存対流かという熱損失モデルの違いについて考え、次回説明できるようにしておくこと。</li>
+<li>翌週は休講なので、掲示や公開される録画・トランスクリプトを確認すること。</li>
+</ol></div>
+</div>
+</div>
+</article><article class="card">
+<div class="card-header">
+<h2>パート 2: 04-17 講義: 一次元定常熱伝導の理論解とFVM/FDMによる離散化・ヤコビ反復実装（Python演習）</h2>
+</div>
+<div class="card-body section-stack">
+<div class="subcard">
+<h3>要約</h3>
+<div class="rich-text"><p>2026-04-17の講義では、一次元定常熱伝導を題材に、支配方程式の理論解（線形、下向き凸の二次多項式的、双曲線関数的）を確認したうえで、数値シミュレーションの標準プロセス（制御体積・グリッド定義→離散化→反復法→フローチャートと実装）を体系化した。FDMとFVMの相違を整理し、FVMではガウスの発散定理に基づく制御体積積分で二階微分を境界勾配差へ低減し、非一様格子での東西境界の勾配評価と係数化（CE, CW, CO）を通じてTiの離散式を導出した。暗示的な連立離散方程式は反復法（ヤコビ法）で解く枠組みを示し、固定点反復の原理、予測値の導入、収束判定まで実装フローを示した。後半はPythonサンプル（1d.py）を用いた演習として、変数・境界条件・係数（C, E, W, O, Q）の意味づけと、ダミー部分の修正、収束ループの実装、ケース1〜3の試行計算により理論解との一致を検証する流れを実践した。</p></div>
+</div>
+<div class="subcard">
+<h3>知識ポイント</h3>
+<div class="rich-text"><ol>
+<li>理論解の背景（ケース1〜3）</li>
+</ol>
+<p>線形解（ケース1）</p>
+<p>特定条件下で解は線形となり、未定係数法で係数を決定できる。</p>
+<p>係数を含む高次解（ケース2）</p>
+<p>係数を含む場合、解は一段高次となりx^2に比例する下向き凸の形状が想定される。正確性は数値検証で確認。</p>
+<p>変数変換と双曲線関数的解（ケース3）</p>
+<p>適切な変数置換により形式的厳密解を与えられ、形状はsinhに類し、対象サイズに依存して変化する。</p>
+<ol>
+<li>FDMとFVMの基本概念と相違</li>
+</ol>
+<p>FDM</p>
+<p>微分を格子上の差分で近似（テイラー展開に基づく中央差分など）。一様格子で簡明。複雑形状では座標変換が必要。</p>
+<p>FVM</p>
+<p>商用ソフトで一般的。制御体積で積分し、ガウスの発散定理で体積積分を境界積分へ還元。非一様・複雑格子に柔軟。</p>
+<p>同一メッシュでの整合</p>
+<p>一様格子・同サイズではFDMとFVMの最終形が一致する場合があるが、一般には導出と扱いが異なる。</p>
+<ol>
+<li>数値シミュレーションの標準プロセス（4ステップ）</li>
+</ol>
+<p>ステップ1：制御体積・グリッド・ノード定義</p>
+<p>一次元棒[0, L]をn分割。ノードi（内部1..n、境界0とn+1）。温度はTiで表記。境界はT0, Tn+1。格子幅Δxiは一般に可変（単純ケースではΔx=L/n）。</p>
+<p>ステップ2：方程式の離散化</p>
+<p>FDM復習：d^2t/dx^2 ≈ (Ti+1−2Ti+Ti−1)/(Δx)^2。FVMでは保存則を制御体積に積分し界面フラックスで評価。</p>
+<p>ステップ3：反復法の導入</p>
+<p>暗示的な連立を反復更新で収束させる。フローチャートで流れを整理。</p>
+<p>ステップ4：フローチャートとコーディング</p>
+<p>設計に基づき実装。以後の講義でも同手順を対象を変えて反復。</p>
+<ol>
+<li>ガウスの発散定理の適用と非一様格子の勾配評価（FVM）</li>
+</ol>
+<p>二階微分の低減</p>
+<p>制御体積積分により、Tの二階微分は東西境界の一次導関数（勾配）差に置換。</p>
+<p>東側Eの勾配</p>
+<p>(Ti+1−Ti) / [0.5·(Δx(i+1)+Δx(i))]。一様格子で(…)/Δx。</p>
+<p>西側Wの勾配</p>
+<p>(Ti−Ti−1) / [0.5·(Δx(i)+Δx(i−1))]。一様格子で(…)/Δx。</p>
+<p>源項の体積積分</p>
+<p>q/lambda一定仮定で q/lambda · Δx(i) に変換。</p>
+<ol>
+<li>FVM離散方程式の係数化と最終式</li>
+</ol>
+<p>係数定義</p>
+<p>CE=1/[0.5·(Δx(i+1)+Δx(i))]、CW=1/[0.5·(Δx(i)+Δx(i−1))]、CO=CE+CW。</p>
+<p>最終更新式</p>
+<p>Ti = (1/CO)·[ CE·Ti+1 + CW·Ti−1 − (q/lambda)·Δx(i) ]。</p>
+<p>連立構造と境界</p>
+<p>i=1..Nに対し同形のN式。T0, Tn+1は既知境界。暗示的形のため反復解法を用いる。</p>
+<ol>
+<li>反復法（ヤコビ法）の原理とTiへの適用</li>
+</ol>
+<p>固定点反復</p>
+<p>g(x)=0 を x=f(x) に変形し、xk+1=f(xk) で更新、収束判定で停止する。</p>
+<p>Ti更新の実装</p>
+<p>予測値Pを用い、Ti = (1/CO)[ CE·T(i+1)^P + CW·T(i−1)^P − (q/lambda)·Δx(i) ] と更新する。</p>
+<p>i=1..N を更新後、T と予測値の差で収束判定を行い、未収束なら予測値を更新して繰り返す。</p>
+<ol>
+<li>実装フローチャートとプログラム構成</li>
+</ol>
+<p>準備</p>
+<p>配列 T[0..N+1], CE[i], CW[i], CO[i], dx[i] などを定義する。一様格子なら dx=L/N。</p>
+<p>初期・境界条件</p>
+<p>一様温度などの初期値を設定し、T[0]=TL, T[N+1]=TH などの境界値を与える。</p>
+<p>収束ループ</p>
+<p>ヤコビ更新→全節点比較→収束判定→継続／終了。収束後に T[1..N] を出力する。</p>
+<ol>
+<li>メッシュ生成・記法の注意</li>
+</ol>
+<p>変数・配列</p>
+<p>内部未知数は Ti（i=1..n）、境界は T0, Tn+1。プログラムでは内部 n 個の値を主未知数として扱う。</p>
+<p>格子幅の一般化</p>
+<p>非一様格子 Δxi では、急勾配領域を細かく、変化の緩い領域を粗くできる。最も単純な場合は Δx=L/n。</p>
+<p>図式化</p>
+<p>混乱を避けるため、制御体積、ノード位置、格子幅、境界の関係は必ずスケッチする。</p>
+<ol>
+<li>演習（Python 1d.py）と学習運営</li>
+</ol>
+<p>教材と設問</p>
+<p>Moodle の「Program materials」→「Lesson 3」から `1d.py` を取得する。Q1〜Q9に沿ってコード理解（各行の意味とグルーピングの意図）、境界条件追加（Q2）、源項設定（Q5: ケース1ではQ=0）、中核の Ti 更新式の正しい実装（C, E, W, O, Q を用いる）、理解確認（Q7, Q8）、ケース1〜3の試行計算（Q9）を行う。</p>
+<p>ダミー部分の修正と検証</p>
+<p>配布コード中のダミー式を正しい離散式に置き換える。実行して出力を確認し、修正後に理論解、とくにケース1との一致を検証する。</p>
+<p>実施体制</p>
+<p>11:30ごろに更新点と単位の補足説明がある。質問は挙手で対応し、学生同士の相談も可。初心者には個別支援がある。</p></div>
+</div>
+<div class="subcard">
+<h3>質問</h3>
+<div class="rich-text"><p>[挿入された質問・困惑] / [挿入質問／困惑] / [挿入質問・疑問]</p></div>
+</div>
+<div class="subcard">
+<h3>課題</h3>
+<div class="rich-text"><p>一次元棒[0, L]をn分割し、Ti（i=1..n）と境界 T0, Tn+1 を定義したスケマティクス図を作成する。</p>
+<p>一様格子 Δx=L/n の場合について、中央差分式 (Ti+1−2Ti+Ti−1)/(Δx)^2 を導出して書く。</p>
+<p>非一様格子 Δxi で界面位置と制御体積幅を明示した図と記法を整備する。</p>
+<p>反復法のフローチャート（初期化、境界設定、更新、収束判定、出力）を作成する。</p>
+<p>非一様格子で FVM 離散式を実装し、CE, CW, CO を計算して Ti 更新式をヤコビ法で解く。</p>
+<p>初期条件 TL、境界 T[0]=TL, T[N+1]=TH、q/lambda 一定のケースで、収束判定（例: 最大差分 &lt; 1e−6）によって反復を停止するプログラムを作成する。</p>
+<p>一様格子と非一様格子の結果を比較し、一様格子では FDM と FVM が一致することを確認する。</p>
+<p>勾配評価の分母（半格子幅和）の取り方が結果に与える影響を、格子の不均一性を変えて検証する。</p>
+<p>右辺源項の仮定（制御体積内で q/lambda 一定）の影響を、区間ごとに異なる q や lambda を与えてテストし、必要な式の修正点を整理する。</p>
+<p>ケース1〜3の理論解形状（線形、下向き凸、双曲線正弦的）を参照し、同条件で数値設定と比較検証の準備を行う。</p>
+<p>コード実装前に、必要な配列、境界条件、格子生成関数（均一・非均一）を洗い出して設計書に記載する。</p>
+<p>Moodle の「Program materials」→「Lesson 3」にアクセスし、`1d.py` をダウンロードして内容確認・実行を行い、ダミー部分（Q2, Q4, Q5, Q6 など）を正しい形式に更新する。</p></div>
+</div>
+</div>
+</article>
+      <section class="card">
+        <div class="card-header">
+          <h2>講義トランスクリプト</h2>
+        </div>
+        <div class="card-body">
+          <p class="lead" style="margin: 0; max-width: none;">全文トランスクリプトを、時刻ごとのカード形式で表示しています。</p>
+        </div>
+      </section>
+      <article class="card">
+<div class="card-header">
+<h2>パート 1: </h2>
+</div>
+<div class="card-body transcript-part">
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:00:07</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">それでは、いくつか連絡をします。先週は流体力学と熱伝導のとても基礎的な部分を扱いました。前半は数学で、この講義で今後扱う内容を皆さんが追えて理解できるようにするためのものでした。そして今週からは、Python と数値シミュレーションに基づいて支配方程式をどう解くかという、より技術的な内容に入ります。では、資料はここにあります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:00:41</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">先週の内容についての資料です。もともと PDF で配布した資料もここにありますし、私の講義ノートもここにあります。必要なら復習用にダウンロードしてください。この講義中は本当に理解に集中してください。また、印刷版と空欄の多い PDF も用意しています。しっかり追って十分に理解するために、できるだけ全部書くようにしてください。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:01:15</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ただ、時間内に全部書き取るのが難しい部分もあると思います。その場合は後でこれをダウンロードして理解を確認してください。また、前にも言ったように、私は講義を録画しています。講義中の内容は全部録画しています。特に日本人や中国人の学生など、言語面で困る学生が多いことを理解しているからです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:01:46</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">一番いいのは皆さんが自分で勉強することです。ただ、それだけが大事というわけではありません。必要なときにはこれを使ってください。時間があるときだけですが、講義の要約や、その回で扱った内容の全文トランスクリプトも提供します。授業中に私の言っていることが部分的にわからないとき、あるいは授業についていけないときに使ってください。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:02:18</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これを使ってください。また、日本語訳もここにあります。日本人の学生はこれも見ておいてください。特に後半には全文トランスクリプトの日本語訳もあります。私の意図と完全には一致しない部分もありますが、大部分は合っています。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:02:48</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ただし、これは自動録音・自動翻訳・自動文字起こしです。そのため完全な翻訳ではありません。わからない部分があれば直接私に聞いてください。授業を追うための補助として使ってください。では、今日の内容はここ、2番です。まだならダウンロードしておいてください。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:03:25</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">それから来週について一つ連絡があります。来週は別の予定があって時間が取れません。申し訳ないのですが、来週の授業は休講にさせてください。4月前のところで、来週は休講です。来週休校にさせてください。ここまでで質問はありますか。大丈夫ですか。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:03:57</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">大丈夫ですか。では今日の内容を始めましょう。今日の内容はとても基礎的ですが、最も重要な部分です。今日のトピックに入る前に見てもらいたいものがあります。印刷した資料、あるいは PDF の最初のページを開いてください。先週扱った支配方程式のごく簡単な復習があります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:04:29</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">先週学んだ支配方程式をよく読んで書き込んでください。熱伝導方程式と Navier-Stokes 方程式についてです。前回の内容を参照して構いません。要点をまとめるつもりで書いてください。問題は、次の現象を表す支配方程式を書くことです。定義はそこに書いてあります。t は時間、座標は x, y の二次元、速度は u, v、あるいは tensor notation なら ui でも構いません。温度は T です。運動学的</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:05:03</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">粘性係数は mu です。微分の記号と紛らわしいですが、これは mu で、こちらは速度の v です。手書きでははっきり区別してください。比熱容量は rho cp、熱伝導率は lambda です。これは定義です。それから4つの式を書いてもらいます。1つ目は理解の確認として、一次元熱伝導方程式と、定常</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:05:39</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">状態の式、そして二次元熱伝導方程式の拡張形です。それから二次元流れの連続の式と Navier-Stokes 方程式です。実際の式の形を十分理解できるように、すべての形を書いてください。4つ目は、テンソル表記を使った Navier-Stokes 方程式、連続の式、内部エネルギー方程式の一般形です。先週の内容を素早く復習して、式を全部書いてください。5分あげます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:06:14</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">わかりましたか。理解しましたか。把握できましたか。最初のページは練習問題です。前回の講義ノートを見て、ここに式を書いてください。あとで説明しながら私も書きますが、まずは今書いてください。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:06:55</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これはシミュレーションの出発点なので、まず支配方程式を押さえなければなりません。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:08:30</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">英語でも中国語でも日本語でも、友達と話して構いません。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:09:28</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">小さいですね。ちょっとやってみましょう。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:10:17</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">合わないですね。こっちは大きい。では説明します。後ろの席から見えますか。このスクリーンは少し小さくて、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:11:27</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">調整できません。見えますか。見えますか。後ろの人は見えますか。ここまで書きますが見えますか。見えなかったら前に来てください。これはただの復習です。今週以降は支配方程式の細かい話はもうしません。つまり、これらの式はもう知っている前提で進めます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:12:01</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">では1つ目は一次元熱伝導方程式です。熱伝導方程式とは、温度が時間と空間によってどう変化するかを表すものです。一次元なので、当然温度は時間と位置 x の関数です。支配方程式は rho cp かける偏 T、partial x ではなく、すみません、partial t です。ここは紛らわしいですが、大文字 T は温度です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:12:33</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">小文字 t は時間です。そしてこれは熱伝導率と x に関する温度の2階偏微分とつり合います。一次元を考えているので、x に関する項が1つだけ出てきます。これが一次元形です。ただし、ベクトル表記や演算子を使った一般形はこう書けます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:13:08</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">rho cp かける partial T / partial t イコール lambda かける nabla squared、つまり Laplacian の T です。これが一般形です。この形を覚えておくと、自分がどんな方程式を解いているのか思い出しやすくなります。もちろん、これは考えている次元に応じて2方向または3方向の和になっています。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:13:38</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">今は一次元だけを考えているので項が1つだけです。しかし二次元なら x と y、三次元なら x, y, z になります。簡単ですね。次に定常状態、つまり温度が時間で変化しない場合を考えると、ここに書いてあるように時間で変化しません。したがってこの項を落とせます。この項はゼロになります。すると定常状態の式は、x に関する T の2階微分がゼロという形になります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:14:22</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">こういう形です。ここでは lambda は単なるパラメータなので、もう書く必要はありません。両辺を lambda で割ればよいからです。したがって単純に 0 イコールこの式と書けます。また偏微分は常微分に変わります。なぜならこの T は今や x だけの関数だからです。とても小さな違いですが重要です。この式が今日解く式です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:14:56</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">では同じように二次元の場合です。ほとんど同じなので思い出してください。rho cp かける T の偏微分は、今度は二つの</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:15:29</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">方向を考えます。x と y に関する T の2階偏微分です。それほど難しくありません。定常状態でも同じで、partial T / partial t を落とせるので、その項はゼロです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:03</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">すると x と y に関する T の2階微分の和がゼロになります。ここはよく理解してください。一次元の場合は x だけの関数です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:40</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">だから常微分の d を使います。しかしこちらは定常でも x と y の関数なので偏微分を使います。では3つ目、二次元流れに対する連続の式と Navier-Stokes 方程式です。二次元流れということは u と v を考える必要があります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:17:20</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">速度が u, v で、座標が x, y なので、当然運動量の式は2本必要です。つまり u の式と v の式です。連続の式は u と v をつなぐ式です。したがって連続の式は partial u / partial x + partial v / partial y = 0 です。もう多くの人は知っていますよね。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:17:20</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">運動量方程式、つまり u の式は、u の t に関する偏微分に加えて、一般形としては蓄積項と移流項があって右辺に何かが来る形です。二次元なので x と y に展開します。移流項は u partial u / partial x + v partial u / partial y です。圧力項 partial p / partial x と拡散項もあります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:18:25</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">動粘性係数と、u の x と y に関する2階偏微分です。これと同じ形が使えますが、u や方向を適切に置き換える必要があります。二回現れる項は二次元を表しています。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:18:59</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">v の式では、これらの u を v に置き換えます。したがって v の式は partial v / partial t + u partial v / partial x + v partial v / partial y です。圧力項は今 y 方向を考えているので partial p / partial y になります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:19:33</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">拡散項もほとんど同じですが、成分を v に置き換えます。つまり v の x, y に関する2階偏微分です。ここでも v が出てきます。v の式なのでここもここもここも v です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:20:05</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">圧力の方向も y で、拡散項も v です。念のため言うと、ここは v でここは u です。とても単純です。これらの式を覚えてください。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:20:46</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">それから一般形です。記憶に残すためにも一般形を思い出してください。一般形というのは、テンソル表記を使って i = 1 から 3 とすると、これらの式を1本で全成分表現できるということです。連続の式は partial Ui / partial Xi = 0 です。i はダミー添字なので、3成分を考えます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:21:18</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Navier-Stokes 方程式も同じです。この式では、成分をどう表現するかの規則がわかります。各項を一般形の Ui で表せばよいのです。蓄積項はこの形、移流項は Uj partial Ui / partial Xj、圧力項は minus 1 / rho partial P / partial Xi です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:21:54</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">i は方向です。動粘性係数に Ui の2階微分、つまり Xj, Xj に関する偏微分を掛けます。j が和として処理されるように、同じ j を2回出します。これは partial xj squared と同じ意味です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:22:25</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">もし j が1回しか出ないと自由添字のように見えてしまうので、それを避けるために xj を2回書いています。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:22:57</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">では内部エネルギーです。内部エネルギー方程式は、ほとんど温度の式と同じです。したがって ui を温度に置き換えるだけです。partial T / partial t + Uj partial T / partial Xj = diffusivity かける T の Xj, Xj に関する2階微分になります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:23:49</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ここで mu は動粘性係数、alpha は熱拡散率です。これらは単位が同じで、空間中にある成分がどれだけ拡散するかという意味も非常に似ています。違うのは圧力項だけです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:24:20</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">少し待ちます。はい。違いは圧力項だけです。ここにも、こちらにも、そしてここにも、ほぼ同じ項が見えます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:24:51</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">同じように拡散項もあります。したがって、成分や物理量が何であっても、支配方程式はほとんど同じ形です。速度であっても温度であっても濃度であっても、基本的にはこの形です。だから前回、これを移流拡散方程式として学んだわけです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:25:25</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">拡散方程式ですね。最終目標は実際にはこの方程式を解くことです。つまり Navier-Stokes 方程式を解いて、CFD、計算流体力学の部分まで扱えるようにしたいわけです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:25:59</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ただ、これらの形を見ると、最初はこの項、この項、この項だけを考えるのが簡単です。つまり蓄積項と拡散項です。これをどう解くか理解したら、あとからこの項を加えればよいのです。この項はどの方程式でも追加で考えなければならない項だからです。だから今週からはまずこの式から始めます。ただ今回は移流項は考えず、この項とこの項だけを考えます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:26:31</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">それでも時間項を直接考えるのは少し難しいので、まずはこれだけ、つまり定常状態という一番簡単なものから始めます。それをこの形に拡張し、さらに二次元へ拡張し、最後に Navier-Stokes 方程式まで拡張します。よろしいですね。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:27:11</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">質問はありますか。では次のページを見てください。今日のトピックは一次元熱伝導方程式です。これを解きます。模式図はここにありますが、動画を見せたほうがイメージしやすいと思うので、動画を見せます。リンクはそこにあります。NHK のものです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:27:48</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">皆さん NHK は知っていますよね。日本の公共放送です。お金を取られますよね。でも良い番組を持っています。教育的なコンテンツが多くて、こういう実験もやっています。これから解く対象をイメージできるように、この動画を共有したいと思います。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:28:25</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">音は消しておきます。今日はこのような熱移動現象をどう解くかを扱いますが、その前に実際の対象を理解してほしいと思います。ある場所にこういう一次元の金属棒があると仮定します。そして</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:28:59</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">片側をバーナーで加熱して、熱が一方向にどう伝わるかを見たいわけです。これは最終形ですが、順番に見ていきます。このような非常に長い金属棒、理想化した一次元棒を用意して、その上にパラフィンを置いて、熱が一方向にどう伝わるかを視覚的にわかるようにしています。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:29:29</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">では2分あたりに進みます。小さいほうの実験が見えます。はい。これは材料を変えた小さな一次元金属棒で、熱伝達の違いを見ています。ステンレスと銅、そして最後は何だったかな。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:30:02</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">パラフィンを上に載せています。最後はアルミですね。片側を加熱して、これがサーモグラフィ画像です。もちろん熱がその方向に伝わっているのが見えます。明るい色が高温で、だんだんこちらへ広がっていきます。またパラフィンの上に置いたものが落ちていくので、熱移動がよくわかります。材料によって熱の伝わる時間が</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:30:34</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">かなり違います。銅は熱が速く伝わりますが、ステンレスは遅いです。そういう違いが見えます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:31:14</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">この会社、いや会社ではなく、公共放送ですね。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:31:46</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">日本の仕組みでは、日本国民はこのような映像やテレビ番組を見るためにお金を払わなければなりません。Netflix のような配信とは違って、一方向に放送していて、NHK の信号を受け取れる装置を持っていると支払いが義務になります。それが彼らのやり方です。でもそのおかげで十分なお金があるのだと思います。だからこういうことができる。教育的ではありますが、かなりお金と時間を使っていますよね。でもこういう実験をしていて、特に小さな子どもには面白いかもしれません。それをさらに大きくしたのです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:32:17</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">小さい</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:32:54</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">一次元熱伝達だけでも十分理解できますが、これを大きな形に拡張しています。直径が 10 cm、これは銅だと思います。長さは 20 m です。そして片側を非常に強いバーナーで加熱して、熱が一方向に伝わるのにどれくらいかかるか、小さい場合と大きい場合で比較しています。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:33:30</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">その上にもパラフィンを置いています。そして片側をずっと加熱します。これは1分ではなく1時間です。ここを見てください。つまり1時間、片側を1時間加熱しています。しかしまだここでは熱は検出されていません。けれども徐々に、徐々に一方向へ熱が伝わっていきます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:34:04</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">1時間20分で 1.2 m です。片側の温度も測っています。パラフィンの</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:34:40</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">融点はたぶん 50 度か 40 度くらいですよね。それがこの方向に伝わっていきます。途中は飛ばしますが、興味があれば見てください。バーナーを変えたりやり方を変えたりしながら、この実験をずっと続けて、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:35:14</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">熱が一方向にどう伝わるかを見ています。最後の最後に完全な温度分布を見せます。もう一度やってみます。8:20 です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:35:47</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">熱源の与え方を何度も変えています。発熱が足りなかったからです。でも最終的にはこの状態に達して、片側にかなり大きな熱を与えています。片側では銅がほとんど溶けそうです。それでも 18 時間、20 時間と経って、熱は徐々にそちらに伝わっていきます。しかし反対側までは届きません。全長は 20 m ですが、実際に温度上昇が見えるのはまだこのあたりまでです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:36:20</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">3 m です。これは内部温度ではなく表面温度ですが、それでも一方向への熱伝達を示しています。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:36:57</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">このあたりは 20 数度で、室温ですね。縦軸が温度、横軸が位置です。そして温度</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:37:28</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">分布はこうなっています。ここまでは、おそらく 10 m くらいまでは温度が変化していない、あるいはほとんど変わっていません。この現象を、熱移動の物理的要素を考えながらどう再現するかを見たいわけです。これが今日のトピックです。一次元熱伝達は理論解を求められる簡単な問題ですが、見てのとおり温度分布は単純ではありません。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:38:02</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これは実験であり、周囲条件も固定ではないからです。これを踏まえて、この温度分布の形をどう再現するかを考えます。では資料に戻りましょう。PDF に描いた模式図を見てください。片方が理論側で、もう片方が数値シミュレーション側です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:38:42</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これは非常に単純な一次元定常シミュレーションで、実は厳密解があります。つまり厳密解があるなら数値的に解く必要はないわけです。理論解がすべてです。ただし数値シミュレーションのよいところは、境界条件や熱源条件などを変えて、さまざまな条件を試せることです。その有用性を見たいと思います。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:39:16</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これが私が描いた模式図です。非常に長い一次元金属棒を想像してください。片側をバーナーや熱源で加熱すると、その側の温度が高くなり、熱がこの方向に一方向へ伝わっていきます。下の図が温度分布のグラフです。縦軸が温度、横軸が位置です。最初は、これが境界条件で、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:39:51</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">この温度は固定、こちらの温度も固定とします。初期状態では、もちろん金属棒は周囲温度と同じ温度です。したがって温度分布はこのようになるはずです。TL は低温側、つまり周囲空気温度です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:40:25</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">TH は熱源温度です。そして時間が経つにつれて、この温度分布は</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:41:01</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">変化していきます。両端の位置は固定されていて、時間 t の増加に伴って温度はこのように上がっていくと期待できます。ではこれを数値シミュレーションで確認しましょう。最終的に</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:41:33</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">温度が空間だけの関数になった段階では、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:42:08</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">飽和した定常解が得られます。その段階では温度分布は変化しません。これが今日の目標です。では今日の目的です。主な目的は4つあります。これは数値シミュレーションの導入部分なので、とても単純な例を使って、方程式をどう導出するかを丁寧に見ていきます。目的は finite</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:42:49</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">volume method、つまり有限体積法の本質を理解することです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:43:21</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">finite difference method と finite volume method の違いを区別する必要があります。この講義の中心は有限体積法です。また、支配方程式をどう離散化するかも理解します。元の方程式は連続体の形、つまり偏微分方程式や常微分方程式という連続形です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:43:54</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">しかし数値シミュレーションでは、コンピュータで値を表現するためにそれを離散化しなければなりません。この過程を離散化といいます。これを学びます。後半はより技術的な部分で、Python を用いて温度分布を数値計算します。また、どの境界条件を使うべきか、さまざまな境界条件を考えたうえで、どれが最もよい仮定かも検討します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:44:32</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ではまず支配方程式を見ましょう。いつも支配方程式から始めます。この講義で扱うのは、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:45:03</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">何らかの支配方程式で表せる現象です。世の中の現象には大きく二種類あります。ひとつは、すでに方程式で記述されているものです。たとえば温度分布はよい例ですし、空気の流れなどもそうです。そういうものには支配</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:45:33</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">方程式があります。科学的には、それはある意味すでに解かれているとも言えます。少なくとも現象を記述する支配方程式がある。それがこの講義で扱う側です。もう一方は、より解きにくい、確率的な問題です。たとえば人間行動には支配方程式がありません。また</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:46:10</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">車の動きも、空気の流れには似ていますが、対応する支配</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:46:50</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">方程式はありません。そういうものは multi-agent simulation と呼ばれる別のタイプのシミュレーションで、ここでは区別して考えます。ここで扱うのは、支配方程式が存在する単純な数値シミュレーションです。では今日解く支配方程式を見ましょう。実はもう復習したものと同じです。一次元熱伝導方程式を解きます。定義を思い出してください。必要な物性は rho、cp、比熱、それから lambda、熱伝導率です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:47:22</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これは定義です。時間が t、座標が x、大文字 T が温度です。温度は時間 t と位置 x の二変数関数であると仮定します。また熱損失も考えます。というのも、さきほど</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:47:54</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">動画で見たように、金属棒は室内の空気中にあります。周囲は周囲温度です。したがって表面から熱が放出されます。その条件を考えたいなら、熱損失を入れなければなりません。そこで熱損失を Q と書き、ここでは異なる種類の熱損失を考えます。L は長さで 20 m、TL と TH は両端の温度です。そして支配方程式は、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:48:27</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">一次元熱伝導方程式です。rho cp partial T / partial t = lambda partial^2 T / partial x^2 です。違いは熱損失を考えることで、表面などから熱が出ていく部分を表すために minus Q を加えます。plus Q は熱源、minus Q は熱損失です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:49:02</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">そして先ほど言ったように、まずは定常状態から始めるので最初の項は落ちます。最終的に考える式は、x に関する T の2階微分が Q / lambda に等しいという形です。この項はゼロなので、Q の項を移して lambda で割ればこの形になります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:49:35</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">かなり単純な式です。続いて境界条件です。方程式を解くには境界条件も必要なので、これも定義しなければなりません。やりたいのは動画で見た現象の再現ですが、境界条件は明示されていません。片側がバーナーで加熱され、反対側は周囲温度です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:50:05</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ただしこの現象を簡単にするために、片側は固定温度と仮定します。図では 0 側と書いてありますが、ここで考えたいのはこの条件です。加熱側を L 側と定義して、その温度を TH、非常に高い温度とします。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:50:39</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">たとえば 1000 ℃ としましょう。そして反対側、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:51:10</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">加熱端から 20 m 離れた側は周囲温度で固定とします。たとえば 25 ℃ です。これは単なる例ですが、ここではこの境界条件を仮定します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:51:41</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">では周囲条件を3種類考えましょう。金属棒は室内空気に囲まれているとします。ですから表面からの熱の出入りを何らかの形で考える必要があります。ただし最初は非常に単純なものから始めます。ケース1、2、3の3種類を用意しました。最初はケース1、断熱条件です。理論解や演習で最も基本になる条件ですね。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:52:15</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">断熱とは表面から熱が伝わらないことです。日本語で断熱条件ですね。動画では棒は空気中にありますが、もしこの棒の表面を</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:52:47</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">発泡スチロールのような断熱材で覆ったら、表面から熱は出ていきません。これが断熱条件です。方程式を簡単にして、断熱条件と</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:53:25</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">現在の条件との違いを見るためにも、このケースを考えます。表面が完全に断熱材で覆われていれば、表面での熱移動は起きません。通常、表面からの熱移動は Fourier の法則のような形で書かれますが、ここではそれが起こらないと仮定します。つまり元の支配</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:53:58</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">方程式における Q はゼロです。熱損失も熱源もない、つまり Q = 0 です。すると支配方程式は非常に単純になり、x に関する T の2階微分がゼロになります。簡単ですね。解は後で見ますが、2階微分がゼロなら解は線形形になると想像できます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:54:43</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Ax + b です。2階微分すればゼロになります。これが最も単純なケースですが、見てわかるように、動画で見た現象とはかなり違います。線形ということは、温度分布が位置 x に比例して一直線になるということです。しかし動画で見た形は直線ではなく、下に凸の形でした。つまり全く違います。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:55:14</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">だから別の形、ケース2を考えたいわけです。動画で見た物理現象をもう少し反映させます。表面には断熱材はなく、空気があります。したがって表面から熱移動がある。その熱移動をケース2</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:55:45</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">とケース3で考えます。固体と流体、ここでは空気との間に表面があると、そこで熱移動が起きます。これが対流です。通常、対流による熱移動は表面温度と空気温度との差に比例します。ここでは簡単化した形を示しています。もし</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:56:17</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ここにある温度があり、こちらに別の温度があって、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:56:52</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">表面温度が高ければ、もちろん熱はこの向きに移ります。逆なら反対方向に移ります。こういう現象が対流熱伝達です。対流による熱損失は、この二つの位置の温度差で表し、その量はある係数で表現します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:57:30</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">重要なのは、対流熱移動量が温度差に比例するという点です。式はそこに書いてあります。対流による熱損失は</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:58:00</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">表面と空気の温度差に比例し、その係数を</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:58:32</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">h で表します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:59:04</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">単位は単位面積あたり</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:59:58</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">単位時間あたりのエネルギー移動量です。エネルギーは普通ジュールで表すので、ジュール毎平方メートル毎秒のような形になります。これが熱移動の単位です。この係数は、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:00:31</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">どれだけ熱が空気へ放出されるかを表していて、空気か水かなどの流体の種類や、流れの向きや周囲条件によって変わります。条件によって h は変化します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:01:01</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">つまり熱移動の効率を表す係数です。これを熱伝達係数といいます。h を表す経験式はたくさんありますが、通常は周囲の流体条件の関数になります。ただしそうすると方程式系がかなり複雑になります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:01:33</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">そこでここでは h を一定とします。これがケース2です。金属棒と空気との間の熱移動をこの形で表すとすると、熱損失は棒の最高温度と最低温度に比例すると仮定できます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:02:04</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">つまり熱損失を最高温度 minus 最低温度で表すことにしましょう。対流という物理現象をかなり簡略化した形ですが、表面温度と空気温度の差によって熱損失が起きると考えるわけです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:03:07</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">方程式を単純にしたいので、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:03:41</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">この定数項をここに入れます。こうして対流現象に着想を得た単純化を行います。そしてケース3は、より現実的なものです。見たように、金属表面と空気との間の対流は温度差によって起こります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:04:16</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">そして表面温度は当然位置の関数です。したがって位置によって対流熱移動は変わるはずです。より精密なケース3はそれを表します。つまり対流熱損失を、位置 x における実際の表面温度 minus TL で表します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:04:47</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これが違いです。この3ケースを比較して違いを見ます。模式図を見ると理解しやすいですね。ケース3では、すべてを記録できます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:05:19</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ケース1は本当に断熱された状態で、ここから熱損失はありません。与えられたエネルギーはすべてこの方向にだけ伝わります。解はすでにここに書いてあるような形になります。この条件は、少なくとも見た現象とはかなり違います。ケース2は、表面と空気の温度差によって熱が空気へ移る条件ですが、現象を単純にするために最高温度と最低温度を</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:05:53</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">一定値として使います。つまり位置に依存しません。ここに金属棒があり、ここから熱が与えられますが、表面全体で熱損失が一定と仮定します。そうすると方程式がどう変わるか見ていきます。最後のケース3はもっと現実的です。表面温度が位置の関数だと仮定します。すると高温側では当然熱損失が大きくなります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:06:28</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ここは表面温度が高く、周囲温度 TL は一定です。したがってここでは、他の位置よりもはるかに大きな熱損失になります。この差を使うことで、各位置の表面からの熱損失の違いを表現できます。これが3条件です。そしてこれが演習問題です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:06:55</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">数学がわかっていれば、実はすべて理論解が求められます。では少し休憩を取る前に、ケース1、ケース2、ケース3について理論解を導出する演習をしてください。それほど難しくありません。入試を通った人ならみんなできます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:07:30</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ケース1について、この条件のもとで解いてください。ケース2は少し違います。解はここに書いてあるので、自分で導けるか確認してください。違いはこの定数項だけで、とても簡単です。式を単純にするためにこの定数値を与えてあります。最後はこれです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:08:03</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ここでは T が変数として右辺に入っているので少し形が違います。ただしこれも2階の常微分方程式ですから、解き方は知っているはずです。では15分あげます。そのあと10時ごろに休憩します。休憩前にこの式を解いてください。必要なら友達と相談して構いません。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:08:34</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">理解しましたか。この3条件を用意したので、とても単純な式だと思います。解いてみましょう。境界条件とケース数は与えてあるので、今のうちに特殊解を書いてください。そのあと休憩にします。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:10:44</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">多すぎるな。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:13:07</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ここから10時10分まで少し休憩にしましょうか。いつものように少し早めに終わります。では10時10分から再開します。少し休憩しましょう。</p>
+</article>
+</div>
+</article><article class="card">
+<div class="card-header">
+<h2>パート 2: </h2>
+</div>
+<div class="card-body transcript-part">
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:00:12</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">それでは後半を再開します。まだとても基礎的な部分、つまり支配方程式をどう解くかを扱っています。まだ数値計算そのものには入っていませんが、この背景が重要です。全員がついてこられるように説明します。考える条件は3つで、それぞれ理論解を実際に求めることができます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:00:47</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">まず簡単に説明します。1つ目はとても単純で、解は線形です。係数を決めれば線形解が得られます。分布はこのようになります。必要なら導出は後でよく見てください。次にケース2は係数が入るので、一段高い次数の解、つまり多項式の解になります。解はこのような形です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:01:26</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">x の2乗に比例する下向きに凸の曲線になります。動画で見た分布に少し近いかもしれませんが、まだ粗いイメージです。数値シミュレーションで見てみましょう。最後のケースはこれです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:02:04</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">導出のやり方は何でもよいのですが、変数変換を使って式を簡単にすれば解けます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:02:38</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">そうすると解が得られます。後半はほぼ導出だけですが、この双曲線正弦のような形になります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:03:09</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">考えるサイズによってはこんな感じの形です。厳密解も正式な形で書いてあるので、比較してください。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:03:47</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ここからが実は本題です。ケース1、2、3の3条件について、同じことを数値シミュレーションでやりたいわけです。数値シミュレーションのプロセスは実はいつも同じです。常に次の4ステップに従います。これはこの講義全体の中で最も重要な部分です。残り5回の講義でも、対象を変えながら同じ流れを繰り返します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:04:24</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">最初のプロセスは、define です。スペルは definite ではなく define ですね。grid と node を定義します。grid と node とは、値を代表させる位置のことです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:04:57</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">この場合は一次元の金属棒だと思ってください。それを小さな区間に分割して定義します。値そのものは連続ですが、その小区間全体の温度を代表する位置を1つ決め、その位置に1つの値、1つの変数を置きます。これが grid generation、node generation です。まずこれを定義しなければなりません。次に</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:05:42</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">方程式を離散化します。離散化した形に変えます。その次が反復法で、これが方程式を解く数値手続きです。さらに必要であれば flow chart を描きます。必須ではありませんが、描くとプログラムの流れや構造が理解しやすくなります。通常は flow chart を描いて、どういう構造を</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:06:25</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">コードに書くべきかを理解します。この4ステップが実際に皆さんが通るプロセスです。今日はここで実際にそれをやって理解してもらいます。まず step 1、control volume、grid、node を模式図で定義します。この部分が実は最も重要です。図を描いたので、それを見てください。これが解きたい対象で、一方向に座標を定義し、この位置 L とこの位置 0 に対応させます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:07:02</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">そして 0 から L までを小さな区間に分けます。1、2、3 と分けていきます。中央の代表点を i、その左隣を i-1、右隣を i+1 とします。ここは重要なので大きくして説明します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:07:39</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">隣が i-1、その右が i+1 です。全体を n 分割すると最後の node は n、その1つ手前は n-1 になります。そしてこの node の温度を Ti と書きます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:08:19</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">同じように左の温度は Ti-1、右の温度は Ti+1 です。これが温度を表す離散化変数です。元々は T(x) のような連続量ですが、独立した変数群に置き換えます。それからもう一つ重要なのは境界で、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:08:54</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">こちらにも境界があります。境界は二つあります。こちらはもちろん TL ですが、記法を揃えるために T0 と書きます。反対側は TH ですが、同じように Tn+1 と書きます。これが境界条件です。さらに、この小区間、つまり control volume の幅を delta x i と書きます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:09:28</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">同様に、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:10:01</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">右側は delta x i+1、左側は delta x i-1 です。とても単純です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:10:34</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">そして今考えているこの区間そのものが control volume です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:11:06</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これが node、grid、変数の定義です。実際、これがほとんどすべてです。これらを定義してしまえば、残りは数学的処理です。ただしこの部分こそが系の離散化の本質です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:11:43</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">1D でも 2D でも同じで、必ずこのプロセスが必要です。これをしないと式を導けません。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:12:13</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ですからこれらの変数定義は非常に重要です。i は node 番号で、0 から n+1 までです。0 と n+1 は境界値で、条件によって変化する内部変数は 1 から</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:12:46</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">n までです。つまり n1, n2, n3, …, nn の n 個の変数があります。node i の温度は Ti と表します。したがってプログラムではこの値を表す n 個の変数、あるいは配列が必要です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:13:18</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">delta x は各 control volume、各 grid の幅です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:13:48</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">もちろん最も単純な場合はすべて同じ delta x を使えますが、一般形を保つために</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:14:20</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">delta x i と書きます。そうすると場所によって格子幅を変えられます。温度勾配が急な場所では小さくし、変化が緩やかな場所では大きくできます。一般的にするために delta x i を使います。そして n はもちろん、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:14:57</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">全体の node 数、あるいは扱う変数の総数です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:15:29</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">最も単純な場合、delta x は一様幅なので、全長 L を</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:03</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">node 数 n で割ったものです。これが delta x です。これで以上です。この模式図は本当に重要なので、混乱したら必ずこれを描いてください。この node の定義に基づいて、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:40</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">方程式を離散化できます。では step 2、次のステップに行きましょう。次は離散化方程式の導出です。今回の元の式は非常に単純で、x に関する T の2階微分です。これをどう離散化するか考えます。まず皆さんがよく知っている finite difference method から思い出しましょう。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:17:20</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">FDM と FVM の違いを明確にするためです。この講義では finite volume method を使います。FDM は Taylor 展開に基づいています。T(x ± delta x) を Taylor 展開できますよね。こういう形に書けます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:14:20</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">最初の項は T、一次の項は T の一次微分に delta x を掛けたものです。展開方向によって plus, minus がつきます。3つ目の項は T の x に関する2階微分に delta x の2乗を掛けて 1/2 を掛けたものです。その次は 1/3! と T の3階微分です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:15:02</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">このように続きます。この形を使うと式が作れます。二つの値の差を考えると、一次の項は打ち消し合います。すると 2 倍の T(x) と、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:15:35</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">2 倍の2階微分項が残ります。1/2 は消えて、T の2階微分と delta x^2 が残ります。高次項は無視できるとします。求めたいのはこの2階微分項なので、他の項を移項すると、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:06</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">T の2階微分は delta x^2 で割った形になります。つまり T(x+delta x) - 2T(x) + T(x-delta x) を</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:46</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">delta x^2 で割る形です。これで元の連続形を純粋な離散形に変えられます。mesh generation で示した定義を使えば、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:17:17</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">最初の項は Ti+1、二つ目は Ti、最後は Ti-1 になります。つまり control volume における値を、隣接する node の値 i+1 と i-1 で表すわけです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:17:51</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">このように微分項を直接離散形へ変えるプロセスが FDM、finite difference method です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:18:32</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">有限差分法ですね。これを使うなら非常に単純な mesh 座標系が必要です。mesh が複雑だと使えません。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:19:06</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">たとえば丸い物体の形を mesh で再現したい場合、FDM を使うならその曲面を表すために Jacobian が必要です。多くの商用ソフトはこの方法を使いません。これから説明する FVM を使います。両者をよく区別してください。FVM ではこのように式を直接変形しません。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:19:39</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">まず理論的に、微分方程式を control volume に関して積分します。これがまったく違うプロセスです。mesh には control volume があります。支配方程式を離散化する前に、その control volume で積分するのです。FVM の基本概念は Gauss の積分定理に基づいています。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:20:11</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">基礎事項だと思いますが、簡単に触れます。発散項があるとき、その項を control volume 上で積分すると表面積分に変換できます。これが Gauss の定理です。U をベクトル場とすると、その発散を control volume で積分したものは、元のベクトル場の表面積分になります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:20:47</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これを支配方程式に使います。模式図も示しています。発散とは、中から何かが湧き出しているようなイメージです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:21:22</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">その値を体積全体で積分したものは、表面から出ていく量や入ってくる量と一致します。内部で何が起こっているかは関係なく、表面値だけを積分すればよいのです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:21:53</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">そうして得た値は等しくなります。これが Gauss の定理です。ではこれを支配方程式に使いましょう。一次元熱伝導方程式です。解きたい方程式はこの2階微分項の式です。この単純な式に同じ Gauss の定理を適用します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:22:23</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">離散化する前に、この2階微分項を control volume について積分します。control volume はこの区間で、支配方程式はこの形です。この体積について積分すると、こう書けます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:22:55</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">つまり x に関する T の2階微分を control volume 上で積分します。右辺も同じです。ではこの左辺をどう表すか考えます。control volume は dx です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:23:26</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">x 方向には距離があります。つまり x についての積分と同じです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:23:57</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Gauss の定理を使えば、この積分によって2階微分は1階微分に落とせます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:24:36</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">もともとは2階ですが、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:25:10</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">積分すると理論的には1階に下がります。ただし境界での値を取らなければなりません。Gauss の定理とは表面値、ここでは境界値を使うという意味です。この一次元の場合、表面ではなく、control volume の東側境界 E と西側境界 W の値を取ります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:25:40</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">つまりこの位置とこの位置の値を E, W として使います。こうして2階から1階に落とせますが、その代わり1階微分の境界値が必要になります。理論的には、境界における勾配の差の形に変わります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:26:17</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これが FVM の本質です。他の項でも同じ方法を使えば式を導出できます。残るのはそれらの項を評価することです。つまりこの位置の勾配とこの位置の勾配です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:27:00</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">その差を取ります。勾配を grid を使って評価できれば、離散形が得られます。では東側から始めましょう。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:27:32</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">東側の勾配です。ここですね。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:28:05</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">この位置の温度勾配は、表し方はいろいろありますが、一番簡単なのはここ二点の値と距離を使う方法です。つまり Ti+1 - Ti を、node 間距離で割ります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:28:42</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">距離は position i の半格子と position i+1 の半格子の和、つまり 0.5(delta x i+1 + delta x i) です。一様格子ならもちろん (Ti+1 - Ti)/delta x です。一般形にするために delta x i+1 と delta x i を残します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:29:15</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">模式図も見せましたが、残りはわかると思うので西側の式も書いてください。温度差は Ti - Ti-1、分母は 0.5(delta x i + delta x i-1) です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:29:56</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">一様格子なら (Ti - Ti-1)/delta x です。一般形ではこのように書けます。同様に右辺にも control volume 積分を適用します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:30:32</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">q/lambda を control volume で積分します。energy source あるいは sink がこの control volume 内で一定だと仮定するので、q と lambda はこの区間では定数です。したがって単純に grid 幅との積になります。つまり q/lambda * delta x i です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:31:03</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これで3つの項がそろいました。元の支配方程式は最初の積分形です。これらを一つの式にまとめると、東側から来る項として (Ti+1 - Ti)/0.5(delta x i+1 + delta x i) があり、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:31:38</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">西側項は、Ti と Ti-1 の順序を変えて符号を変えれば plus にできます。つまり Ti-1</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:32:23</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">と Ti を含む項が 0.5(delta x i-1 + delta x i) で割られます。これが q/lambda * delta x i とつり合います。これが離散化された</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:32:58</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">方程式です。もうほとんど終わりです。多くの教科書ではこのあと係数表記を使います。式を簡単にするためです。そこでこの係数を定義します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:33:33</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">東側から来るので CE、西側から来るので CW と定義します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:34:08</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">具体的には CE = 1 / 0.5(delta x i+1 + delta x i)、CW = 1 / 0.5(delta x i-1 + delta x i) です。同じ式を書き換えているだけです。そして次に、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:34:46</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">求めたい変数 Ti について解きます。Ti がここにもここにも出てくるので、それらをまとめて反対側へ移します。すると CE + CW が出てくるので、その和を CO と定義します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:35:21</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">CO です。最終的な形は Ti = 1 / CO [ ... ] となります。東側の変数 Ti+1 には東側係数 CE が掛かり、西側の変数 Ti-1 には西側係数 CW が掛かります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:36:05</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">残りは source term、あるいは sink term の q/lambda * delta x i です。これで Ti を求める式ができました。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:36:42</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これが有限体積法 FVM に基づく離散化形です。見た目は似ていますが、導出の考え方は違います。同じ格子幅、たとえば一様格子を使うと、最終形は FDM と FVM で同じになることもあります。しかし mesh の形が変わると導出式は変わります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:37:25</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">したがって最初から支配方程式を FVM の形で導出する必要があります。この違いを理解してほしいと思います。さてこの式が得られると、温度がどう決まるかも少し理解できます。Ti+1 がここにあり、Ti-1 がここにあります。つまり Ti は両隣の温度と格子由来の係数によって決まります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:38:02</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">模式図で考えると、これが位置 i、こちらが i-1、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:38:45</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">こちらが i+1 です。求めたいのは Ti です。この Ti は、Ti+1 の項と、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:39:19</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Ti-1 の項、それぞれに CE と CW が掛かったものから構成されます。これらの値がわかれば Ti を求められます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:39:53</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">しかしここで気づくはずです。Ti を求めるには両隣の値が必要ですが、計算を片側から始めると、その一方がまだわかっていません。したがって、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:40:26</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">何らかの数値的手法が必要です。それが反復法です。これは実際には連立方程式になっています。Ti だけでなく、Ti+1 についても Ti と Ti+2 を用いた同様の式が成り立ちます。これがずっと続きます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:40:58</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">片側から考えるとわかりやすいです。T1 にこの式を適用すると、1/C0 に CE*T2 などが入る形になります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:41:29</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">T2 に適用すると CE*T3 + CW*T1 - q/lambda * delta x2 という形です。同じように続けると、TN では CE*TN+1 + CW*TN-1 - q/lambda * delta xN になります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:42:00</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">つまり N 本の式があります。そして T0 と</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:42:35</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">TN+1 は境界条件で既知です。したがって求めるべき実際の値は</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:43:06</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">T1 から TN です。未知数は N 個、式も N 本あるので理論的には解けます。ただしこの形は implicit form と呼ばれ、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:43:37</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">求めたい変数が暗に含まれている形です。この場合は iterative method、つまり反復法が必要です。数値計算を繰り返して解に近づけます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:44:16</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">理論的背景の細部には立ち入りませんが、解を得るにはこの手順に従ってください。一般形として g(x) という関数があるとしましょう。これが implicit form なら、反復法が必要です。たとえば、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:44:46</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">このような式です。解きたい変数は x ですが、一般には x = 何か という明示形にできません。解析解がない形です。しかし解は存在するはずです。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:45:18</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">たとえば x + log x = 0 のような式です。これは数値的には解けますが implicit form です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:45:53</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">同じようなものです。こういう式には数値解法が必要です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:46:26</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">まず元の式を x について並べ替えて、x = something の形にします。たとえば</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:46:56</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">g(x)=x+log x=0 を x = -log x の形に変えます。次に適当な初期値を仮定します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:47:31</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ランダムな初期値 x0 を与えて、この式に代入し、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:48:10</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">x1 を得ます。これが反復法です。x0 より x1 のほうが解に近いと期待します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:48:50</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">さらに x1 を代入して x2 を得ます。そうすると x2 は x1 や x0 よりもさらに解に近いはずです。これを繰り返すと x(i+1) = f(xi) と書けます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:49:20</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">そして xi と x(i+1) が同じになるまで繰り返します。同じになれば、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:49:54</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">元の方程式を満たしていることになります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:50:26</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これが implicit form の解です。この方法は Jacobi method と呼ばれます。反復法の一種で、日本語では反復法です。数値解法です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:51:02</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">したがって式が implicit ならこれを使います。Ti の式も implicit なので同じ考えを適用します。Ti を計算するときには</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:51:49</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Ti-1 と Ti+1 が必要ですが、まだわからないとします。そこで prediction value、予測値を使います。つまり Ti の式は 1/C0 と</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:52:21</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">CE に、本来は Ti+1 が入るところを Ti+1 の予測値に置き換えます。次の項も同様に、CW に Ti-1 の予測値を掛けます。元の Ti-1 は未知なので予測値を使います。残りの項は既知です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:53:10</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">したがって使えます。これを i = 1 から n まで繰り返して全ての値をまず計算します。すると T1 から TN が得られます。そのあと、新しい値と予測値を比較します。同じなら解です。違えば、もう一度計算を繰り返します。Ti をまた式に代入して、次の Ti を得ます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:53:42</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">これを繰り返して解に到達します。これが全プロセスです。初めてプログラムを書いて何かを計算する人もいると思うので、flowchart を描きます。flowchart はもちろん Start から始まります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:54:56</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">まず variable definition が必要です。手計算では Ti や delta x i などと書きますが、数値コードでは T0</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:55:27</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">から Tn+1 までを Python の配列として定義します。実際の配列サイズは</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:56:14</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">n+2 ですね。同じように CW なども、一定値でもよいですが一般形のために配列として持っておきます。delta は変数名に使えないので dx を使います。たとえば dx0 は 0、dx1 は</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:56:50</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">一様格子なら L/n です。dx0 は境界 node 0 のダミー値として 0 を入れておきます。こうして変数を定義します。これが最初のプロセスです。そのあと初期条件を定義します。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:57:20</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">反復法において物理的な初期条件は必須ではありませんが、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:57:54</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">初期値と境界条件は必要です。全 node の温度初期値を周囲温度 TL とします。境界は T(0)=TL、</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:58:26</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">反対側の境界は T(N+1)=TH、高温側です。こうしてプログラム中で値を定義します。そこまでが準備です。次が calculation です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:58:57</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">すでに Ti の式はあります。Ti = 1/C0 (...) で、東側は Ti+1 ですが、元の値ではなく予測値を使うので、別の変数が必要です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:59:33</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">西側も同様で、Ti-1 の予測値を使い、最後に q/lambda * delta x i を引きます。これが Ti の式です。もちろん i=1 から n まで繰り返す必要があるので、ここに1つ loop が必要です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:00:06</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">そして全体の計算が終わったら convergence check をします。Ti と Tpi を比較します。同じなら解です。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:00:37</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">少しでも違うなら、もう一度計算しなければなりません。差がある場合は prediction value を新しい Ti に置き換え、計算に戻ります。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:01:07</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">再び計算し、また convergence check に戻ります。ここで比べるのは1個の値ではなく 1 から N まで全部です。全部の値で T と TP が一致したら、収束したので計算を終了できます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:02:27</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">そうしたら End に進めます。全体構造は重要なので、もう一度見せます。</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:07:55</span>
+<span class="transcript-chip">発言者: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">ここ、プラスかな。</p>
+</article>
+</div>
+</article>
+    </main>
+
+    <footer class="footer">
+      <p>作成日: 2026-04-24 09:58:56 JST</p>
+      <p class="footer-note"><a href="html.md">Source instructions</a></p>
+    </footer>
+  </body>
+</html>

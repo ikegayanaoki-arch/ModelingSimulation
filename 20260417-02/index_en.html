@@ -1,0 +1,1949 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lecture Overview: 04-17 Lecture: Python FVM for 1D Steady Heat Conduction and Convection Loss Modeling</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="lang-switcher">
+      <a href="index_jp.html">Japanese</a>
+      <a href="index_en.html" class="current">English</a>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">Lecture Record</p>
+        <h1>04-17 Lecture: Python FVM for 1D Steady Heat Conduction and Convection Loss Modeling</h1>
+        <p class="lead">The complete summary text is preserved and arranged into a readable HTML layout.</p>
+        <div class="meta-grid">
+<div class="meta-item">
+<span class="meta-label">Date Time</span>
+<p class="meta-value">2026-04-17 08:45:01</p>
+</div>
+<div class="meta-item">
+<span class="meta-label">Location</span>
+<p class="meta-value">[Soriko 2]</p>
+</div>
+<div class="meta-item">
+<span class="meta-label">Instructor</span>
+<p class="meta-value">[Ikegaya, Naoki]</p>
+</div>
+<div class="meta-item">
+<span class="meta-label">Created</span>
+<p class="meta-value">2026-04-24 09:58:56 JST</p>
+</div>
+</div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <div class="card-header">
+          <h2>Lecture Summary</h2>
+        </div>
+        <div class="card-body">
+          <p class="lead" style="margin: 0; max-width: none;">The complete summary text is preserved and arranged into a readable HTML layout.</p>
+        </div>
+      </section>
+      <article class="card">
+<div class="card-header">
+<h2>Part 1: 04-17 Lecture: Python FVM for 1D Steady Heat Conduction and Convection Loss Modeling</h2>
+</div>
+<div class="card-body section-stack">
+<div class="subcard">
+<h3>Summary</h3>
+<div class="rich-text"><p>The lecture transitions from foundational fluid dynamics, heat conduction, and mathematical preliminaries into the technical phase of solving governing equations via Python-based numerical simulations. After reviewing last week’s governing equations (heat conduction and Navier–Stokes), the instructor outlines today’s focus: deriving and numerically solving the steady-state, one-dimensional heat conduction equation with varying boundary and heat-loss conditions, using the finite volume method (FVM). A real-world NHK video demonstration of heat conduction in long metal bars (stainless steel, copper, aluminum; small and large scales up to 20 meters; heating durations up to 18–20 hours) motivates the modeling of heat transfer and surface convection. The class establishes three cases for heat loss: adiabatic (no loss), constant position-independent convection-like loss, and position-dependent convection. Students are asked to derive exact analytical solutions for each under fixed-end temperatures (e.g., TH at x=L and TL at x=0). Upcoming plans include discretization with FVM, implementing solutions in Python, exploring boundary conditions, and progressively moving from simple steady diffusion to time-dependent and advection-inclusive problems, ultimately aiming at Navier–Stokes CFD. Administrative notes include the availability of lecture PDFs and notes (with blanks for in-lecture completion), recorded lectures with transcripts and Japanese translations (with possible inaccuracies), and the cancellation of next week’s session before April due to a scheduling conflict.</p></div>
+</div>
+<div class="subcard">
+<h3>Knowledge Points</h3>
+<div class="rich-text"><ol>
+<li>Course logistics and materials</li>
+</ol>
+<p>Availability of materials and recordings</p>
+<p>PDFs of last week’s content and lecture notes (including versions with blanks for active note-taking) are provided for download to support follow-up study.</p>
+<p>The instructor records lectures and, when time permits, provides summaries and full transcripts. Japanese translations are also provided; students should verify unclear parts due to automatic transcription/translation inaccuracies and ask the instructor directly if needed.</p>
+<p>Class schedule change</p>
+<p>Next week’s class is canceled due to a conflicting appointment (“before April”). The cancellation applies to the immediate next session only.</p>
+<ol>
+<li>Review of governing equations (heat and fluid flow)</li>
+</ol>
+<p>Heat conduction equation (general and reduced forms)</p>
+<p>Time-dependent form: rho cp ∂T/∂t = lambda ∇²T (with 1D reduction rho cp ∂T/∂t = lambda ∂²T/∂x²).</p>
+<p>Steady-state form (no time dependence): ∇²T = 0 (thus in 1D, ∂²T/∂x² = 0).</p>
+<p>Notation: capital T for temperature, t for time; lambda is thermal conductivity; rho cp are density and specific heat.</p>
+<p>2D heat conduction</p>
+<p>Time-dependent: rho cp ∂T/∂t = lambda (∂²T/∂x² + ∂²T/∂y²).</p>
+<p>Steady: ∂²T/∂x² + ∂²T/∂y² = 0; T = T(x,y) even in steady state, so partial derivatives remain.</p>
+<p>Continuity and Navier–Stokes (2D)</p>
+<p>Continuity: ∂u/∂x + ∂v/∂y = 0.</p>
+<p>x-momentum (u-equation): ∂u/∂t + u ∂u/∂x + v ∂u/∂y = −(1/rho) ∂p/∂x + nu (∂²u/∂x² + ∂²u/∂y²).</p>
+<p>y-momentum (v-equation): ∂v/∂t + u ∂v/∂x + v ∂v/∂y = −(1/rho) ∂p/∂y + nu (∂²v/∂x² + ∂²v/∂y²).</p>
+<p>nu denotes kinematic viscosity; pressure gradients align with direction (x or y).</p>
+<p>Tensor (index) notation general forms</p>
+<p>Continuity: ∂Ui/∂Xi = 0, with i = 1..3 (summation over repeated indices).</p>
+<p>Navier–Stokes: ∂Ui/∂t + Uj ∂Ui/∂Xj = −(1/rho) ∂P/∂Xi + nu ∂²Ui/∂Xj∂Xj.</p>
+<p>Internal energy (temperature analog, advection–diffusion form): ∂T/∂t + Uj ∂T/∂Xj = alpha ∂²T/∂Xj∂Xj, where alpha is thermal diffusivity; the structure parallels momentum with the pressure term absent.</p>
+<p>Conceptual structure: advection–diffusion</p>
+<p>Storage (transient) term, advection term, and diffusion term form a common template across scalar quantities (T, concentration) and vector quantities (velocity). Pressure appears only in momentum.</p>
+<p>Pedagogical plan: start with pure diffusion (steady), then add time dependence, then add advection, and finally proceed to full Navier–Stokes.</p>
+<ol>
+<li>Numerical simulation roadmap (Python; FVM focus)</li>
+</ol>
+<p>Scope and objectives</p>
+<p>The goal is to numerically simulate 1D steady-state heat conduction and reproduce observed temperature distributions under different boundary and heat-loss assumptions, while comparing them with exact solutions where available.</p>
+<p>Progressive complexity: begin with the simplest steady diffusion case, then include source/sink terms (heat loss), then extend to 2D and Navier–Stokes CFD.</p>
+<p>Discretization methodology</p>
+<p>Emphasis is placed on the finite volume method (FVM) as the main approach; the distinction from the finite difference method (FDM) is highlighted.</p>
+<p>Rationale: convert continuous PDEs/ODEs into discrete algebraic equations suitable for computation; this facilitates the handling of conservation laws and boundary conditions.</p>
+<ol>
+<li>Physical demonstration and experimental context (NHK video)</li>
+</ol>
+<p>Small-scale bar experiments</p>
+<p>Materials: stainless steel, copper, and aluminum were tested with paraffin applied to visualize heat-front progression; thermal imaging was used to show heat penetration.</p>
+<p>Observation: copper transfers heat faster; stainless steel is slower; the surface paraffin melts at approximately 40–50°C, indicating the temperature distribution along the bar.</p>
+<p>Large-scale bar experiment</p>
+<p>Geometry and conditions: a copper bar of diameter about 10 cm and length about 20 m, with one end heated by powerful burners.</p>
+<p>Temporal progression: heating durations up to about 18–20 hours; despite intense heating near the source (with copper nearly melting at the hot end), the surface temperature rise propagates only a few meters (about 3 m) along the bar and does not reach the 20 m end.</p>
+<p>Temperature profile: plotted as surface temperature versus position; ambient room temperature is about 20°C; the profile shows a downward-convex shape rather than a linear one, emphasizing the importance of heat loss to the surroundings. Surface temperature is measured; internal temperature may differ.</p>
+<p>Interpretation for modeling</p>
+<p>A realistic reproduction requires accounting for heat loss to ambient air (convection) and boundary conditions. Pure conduction without surface loss yields linear profiles inconsistent with the observed convex curves.</p>
+<ol>
+<li>Problem formulation for today’s 1D steady heat conduction</li>
+</ol>
+<p>Governing equation with heat loss term</p>
+<p>Starting PDE: rho cp ∂T/∂t = lambda ∂²T/∂x² − Q, where Q represents heat loss (Q &gt; 0 for loss).</p>
+<p>Steady-state reduction: ∂²T/∂x² = Q/lambda (after dropping the transient term and rearranging).</p>
+<p>Boundary conditions (fixed-end temperatures)</p>
+<p>At x=0: T = TL (ambient side; example 25°C).</p>
+<p>At x=L: T = TH (heated side; example 1,000°C).</p>
+<p>Example length: L = 20 m (motivated by the NHK setup).</p>
+<p>Three heat loss cases to compare</p>
+<p>Case 1: Adiabatic (perfect insulation)</p>
+<p>Physical assumption: no heat transfer from the surface (for example, insulated with a material like Styrofoam); Q = 0.</p>
+<p>Governing ODE: ∂²T/∂x² = 0 → linear temperature profile T(x) = Ax + B.</p>
+<p>Implication: the linear distribution contradicts the observed convex profile in the experiment.</p>
+<p>Case 2: Constant, position-independent convection-like loss</p>
+<p>Simplified assumption: heat loss is treated as a constant proportional to a global temperature difference (for example, “highest temperature − lowest temperature” across the bar), abstracting convection with a constant coefficient H; Q is taken as a constant independent of x.</p>
+<p>Governing ODE: ∂²T/∂x² = Q/lambda with Q = constant → quadratic temperature profile; this reflects a uniform sink across the domain.</p>
+<p>Motivation: capture nonlinearity without position dependence while keeping the mathematics simple.</p>
+<p>Case 3: Position-dependent convection loss (more realistic)</p>
+<p>Physical model: local convective heat loss is proportional to the local surface-to-ambient temperature difference: q_conv(x) = h [T(x) − TL], with h as the heat transfer coefficient (units J·m⁻²·s⁻¹ per K; representing transfer efficiency depending on fluid, flow, and geometry).</p>
+<p>Governing ODE: ∂²T/∂x² = (h/lambda) [T(x) − TL] → a linear ODE with T on the right-hand side; this yields exponential-like solutions consistent with observed convex profiles and stronger losses near the hotter end.</p>
+<p>Notes: h can vary with the fluid (air vs. water) and flow conditions (forced vs. natural convection), but it is assumed constant here for tractability.</p>
+<ol>
+<li>Analytical solvability and classroom exercise</li>
+</ol>
+<p>Exact solutions and their role</p>
+<p>The steady 1D cases (1–3) are analytically solvable ODEs with the specified boundary conditions, and they provide benchmarks for numerical methods.</p>
+<p>Case 1: linear solution from ∂²T/∂x² = 0.</p>
+<p>Case 2: quadratic solution from a constant right-hand side.</p>
+<p>Case 3: second-order linear ODE with constant coefficients; the solution involves exponentials shifted by TL, reflecting decay from the hot end toward the ambient temperature.</p>
+<p>Assignment during lecture</p>
+<p>Students are given about 15 minutes (before the break at 10:10) to derive the theoretical solutions for Cases 1–3 using the provided boundary conditions. A simplified constant form is suggested for Case 2, and Case 3 uses the convective loss model T(x)−TL on the right-hand side.</p>
+<p>These derivations establish understanding before numerical discretization and simulation.</p>
+<ol>
+<li>Notation, units, and coefficients</li>
+</ol>
+<p>Symbols and meanings</p>
+<p>T (temperature), t (time), x (position), u, v (velocity components), p (pressure), rho (density), cp (specific heat), lambda (thermal conductivity), nu (kinematic viscosity), alpha (thermal diffusivity), h (convective heat transfer coefficient), Q (heat loss term; positive for loss and appearing with a minus sign in the time-dependent equation).</p>
+<p>Units and interpretations</p>
+<p>Heat transfer coefficient h: energy flux per area per time per degree difference; J·m⁻²·s⁻¹·K⁻¹.</p>
+<p>Thermal diffusivity alpha and kinematic viscosity nu share dimensions of diffusivity, indicating analogous diffusive behavior in heat and momentum.</p>
+<ol>
+<li>Pedagogical sequencing and language support</li>
+</ol>
+<p>Learning sequence</p>
+<p>Start with steady-state diffusion-only problems (storage and diffusion terms only, without advection).</p>
+<p>Next include the transient term.</p>
+<p>Then add the advection term.</p>
+<p>Finally build toward full Navier–Stokes CFD.</p>
+<p>Language accommodations</p>
+<p>The lecture acknowledges the challenges faced by non-native speakers, especially Japanese and Chinese students. Materials, recordings, and translations are provided to aid comprehension, with the caveat that automatic outputs may contain inaccuracies.</p></div>
+</div>
+<div class="subcard">
+<h3>Questions</h3>
+<div class="rich-text"><p>[Insert Question/Confusion]</p></div>
+</div>
+<div class="subcard">
+<h3>Assignments</h3>
+<div class="rich-text"><ol>
+<li>Download and review last week’s materials and today’s “contents 2” PDF; bring the version with blanks to complete during lecture.</li>
+<li>Complete the quick review on page 1: write out the governing equations covered last week (1D and 2D heat conduction, steady-state reductions, 2D continuity and Navier–Stokes, and the general tensor forms for continuity, momentum, and internal energy).</li>
+<li>Derive analytical solutions for the steady 1D heat conduction cases with boundary conditions T(0)=TL and T(L)=TH:</li>
+</ol>
+<p>Case 1: Adiabatic (Q=0) → solve ∂²T/∂x² = 0.</p>
+<p>Case 2: Constant heat loss Q (position-independent) → solve ∂²T/∂x² = Q/lambda.</p>
+<p>Case 3: Position-dependent convection loss → solve ∂²T/∂x² = (h/lambda)(T−TL).</p>
+<ol>
+<li>Compare the qualitative shapes of the derived profiles with the NHK experimental observations (linear vs. convex), and discuss which case best matches.</li>
+<li>Prepare to implement the steady 1D conduction solver in Python using the finite volume method (set up discretization, boundary conditions, and source terms for Cases 1–3).</li>
+<li>Reflect on boundary condition choices and heat-loss modeling (constant vs. position-dependent convection) for reproducing the experimental profiles, and be ready to justify selections in the next session.</li>
+<li>Note: next week’s class is canceled; monitor course announcements for updated scheduling and any posted recordings/transcripts.</li>
+</ol></div>
+</div>
+</div>
+</article><article class="card">
+<div class="card-header">
+<h2>Part 2: 04-17 Lecture: Theoretical Solutions of 1D Steady Heat Conduction and Discretization / Jacobi Iteration by FVM/FDM (Python Exercise)</h2>
+</div>
+<div class="card-body section-stack">
+<div class="subcard">
+<h3>Summary</h3>
+<div class="rich-text"><p>In the lecture on 2026-04-17, using one-dimensional steady heat conduction as the subject, the class first confirmed the theoretical solutions of the governing equation (linear, downward-convex quadratic-polynomial-like, and hyperbolic-function-like), and then organized the standard process of numerical simulation in a systematic way: defining control volumes and grids, discretizing the equation, introducing an iterative method, and preparing a flowchart and implementation. The differences between FDM and FVM were clarified. In FVM, by applying the control-volume integral based on Gauss’s divergence theorem, the second derivative is reduced to a difference of boundary gradients, and the discrete equation for Ti is derived through gradient evaluation at the east and west faces on a nonuniform grid and coefficient definitions (CE, CW, CO). A framework was then shown for solving the resulting implicit system of discrete equations by an iterative method (Jacobi method), including the principle of fixed-point iteration, introduction of predicted values, and convergence judgment. In the latter half, a Python sample (`1d.py`) was used as an exercise. The meanings of variables, boundary conditions, and coefficients (C, E, W, O, Q) were explained, students were asked to correct dummy parts, implement the convergence loop, and verify agreement with the theoretical solutions through trial calculations for Cases 1 to 3.</p></div>
+</div>
+<div class="subcard">
+<h3>Knowledge Points</h3>
+<div class="rich-text"><ol>
+<li>Background of the theoretical solutions (Cases 1 to 3)</li>
+</ol>
+<p>Linear solution (Case 1)</p>
+<p>Under the specified conditions, the solution is linear, and the coefficients can be determined by the method of undetermined coefficients.</p>
+<p>Higher-order solution with coefficients (Case 2)</p>
+<p>When a coefficient term is included, the solution becomes one order higher, and a downward-convex shape proportional to x^2 is expected. Accuracy is checked numerically.</p>
+<p>Variable transformation and hyperbolic-function-like solution (Case 3)</p>
+<p>By an appropriate change of variables, a formally exact solution can be obtained, and the shape resembles `sinh`, varying depending on the size of the target domain.</p>
+<ol>
+<li>Basic concepts of FDM and FVM and their differences</li>
+</ol>
+<p>FDM</p>
+<p>Derivatives are approximated by differences on the grid, based on Taylor-series expansion (for example, central differences). It is simple on a uniform grid. For complex geometries, coordinate transformation is required.</p>
+<p>FVM</p>
+<p>Common in commercial software. Equations are integrated over control volumes, and volume integrals are reduced to boundary integrals by Gauss’s divergence theorem. It is flexible for nonuniform and complex grids.</p>
+<p>Consistency on the same mesh</p>
+<p>On a uniform mesh with equal spacing, the final forms of FDM and FVM can coincide, but in general their derivations and treatments differ.</p>
+<ol>
+<li>Standard process of numerical simulation (4 steps)</li>
+</ol>
+<p>Step 1: Define control volumes, grids, and nodes</p>
+<p>Divide the one-dimensional bar [0, L] into n parts. Nodes are indexed by i (interior 1..n, boundaries 0 and n+1). Temperature is denoted by Ti. Boundaries are T0 and Tn+1. Grid width Δxi can in general vary (in the simplest case, Δx=L/n).</p>
+<p>Step 2: Discretize the equation</p>
+<p>FDM review: d^2t/dx^2 ≈ (Ti+1−2Ti+Ti−1)/(Δx)^2. In FVM, conservation equations are integrated over control volumes and evaluated by fluxes at interfaces.</p>
+<p>Step 3: Introduce an iterative method</p>
+<p>Solve the implicit coupled system by iterative updates. A flowchart is used to organize the procedure.</p>
+<p>Step 4: Flowchart and coding</p>
+<p>Implement based on the design. The same procedure will be repeated in later lectures with different targets.</p>
+<ol>
+<li>Application of Gauss’s divergence theorem and gradient evaluation on nonuniform grids (FVM)</li>
+</ol>
+<p>Reduction of the second derivative</p>
+<p>By integrating over a control volume, the second derivative of T is replaced by the difference between first derivatives (gradients) at the east and west boundaries.</p>
+<p>Gradient at the east side E</p>
+<p>(Ti+1−Ti) / [0.5·(Δx(i+1)+Δx(i))]. On a uniform grid, this becomes (…)/Δx.</p>
+<p>Gradient at the west side W</p>
+<p>(Ti−Ti−1) / [0.5·(Δx(i)+Δx(i−1))]. On a uniform grid, this becomes (…)/Δx.</p>
+<p>Volume integral of the source term</p>
+<p>Assuming q/lambda is constant, it is converted to q/lambda · Δx(i).</p>
+<ol>
+<li>Coefficient form of the FVM discrete equation and the final expression</li>
+</ol>
+<p>Definition of coefficients</p>
+<p>CE=1/[0.5·(Δx(i+1)+Δx(i))], CW=1/[0.5·(Δx(i)+Δx(i−1))], CO=CE+CW.</p>
+<p>Final update formula</p>
+<p>Ti = (1/CO)·[ CE·Ti+1 + CW·Ti−1 − (q/lambda)·Δx(i) ].</p>
+<p>Coupled structure and boundaries</p>
+<p>The same form gives N equations for i=1..N. T0 and Tn+1 are known boundary values. Because the form is implicit, an iterative solution method is used.</p>
+<ol>
+<li>Principle of the iterative method (Jacobi method) and its application to Ti</li>
+</ol>
+<p>Fixed-point iteration</p>
+<p>Rearrange g(x)=0 into x=f(x), update as xk+1=f(xk), and stop when the convergence criterion is satisfied.</p>
+<p>Implementation of Ti updates</p>
+<p>Using a predicted value P, update as Ti = (1/CO)[ CE·T(i+1)^P + CW·T(i−1)^P − (q/lambda)·Δx(i) ].</p>
+<p>After updating i=1..N, judge convergence using the difference between T and the predicted values. If not converged, update the predicted values and repeat.</p>
+<ol>
+<li>Flowchart of implementation and program structure</li>
+</ol>
+<p>Preparation</p>
+<p>Define arrays such as T[0..N+1], CE[i], CW[i], CO[i], dx[i], etc. For a uniform grid, dx=L/N.</p>
+<p>Initial and boundary conditions</p>
+<p>Set an initial value such as a uniform temperature. Set boundary values such as T[0]=TL and T[N+1]=TH.</p>
+<p>Convergence loop</p>
+<p>Jacobi update → compare all nodes → convergence check → continue or terminate. After convergence, output T[1..N].</p>
+<ol>
+<li>Notes on mesh generation and notation</li>
+</ol>
+<p>Variables and arrays</p>
+<p>Interior unknowns are Ti (i=1..n), boundaries are T0 and Tn+1. In the program, the n interior values are treated as the main unknown array.</p>
+<p>Generalization of grid width</p>
+<p>With nonuniform grids Δxi, regions with steep gradients can be refined and regions with mild changes can be coarsened. The simplest case is Δx=L/n.</p>
+<p>Use of schematics</p>
+<p>Always sketch the control volumes, node positions, grid widths, and boundaries to avoid confusion.</p>
+<ol>
+<li>Exercises (Python `1d.py`) and course operation</li>
+</ol>
+<p>Materials and questions</p>
+<p>Obtain `1d.py` from Moodle: “Program materials” → “Lesson 3”. Follow Q1 to Q9 to understand the code (meanings of each line and the intent of grouping), add boundary conditions (Q2), define source terms (Q5: for Case 1, Q=0), implement the core Ti update formula correctly using C, E, W, O, Q, confirm understanding (Q7, Q8), and perform trial calculations for Cases 1 to 3 (Q9).</p>
+<p>Correction of dummy parts and verification</p>
+<p>Replace the dummy expressions in the distributed code with the correct discrete formula. After running the program and checking the output, verify that the corrected code agrees with the theoretical solution, especially for Case 1.</p>
+<p>Class operation</p>
+<p>Around 11:30, further explanation will be given on updates and units. Questions are handled by raising hands, and discussion among students is allowed. Individual support is available for beginners.</p></div>
+</div>
+<div class="subcard">
+<h3>Questions</h3>
+<div class="rich-text"><p>[Inserted Question/Confusion] / [Inserted Question/Confusion] / [Inserted Question/Doubt]</p></div>
+</div>
+<div class="subcard">
+<h3>Assignments</h3>
+<div class="rich-text"><p>Create a schematic figure defining a one-dimensional bar [0, L] divided into n parts, with Ti (i=1..n) and boundary values T0 and Tn+1.</p>
+<p>Derive and write the central-difference expression (Ti+1−2Ti+Ti−1)/(Δx)^2 for the uniform-grid case Δx=L/n.</p>
+<p>Prepare a figure and notation for a nonuniform grid Δxi, clearly showing interface positions and control-volume widths.</p>
+<p>Draw a flowchart of the iterative method (initialization, boundary setting, update, convergence check, output).</p>
+<p>Implement the FVM discrete equation on a nonuniform grid by computing CE, CW, and CO, and solve it using the Jacobi method with the Ti update formula.</p>
+<p>Write a program that, for the case of constant q/lambda with initial condition TL and boundaries T[0]=TL, T[N+1]=TH, stops the iteration by a convergence criterion (for example, maximum difference &lt; 1e−6).</p>
+<p>Compare results for uniform and nonuniform grids, and confirm that FDM and FVM agree on a uniform grid.</p>
+<p>Examine how the denominator used in gradient evaluation (half-grid-width sums) affects the result by varying the degree of grid nonuniformity.</p>
+<p>Test the influence of the right-hand source-term assumption (q/lambda constant inside a control volume) by trying interval-dependent q or lambda and整理 the required formula modifications.</p>
+<p>Refer to the theoretical solution shapes for Cases 1 to 3 (linear, downward-convex, hyperbolic-sine-like), and prepare numerical settings and comparisons under the same conditions.</p>
+<p>Before implementation, list the required arrays, boundary conditions, and grid-generation functions (uniform and nonuniform) and write them in a design note.</p>
+<p>Access Moodle “Program materials” → “Lesson 3”, download `1d.py`, inspect and run it, and update the dummy parts (Q2, Q4, Q5, Q6, etc.) into the correct form.</p></div>
+</div>
+</div>
+</article>
+      <section class="card">
+        <div class="card-header">
+          <h2>Lecture Transcript</h2>
+        </div>
+        <div class="card-body">
+          <p class="lead" style="margin: 0; max-width: none;">The complete transcript is shown in timestamped cards.</p>
+        </div>
+      </section>
+      <article class="card">
+<div class="card-header">
+<h2>Part 1: </h2>
+</div>
+<div class="card-body transcript-part">
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:00:07</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">All right, then I will give a few announcements. Last week was the very fundamental part about fluid dynamics and also the heat conduction part. The former part was mathematics, so that everyone can follow and understand what we will cover in this lecture. Then from this week, we will start the more technical part of how we can solve the governing equations based on Python and numerical simulations. All right, then the materials are provided here.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:00:41</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">for the last week&#x27;s content. The material that I originally provided to you as a PDF file is also here. And also, my lecture note is provided here. So if you need it, please download this one for your follow-up studies. And during this lecture, please really focus on your understanding. And also, I provide the printed version and PDFs with many blanks. So in order to follow and understand fully, please try to follow and try to write everything.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:01:15</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">But maybe some parts are very difficult to follow, to write everything in time. So in that case, just download this one later to confirm your understanding. And also, as I mentioned, I record my lecture. During my lecture, I record everything. Because I understand many students have language problems, especially Japanese and Chinese students.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:01:46</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">The best thing is that you study by yourself. But that is not the main point. So please use it when necessary. Only when I have time, I will provide this. It is the summary of my lecture, and also the total transcript that we covered during the course. And then please use it if you cannot understand, maybe partially if you cannot understand what I am saying, or if you cannot follow something during the class.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:02:18</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">And please use this. And also there is the Japanese translation here. So for the Japanese students, please note this. A Japanese translation is provided here as well, especially the latter part, which is the full transcript. Some parts are not exactly my intended meaning, but mostly they are correct.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:02:48</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">But please understand, these are automatic recordings and automatic translations and transcripts. So if you cannot understand some parts, please directly ask me, because it is not a perfect translation, okay? Please just use them to follow my course. All right, then today&#x27;s contents are here, number two, so please download them if you haven&#x27;t.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:03:25</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Okay, then about next week, I need to make one announcement. Next week, I have another appointment, and I cannot make the time, so I am sorry. Let me cancel next week&#x27;s course later, before April. So next week will be canceled. Please let next week&#x27;s class be canceled. Right. Any questions so far? Is everything okay?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:03:57</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Is everything okay? Okay, then shall we begin today&#x27;s content? Today&#x27;s content is a very fundamental part, but the most important part. So then, before we start today&#x27;s topic, let me show you. On the first page of the printed one, or your PDF, please go there. You can see a very quick review part of the governing equations that we covered last week.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:04:29</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So please carefully read them and fill in the governing equations that we studied last week, okay? About the heat conduction equation and also the Navier-Stokes equation. You can refer to the previous week&#x27;s content. And please just summarize them, okay? Well then, the question is to write the governing equations to express the following phenomena. The definitions are written there: t is time, i coordinate with x y in two dimensions, and the velocity is u v, or ui; tensor notation is fine, and the temperature is T, okay? The kinematic</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:05:03</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">viscosity is mu, with differentiation. Sorry, this is mu, and this is v, velocity. In your handwriting please clearly differentiate them. And the specific heat capacity is rho cp, and the conductivity is lambda, okay? This is just the definition. Then there are four parts to write the equations. One is to remind your understanding: the one-dimensional heat conduction equation, and also the steady-state equation for steady</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:05:39</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">state conditions, and the two-dimensional heat conduction equation, the extended form. And continuity and Navier-Stokes equations for two-dimensional flow. Just write all the forms so that you fully understand the actual form of the equations. And number four is the general form of the Navier-Stokes equation and the continuity equation and the internal energy equation using tensor notation. Quickly review last week&#x27;s topic and write all the equations. I&#x27;ll give you five minutes.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:06:14</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Okay, understand? Did you understand? Did you get it? The first page is a practice question, so please look at the last lecture note and write the equations here. I&#x27;ll write them while explaining, but please write them now.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:06:55</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Because this is the starting point for the simulation, we have to cover the governing equations first.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:08:30</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">If you want to talk in English, Chinese, or Japanese, you can talk with a friend.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:09:28</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">It&#x27;s small. Let&#x27;s try it on.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:10:17</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">It doesn&#x27;t fit. This one is big. All right, then let me explain. Can you see this from the back seat? This screen is a bit small, and I</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:11:27</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">cannot adjust it. Can you see it? Can you see it? Can the people in the back see it? I&#x27;ll write this much here, but can you see it? If you can&#x27;t see it, come here. Okay. This is just a review, okay? So then, from this week onward, we won&#x27;t go into detail about the governing equations anymore, okay? So we assume that we already knew, already know, these equations, okay?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:12:01</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So then, the first one is the one-dimensional heat conduction equation, okay? Heat conduction equation means how the temperature is changing with time and space, time and space. Then, one-dimensional, so of course the temperature. Temperature is a function of time and position x, okay? Then the governing equation is rho cp times partial T. Partial x is, sorry, partial t, partial t. So this t, t is a bit confusing, but capital T is temperature, okay?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:12:33</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Small t is time. Then this should balance with the conductivity and the second derivative of, the second partial derivative of T with respect to x. Because we are thinking about one dimension, we get only one term with respect to x, okay? Then this is the one-dimensional form, but the general form using vector notation or operators is written like this.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:13:08</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">rho cp times partial T over partial t is equal to lambda times nabla squared. It is the Laplacian, Laplacian times T. So this is the general form. So if you remember this form, then it is easier to recall what kind of equation we are solving. Of course, this is the summation over two or three directions depending on the dimensions we are thinking about.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:13:38</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So now we are thinking about only one dimension, so that&#x27;s why we have only one term. But if we are in two dimensions, then we have x and y, and in three dimensions x, y, z. Right? Right. Very easy. Then, if we consider a steady-state condition, meaning that temperature doesn&#x27;t change with time. It&#x27;s written here. It doesn&#x27;t change with time. So simply we can drop this term, then this term becomes zero. So the steady-state equation is like zero is equal to the second derivative of T with respect to x.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:14:22</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">this form. So here we don&#x27;t need to include lambda anymore because it is a parameter, right? Then we can divide both sides by lambda. So then simply we can write 0 is equal to this sum. And also the partial derivative, this one, is changed into an ordinary differential because this T is now only a function of x. So t is not included. It is a very minor change, but it is important. This equation is what we will solve today.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:14:56</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Right. Then in the same manner, the two-dimensional case is almost the same, just recall this one. So rho cp times partial derivative of T is equal to, and we need to consider two</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:15:29</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">directions. The second partial derivative of T with respect to x and y, okay, this one. Not that difficult. Then also it is the same for the steady state. We can just drop partial T over partial t, so that term is 0.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:03</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So then what we get is that the second derivative of T with respect to x and y is equal to 0. Then you should understand this well. In this case, one-dimensional means it is only a function of x.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:40</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So then ordinary d is used, but here, still, even under steady-state conditions, this is a function of x and y, so we need to use a partial differential. Okay, okay. Then the third one is the continuity equation and the Navier-Stokes equation for two-dimensional fluid flow, okay? Two-dimensional fluid flow means that we need to consider u and v, right, for</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:17:20</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">the velocities u and v, and for coordinates we need to use x and y, so then of course we have two equations for momentum. That&#x27;s why we have an equation for u and an equation for v. Continuity is the equation that connects u and v, okay? So then the continuity equation is partial u partial x plus partial v partial y is equal to zero. Most of you already knew this, right? Yeah, okay.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:17:20</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">The momentum equation, or the equation for u, is partial u with respect to t, plus, yes, maybe you need to recall this equation in your mind. The general form is like this: storage term plus advection term is equal to something something. So then this is the two-dimensional index, so we need to expand it into x and y directions. Then this is u times, the advection term is u times partial u partial x plus v times partial u partial y, okay? We have two terms, okay, two terms, and we have the pressure term, partial p partial x, and the diffusion term.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:18:25</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Kinematic viscosity and the second partial derivative of u with respect to x and y, this form. So the same equation can be applied, but we need to replace this part, u, and x, and u, u. Other terms appear twice, so it represents two-dimensionality.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:18:59</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">But these u&#x27;s should be replaced by v for the equation of v. So then the equation for v is partial v partial t plus u, and here it should be changed to v. Partial v partial x plus v partial v partial y is equal to the pressure term. The pressure term, now we are thinking about the y-direction, so we have to take the y-directional slope, okay, partial y.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:19:33</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">And the diffusion term is also almost the same, but we need to replace the component with v. So the second partial derivative of v with respect to x and y, yeah, this one. Okay, then v appears here. The equation for v has v here, here, here.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:20:05</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">And also the pressure direction is y, and the diffusion term is also v. And just in case, v is here and u is here, right? Yeah, very simple, okay? Just remember these equations, okay?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:20:46</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then the general form, just in case, to put everything into your memory, just recall the general form. General form means that using tensor notation, with i equal to 1 to 3, these equations can represent all the components in one equation. So the continuity equation is partial Ui partial Xi is equal to 0. Then i is the dummy index there, so we need to consider three components. We can consider three components.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:21:18</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">And the NS equation, Navier-Stokes equation, is also the same. So here, in this equation, we understand the rules for how we can represent the components. These are the terms that express the components. So we just need to express them in the general form of Ui. Then the storage term is like this. Then the advection term is Uj partial Ui partial Xj. And the pressure term is 1 over rho, sorry, minus 1 over rho partial P partial Xi.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:21:54</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">i is the direction. Then kinematic viscosity times the second derivative of Ui, partial derivative of Ui with respect to Xj, Xj. To make sure that this j is summed, you just repeat it two times. It is the same as partial xj squared.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:22:25</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">But then j looks like a free index because it appears only one time. So to avoid that notation, I just repeat xj two times in the term.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:22:57</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Okay, then internal energy. The internal energy equation is the same equation for temperature. So then we just need to replace this ui by temperature, almost, almost. So then partial T partial t plus, partial T partial t plus Uj. Partial T partial Xj is equal to diffusivity times the second derivative of T with respect to Xj, Xj.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:23:49</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Okay, then this mu, mu is kinematic viscosity, then alpha is thermal diffusivity, thermal diffusivity, thermal diffusivity. Then they have the same unit, so they have almost the same meaning, how much some component can diffuse into space. So the only difference is the pressure term.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:24:20</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Oh, I will wait, maybe. Okay. Right. Then the difference is only the pressure term, right? So we can see the same term here, and almost the same term here, and also here.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:24:51</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Same time, diffusion term here. So all the governing equations, regardless of the components or quantities, are almost the same. Whether it is velocity or temperature or concentration or anything, basically they take this form. Then, that&#x27;s why last time we studied this as the advection-diffusion equation.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:25:25</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Diffusion equation, right, okay? Then, our final goal is solving this equation, actually. We want to solve this Navier-Stokes equation so that we can cover the CFD, you know, computational fluid dynamics part.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:25:59</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">But, as you can see from these forms, the easy one is maybe considering only this term, this term, and this term, okay? So, this term and this term, the storage term and the diffusion term. Then after we understand how we can solve this equation, we can add this term. Because this is the additional term that we need to consider in any equation. So that&#x27;s why from this week, we will start from this equation. But we don&#x27;t consider the advection term this time, and we just consider this and this.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:26:31</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">But even then, it is still a bit difficult to directly consider this time term. So then we will start from only this term. Steady-state condition, the easiest one. Then we can extend it to this form and extend it to two dimensions. And finally we extend it to the Navier-Stokes equation. Okay, right? Right. Then...</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:27:11</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Any questions? Okay then please see the next page. Today&#x27;s topic is the one-dimensional heat conduction equation, okay? Yeah, so we solve this one. The schematic is shown here, but I think it is easier for you if I show a video clip. So let me show it. The link is there. It is from NHK.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:27:48</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">You know, most of you know NHK, right? The Japanese public broadcasting company, taking money from us, right? But they have very good programs. Yeah, they have very nice programs, more like educational content. They are doing this kind of experiment, so I just want to share this video clip so that you can imagine</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:28:25</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">what we will solve. Then just switch off the volume, okay? So today we will cover how we solve this kind of heat transfer phenomenon. But before that, I want to make you understand the actual target. So then we assume that this kind of one-dimensional metal bar exists somewhere. Then</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:28:59</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">one side is heated by a burner, and then we want to see how the heat is transferred in one direction. This is the final result, but let us see it step by step. So they produced a very long metal bar, a one-dimensional bar, a very idealized case. And they put this kind of paraffin on the top, so that we can visually detect how the heat is transferred in one direction, like this.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:29:29</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Yeah, then I need to go to minute two. So we can see the small one, two, five, we see this one. Ah, okay. So this is a small one-dimensional metal bar using different types of materials to see the difference in heat transfer. They used stainless steel and copper. And what was the last one? Yeah, then in the simple form, they put this</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:30:02</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">I&#x27;ll say paraffin on the top, aluminum was the last one, okay. One side is heated, and this is the thermographic image. Then of course we can see the heat is transferred, right, in that direction. The bright color means high temperature, and it gradually goes to this side. And also the frogs put on the paraffin are falling off. To see that makes it easy for us to see the heat transfer. All right, then you can see here that based on the different materials, the heat transfer time is</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:30:34</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">different. The heat transfer time is very different. Copper has quicker heat transfer, but stainless steel is still slower. Yeah, then you can see that kind of thing. Then</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:31:14</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">you know this company, or not company, yes, it is public</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:31:46</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">broadcasting. So in the Japanese system, all Japanese citizens need to pay money to watch these video clips or TV programs. Then they can use that money, you know, unlike streaming services like Netflix or other broadcasting systems where once we pay we can watch. They don&#x27;t use that system. They broadcast one way, and if we buy some device that can receive NHK signals, then we have to pay. It is mandatory. That is their strategy. But because of that, they have enough money, I think. That is why they can do this kind of thing. It is very educational, but also really a waste of money and time, right? But they</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:32:17</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">did this kind of experiment, so it is a bit interesting, maybe for very small kids. Then they enlarged it. The system is very simple. The small</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:32:54</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">one-dimensional heat transfer setup is enough to understand, but they extended it into this large form. The diameter is 10 centimeters, I think this is copper, and the length is 20 meters, 20 meters. Then one side is really heated by using a very strong burner to give heat there. Then they tested how long the heat would be transferred in one direction to see the difference between a small one and a large one.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:33:30</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then paraffin is put on there. Then they continuously heat one side. But this is not one minute, it is one hour. One hour, again, see here. Yeah, this means that after one hour, they had already heated one side for one hour. But there is no heat transfer detected here yet. But gradually, gradually the heat is transferred in one direction.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:34:04</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">One hour and 20 minutes, then 1.2 meters. They also measure the temperature at one side. It is like 50 degrees; the paraffin</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:34:40</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">melting point is maybe 50 or 40, right? Then it is transferred in this direction. I will skip ahead. If you are interested, please take a look at that. Then they change the burner or they change the strategy, and they continuously did this experiment, just to see how the heat is</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:35:14</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">transferred in one direction. And at the very, very last, they show the complete temperature distribution. Let me try it again, 8:20.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:35:47</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So many times they changed how they supplied the heat source, because the heat production was not enough. But finally they reached this state, giving so much heat on one side. The copper is almost melting on one side. But anyway, by then 18 hours, 20 hours had already passed. Then gradually the heat is transferred that way. But it doesn&#x27;t reach the other side. You can see that the total length is 20 meters, but the actual heated length is still only here.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:36:20</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">It is 3 meters. This is not the inside temperature but the surface temperature. But somehow it shows how heat is transferred in one direction. And you can see it.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:36:57</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Almost here, 20-something is the ambient temperature, the room temperature, right? Yeah, here you can see the vertical axis is temperature and the horizontal axis is position. Then the temperature</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:37:28</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">distribution is like this. Then up to here, maybe around 10 meters, the temperature doesn&#x27;t change, or yeah, it doesn&#x27;t change. So we want to see how we can reproduce this phenomenon by thinking about the physical components of heat transfer, okay? So this is today&#x27;s topic. One-dimensional heat transfer is quite an easy question for which we can get the theoretical solution, but as you can see, the temperature distribution is not that simple, right? Because</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:38:02</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">it is an experiment, and also the surrounding condition is not fixed. Based on that, we want to consider how we can reproduce this profile, the shape of the temperature distribution, okay. So then shall we go back to the material? Please see the schematic that I have drawn in my PDF. One is the theoretical side and the other one is the numerical simulation side.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:38:42</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">This is quite a simple one-dimensional steady-state simulation, so actually we have an exact solution. Yeah, that means that if we have an exact solution, it is not necessary to solve this equation numerically, right? The theoretical solution is everything. But the good thing about numerical simulation is that we can test different conditions by changing, for example, the boundary condition or a heat source condition or any other conditions, so we want to see how useful it is.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:39:16</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Right, then this is the schematic that I drew. It is imagining one very long one-dimensional metal bar. Then one side is heated by using a burner or any heat source, so the temperature is quite high, and then heat is transferred in one direction, in this direction, right? So then at the beginning, the temperature distribution is, the bottom is the graph, okay? The vertical axis is temperature, and the horizontal axis is position. Then at the beginning, so this is the boundary condition,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:39:51</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">we assume the temperature is fixed, and also the temperature is fixed. At the beginning, of course, the metal bar has the same temperature as the ambient temperature, right? So then the temperature distribution is expected to be like this, right? So TL is the low temperature, so this is the ambient air temperature.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:40:25</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">TH is a heat source temperature, okay? Then gradually, as we saw, this temperature is</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:41:01</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">changing, while this position is fixed and this portion is fixed, and we can expect that the temperature is increasing in this way, right? Like this, in this direction, with increasing time t, okay? Then shall we confirm this by using numerical simulation? Then at the very, very</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:41:33</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">final stage, when the temperature becomes only a function of space, in that</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:42:08</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">case we can get the saturated steady-state solution. At that stage, the temperature distribution does not change, okay? So this is today&#x27;s target. All right, then the purposes of today. There are four main purposes. This is the very introductory part of numerical simulation, so we will carefully see how we can derive the equation, okay, using a very simple example. The purpose is to understand the essence of the finite</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:42:49</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">volume method, okay? So we will cover finite volume, and we need to differentiate between the finite difference</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:43:21</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">method and the finite volume method, okay? The main part of this lecture is the finite volume method. And we also understand how we can discretize the governing equation. The original form of the equation is the continuum form, right? Continuous, sorry, continuous form, so it is like a partial differential equation or ordinary differential equation.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:43:54</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">But in numerical simulation, in your computer, we have to discretize the form, right, so that we can represent the values. That process is called discretization. So we will learn that part. And the latter part is the technical part. And the physical part is to numerically simulate the temperature distribution using your computer and Python. And also we discuss which boundary condition. We consider different types of boundary conditions. Then we will consider which one is the best assumption.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:44:32</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Okay, so let us first see the governing equations. We always start from the governing equations, okay? So what we will solve or deal with in this course is</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:45:03</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">phenomena that can be expressed by some governing equation, okay? There are two totally different types of phenomena in the world, okay? One is already described by equations. For example, temperature distribution is a very good topic, and also, for example, air distribution. Anyway, we have governing</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:45:33</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">equations. So physically, in a scientific sense, that side is already solved, okay? We have at least governing equations to fully describe the phenomena. That is one side, and that is what we are dealing with in this course, okay? The other side is a more unsolved, probable problem, like for example human behavior, so we do not have any governing equation, right? And also the</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:46:10</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">motion of cars. It is very similar to airflow motion, but we do not have any governing</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:46:50</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">equation, okay? That is another type of simulation, which we call multi-agent simulation, but we have to differentiate it. This is a simple numerical simulation where we do have a governing equation, okay? So let us see what governing equation we will solve today. It is actually the same. We already reviewed it, so we understand. We want to solve the one-dimensional heat conduction equation. So just recall the definitions. Obviously the physical properties we need are rho, cp, specific heat, and lambda, heat conductivity.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:47:22</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">This is just the definition, heat conductivity. The definitions are written here. It is the same as before. t is time, x is coordinate, and capital T is temperature. We assume that the temperature is a function of time t and position x, a two-variable function. And also we consider heat loss because, as we saw</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:47:54</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">in the video clip, the metal bar is located in ambient air, inside a room, so the surroundings are at ambient temperature. Heat is released from the surface, right, if you want to consider that condition. So then heat loss is assumed as Q, denoted by Q, and we will consider different types of heat loss here. And L is the length, so 20 meters, and TL and TH are the temperatures at the ends, okay? And then again, it is the same thing, but the governing equation,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:48:27</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">that we will solve is the one-dimensional heat conduction equation: rho cp partial T partial t is equal to lambda second partial T partial x, and the difference is that we consider heat loss, so some portion of heat is released from the surface or somewhere. So then to denote that process, we add minus Q. Plus Q is a heat source, minus Q is heat loss.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:49:02</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Right. Then, as we mentioned, we only consider, we start from the steady-state condition, so the first term is dropped. And the final equation that we need to consider is the second derivative of T with respect to x is equal to Q over lambda. Just move this term; this term is zero, right, zero, and just move this term to the right-hand, left-hand side, and if we divide by lambda, we get this form.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:49:35</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Quite a simple equation, okay? Then the latter part is the boundary condition. Also, when we solve the equation, what we need is the boundary condition, okay? So we need to define it. What we want to do is reproduce the same phenomenon in the video clip, but boundary conditions are not mentioned. Only one side is heated by a burner, right? The other side is at ambient temperature.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:50:05</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">But to simplify this phenomenon, we assume one side has a fixed temperature. So the side at zero, okay, as shown in this figure, so we want to consider this one. One side, or rather the heated side, is defined as L. So the side at L has the temperature TH, a very high temperature.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:50:39</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Let us say this is, for example, 1,000 degrees C. And the other side</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:51:10</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">at 20 meters away from the heated side is fixed at ambient temperature. Let us say this is, for example, 25 degrees C. This is just an example, but this is the boundary condition we assume.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:51:41</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">All right, then shall we consider three different surrounding conditions? Imagine that the metal bar is inside a room, surrounded by air at ambient temperature. So we somehow need to consider the heat flow from the surface. But we can start from a very, very simple one. So I put three different cases: case one, two, three. The first one is case one, adiabatic condition. This is the main theoretical solution or exercise; we have this condition, right?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:52:15</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Adiabatic means heat is not transferred from the surface. In Japanese, dannetsu-joken, this adiabatic condition, okay? So in the video clip, the bar is inside air. But if we insulated this bar, covering the surface with something like</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:52:47</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">styrofoam, an insulating material, then heat is not released from the surface, right? That is the adiabatic condition. To simplify the equation and to see the difference between the adiabatic</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:53:25</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">and the current condition, let us also consider this one, okay? Then if the surface is perfectly insulated by insulating material, heat transfer does not happen at the surface, okay? Usually heat transfer from the surface is written by Fourier&#x27;s law, in this form, right? Yeah, but we assume that this does not happen at the surface, right? So there is no heat loss from the surface, meaning that Q in the original governing</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:53:58</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">equation is zero, right? There is no heat source, meaning that Q in the equation is equal to zero. Then the governing equation is really, really simplified into this form. The second derivative of T with respect to x is equal to zero. It is quite simple. We will see the solution later, but you can imagine that if the second derivative is zero, the equation should be a linear form, right?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:54:43</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Ax plus b. If we take the second derivative, then the term becomes zero. This is the simplest case, but clearly you can understand that this form is quite different from what we observed, right? It is a linear form, meaning that the temperature distribution is like this, right? Linear. Proportional to position x. But in the video clip, the shape is not linear, but like a downward convex shape, meaning that it is totally different.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:55:14</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Totally different. Right. So then that is why we want to consider another form, case two. So we think more about the physical phenomenon that we observed in the video. Of course there is no insulating material on the surface, right? What we have is air. So there is some heat transfer from the surface. We will consider that heat transfer in cases two</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:55:45</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">and three. So when we have a surface between a solid material and any fluid, in this case air, there is heat transfer there, okay, between the surface and the air. That is called convection, right? Real convection. Usually convection heat transfer is proportional to the temperature difference between the surface and the air. So in this case, the simplified form is shown here, okay? But in this case, if</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:56:17</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">there is some certain temperature here, and a different certain temperature here,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:56:52</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">then if the surface temperature is high, of course heat is transferred in this way, okay? And if it is the opposite, heat is transferred the other way. This kind of phenomenon happens. This is called convection, convection heat transfer, convection. Okay, the convection heat loss is expressed by the temperature difference between these two positions, and we use some coefficient to express the amount of heat</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:57:30</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">transfer or heat transfer efficiency, okay? So the important point is that the amount of convection heat transfer is proportional to the temperature difference. So the equation is written there. It is the same equation. The convection heat loss is proportional to,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:58:00</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">proportional to the temperature difference from surface to air, and that coefficient is</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:58:32</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">represented by h, okay? Then this is the unit. The unit is</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:59:04</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">energy transfer per square meter</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:59:58</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">per second. Usually the unit of energy transfer means joules, and joule per square meter and second. This is the unit of heat transfer, right? Then this coefficient denotes,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:00:31</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">expresses, how much heat is released to the air, depending on the situation of the fluid, like whether this is air or water or any other fluid, or sometimes depending on the condition around this object, like whether airflow is moving in one direction or moving vertically. Depending on that condition, this h may change.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:01:01</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So this shows the efficiency of heat transfer. Then this term is called the heat transfer coefficient. There are many empirical equations to describe this heat transfer coefficient. Usually it is a function of the surrounding condition of the fluid, but that makes the equations and the system very complex.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:01:33</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So here we assume that h is constant. This is case two. So if we use this notation for the heat transfer between the metal bar that we see in the picture and the air, then we can assume that the heat loss is proportional to the maximum temperature and the lowest temperature of the metal.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:02:04</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So shall we assume the heat loss can be expressed by highest temperature minus lowest temperature? Simply, by using the physical</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:02:38</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">phenomenon of convection, though this is a simplified form, shall we assume that heat loss can happen because of the difference between the temperature on the surface and the air, right?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:03:07</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So then we want to make the equation simple. We want to put the</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:03:41</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">constant term here. That is why this is a simple assumption inspired by the phenomenon of heat convection, which can be derived from the temperature difference. And then case three is the more realistic one. As we saw, the temperature difference causes convection between the metal surface and air.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:04:16</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">But the surface temperature is, of course, a function of position, right? So depending on the position, the heat transfer by convection should be different. So the more precise one, case three, represents that phenomenon, okay? The convection heat loss is denoted by the more precise form using the actual temperature at the surface at position x minus TL.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:04:47</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So this is the difference. We will consider these three cases to see the differences. Right, so then seeing the schematic makes it easy to understand. So case three, so we can record everything.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:05:19</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So case one, case one is the really insulated adiabatic condition. There is no heat loss from here. So all the energy is given here and transferred only in this way, okay? The solution is already given here, so it should be like this. At least this condition is totally different from the phenomenon that we saw. And case two, case two is the condition where heat is transferred from the surface to air because of the temperature difference. But to make that phenomenon very simple, we use the highest temperature and lowest temperature</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:05:53</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">as a constant value, okay? So it does not depend on position, okay? Here is a metal bar, heat is given here, but we assume the heat loss is constant over all the surface, like this condition. Then we will see how the equation is different. The last one is the more realistic one. The surface temperature is assumed to be a function of position. So then, of course, the heat loss from here at high temperature</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:06:28</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">is larger. Here the surface temperature is high, and the ambient temperature is the constant TL. But here, because the surface temperature is high, of course the heat loss here is much larger than at other positions. So by using this difference, we can represent the difference of heat loss from each surface. So these are the three conditions. Then this is the exercise question, problem, quiz.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:06:55</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So then that is why we can, actually, get all the theoretical solutions if you know the mathematics. So soon we will take a short break, but before that, please do the following exercise: solve these equations by deriving the theoretical solutions of case 1 and case 2 and case 3. It is not that difficult. Anyone who passed the entrance examination can do this.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:07:30</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So just solve this one under this condition for case 1. Case 2 is a bit different. The solution is written here, so just confirm that you can derive this one. Case 2 has this constant value here; that is the only difference, but it is very simple, you can solve it. Then, just to simplify the equation, I gave this constant value, so you can get a very simple equation. And the last one is this one.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:08:03</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So here, another form. Here we have T as a variable, right? So it is a bit different. But it is also a second-order ordinary differential equation, so you know how to solve it. Right, then I will give you 15 minutes, then we will take the break around 10, so before taking the break, solve these equations. You can talk, of course, with your friends and discuss if you need.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:08:34</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Did you understand? I have prepared these three conditions, so I think these are very simple equations, so let us solve them. The boundary conditions and the number of cases are given, so please write down the special case at this time. After that, we will take a break.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:10:44</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">It&#x27;s too much.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:13:07</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Shall we take a short break from now to 10:10? Then, as usual, we will finish a bit earlier than the usual schedule. So let me resume from 10:10. Let us take a short break.</p>
+</article>
+</div>
+</article><article class="card">
+<div class="card-header">
+<h2>Part 2: </h2>
+</div>
+<div class="card-body transcript-part">
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:00:12</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">All right, then let me resume the latter part, okay? So I think now we are still covering a very fundamental part, how to solve the governing issue. We have not started yet on the numerical estimation part, but this background is important. Just to make sure everybody can follow, let me explain this. So there are three conditions that we consider, and we can actually get the theoretical solution.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:00:47</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">for them. Thank you. So quickly let me explain. The first one is very simple, right? The solution is linear, so by solving and determining the coefficients, you can get a linear solution. So this distribution is like this, all right? Then later, please carefully see the derivation if you need. Then another one, case two, has a coefficient here, so what we can get is a one-order-higher solution, a polynomial function. So the solution is like this one, okay, this one. So it is</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:01:26</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">a downward-convex curve proportional to x squared, so it is maybe closer to the distributions that we saw in the video clip, but it is a rough image. So let us see it in the numerical simulation, right? The last one is this one,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:02:04</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">so any derivation is fine, but you can just move this down and change it into another variable so that we can simplify the equation, then solve the simultaneous form,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:02:38</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">and then we can get the solution. So the latter part is just the derivation. You can get this hyperbolic-sine shape, yeah, this kind of shape. It is a very rough image, maybe more like this,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:03:09</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">depending on the size that we consider. All right, then the exact solution is also written in a very formal shape, so please compare them.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:03:47</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Right, then from here is actually the main part, the important part, okay? So we consider three different conditions, case 1, 2, 3. We want to do the same thing using numerical simulation, okay? Right, so the numerical simulation process is always the same, actually. Every time we have to follow these four steps. This is actually the most important part of this course of lectures. So please understand it well. Actually we will repeat the same process for the remaining five courses</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:04:24</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">by changing the target, okay? The system is different, but the process is exactly the same. Right, so the first process is the, sorry, the spelling is wrong, define. We need to define grids and nodes. Okay, it should be define, not definite. Define grids and nodes. Grids and nodes mean the positions where we represent the values.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:04:57</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So we assume, this is like a one-dimensional metal bar in this case, so then we split it into small portions and define them. The value is continuous, but we define one position to represent the entire temperature of that portion, not the entire metal, but a small portion. We just put one value, one variable, to represent this position. This is grid generation or node generation. So we need to define it. We will see it later. Then after that, we</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:05:42</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">need to discretize the equation. So we need to turn the equation into a discretized form. Then the latter part is simple: introduce the iterative method, which is the numerical procedure to solve the equation. To start coding, we need to draw a flow chart if needed. Of course you do not need one if you do not need it, but if you need it, then it is a very easy way to understand the structure and flow of the program. So usually we draw a flow chart so that we can understand what kind of structure we</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:06:25</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">have to build or write in the code. These four steps are the actual things that you need to go through, so today we will actually do them here, so that you can understand, okay? Then first, let us start from the first point, step one: define the control volume and the grids and nodes using a schematic. But this part is actually the most important part, so I didn&#x27;t write it; I drew the figure, so please just follow it. Okay, this is the target that we want to solve, so we define one coordinate in this direction, corresponding to this position L and this position 0, right?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:07:02</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then we split this portion from 0 to L into some portions, just split it into small portions, starting from 1 and 2 and 3, of course. At the center, we represent that as i, and the next is i minus 1, sorry, it is a bit small, let me enlarge it. This is important, so just put position i.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:07:39</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">And the next is i-1, and right next is i+1 to represent neighboring positions. Then starting from 1 and splitting the entire domain into n portions, the last node should be n. The one before last is n-1, this kind of thing. Then we define a variable to represent temperature at this node as Ti.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:08:19</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">In the same way, at this position the temperature is Ti-1, and the temperature on the right-hand side is Ti+1. So this is the discretized variable to denote temperature. Originally the value is continuous, right, T of x, but it should be changed into independent different variables. Right. Also an important thing is that the boundary,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:08:54</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">we have another boundary here, okay? At the boundaries there are two boundaries. This boundary is TL, of course, but to make the notation consistent we can define this as T0. The other side, this is another boundary TH, but in the same way, to make the notation consistent, this is Tn+1, the boundary condition. All right. And also another thing: this portion, the control volume we are considering, this size is denoted as delta xi, okay, delta xi.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:09:28</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">And in the same manner,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:10:01</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">the one on the right is delta x i plus 1, and the other side is delta x i minus 1 in this form, very simple.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:10:34</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then this portion, the portion that we are considering, is the control volume.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:11:06</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Yeah. This is the definition of nodes and grids and variables. So this is everything, actually. Once you define these nodes and grids, the latter part is just a mathematical process. But this part is the discretization process</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:11:43</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">of the system. Whether this is 1D or 2D, it does not matter. We always have to do this process. Otherwise, we cannot derive our equation, right?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:12:13</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So these definitions of variables are very important, okay? i, I already explained, but I will just repeat the same explanation. i is the number of nodes, okay? So it is the node number. It starts from zero and ends at n plus one. Zero and n plus one are the boundary values, and the variables that change with the condition start from one and</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:12:46</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">end at n. So we have n variables, n1, n2, n3, up to nn, okay? Then temperature at node i is represented as Ti, right? Ti. So Ti represents the temperature at node i, temperature at node i, okay? Meaning that we need to prepare n variables or an array to represent the values in the program.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:13:18</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Okay, then delta x is the width of each control volume or grid size, the width</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:13:48</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">of control volume i. For the simple case, of course, we can use the same grid size delta x for all the grids, the simplest one. But to keep the general expression,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:14:20</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">we can write it as delta x i, so then it means we can change the size depending on the location. Maybe where the temperature slope changes rapidly, we can make it a bit small, and where we do not have much change, we can make the distance long. To make it very general, just use delta x i, okay? Then n is, of course,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:14:57</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">the total number of nodes, or the total number of variables that we deal with, total</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:15:29</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">number of nodes. So delta x, if you use the simplest case, the most simple case, is the uniform size. Then it is simply L, the total length,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:03</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">divided by the node number n. So this is delta x. All right, that&#x27;s it. I drew many figures of this schematic, and this schematic is the most important part. So when you are confused, please draw this schematic, okay? Then based on these definitions of nodes,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:40</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">we can discretize the equations. Okay, so then second step. Shall we go to the next step? The next step is to derive the discretized equation. Right, the original equation that we deal with this time in this course is a very simple one, this one: the second derivative of T with respect to x, right, this one. So we can think about how we can discretize it. I think you are very familiar with the first one, the finite difference method, okay?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:17:20</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So then, to clarify the difference between FDM, the finite difference method, and the finite volume method, in this course we use the finite volume method, okay? So to differentiate them, I just want to recall the finite difference method. It is based on Taylor series expansion. You know how to expand Taylor series for T of x plus or minus delta x, right? So we can write it in this form. So T of x plus minus delta x is, of course,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:14:20</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">the first term is T, the first-order term is the first derivative of T times delta x. Then plus or minus, sorry, plus or minus, depending on which direction we are expanding. And the third term is one-half of the second derivative of T with respect to x times delta x squared. And next is one over three factorial, factorial, and the third derivative of T.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:15:02</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">In this way, it continues, right? Then if we use this form, of course we can get this expression. If we consider the difference between these two values, okay, it is quite simple. This term will cancel, right? This term will cancel if we take this minus this. Then what we get is two times T, two times T of x,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:15:35</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">plus two times the second-derivative term. Then one-half vanishes and we get this, the second derivative of T times delta x squared. And this continues, but we assume the higher-order terms are negligible, okay? Then because we want to get this term, right, this term, if we move the other terms, what we get for the second derivative of</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:06</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">T is just division by delta x squared, right? Delta, maybe we can write from here: T of x plus delta x, minus 2T of x, sorry, this should be plus, sorry, this should be plus,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:16:46</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">and T of x minus delta x, divided by delta x squared. So then we can change the differential original continuous form, the continuous form, into a purely discretized form. So then if we use the definition that</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:17:17</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">we showed in the mesh generation, this term changes to Ti plus 1, then the second term is Ti, and the last term is Ti minus 1, right? Meaning that this value at the control volume is represented by the next value to the control volume, denoted by i plus 1 and i minus 1. Then the form is simplified into this form.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:17:51</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Yeah, right, quite easy, right? This process of directly changing the differential term into a discretized form is called FDM, the finite difference method.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:18:32</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Finite difference method, right? So if you want to get the finite difference form, of course we have to use a very simple mesh coordinate system. Otherwise, if the mesh is very complex, we cannot use this one, okay?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:19:06</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">For example, if you want to reproduce the round shape of some object using a mesh, in that case we need to use a Jacobian to represent that curved face if you want to use FDM. Many commercial software packages do not use this one. They do not employ this finite difference method. Most commercial software uses FVM, which I am going to explain from now. Please carefully distinguish them. In FVM, we do not use this direct change of the equation.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:19:39</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">We do not use this form of the equation directly. First, we theoretically change the equation by integrating the differential equation with respect to the control volume. That is a totally different process. In the mesh we have a control volume, right? So we have a governing equation. Before discretizing that equation, we integrate the equation with respect to that control volume. That is the process. The basic concept of FVM is based on Gauss&#x27;s integral theorem.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:20:11</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">I think you know this as a fundamental part, but let me cover it briefly. Okay, so if there is a divergence term, then if we integrate that term with respect to some control volume, we can reduce that integral into a surface integral. That is Gauss&#x27;s theorem. So let us take this one. U is the vector field, then div U is the divergence, then the integral is with respect to the control volume. If we take this integral, it is reduced to the surface integral of the original vector field.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:20:47</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">We will use this in the governing equation. We apply this. The schematic is shown here. I think you know well that if we have divergence, it is like some quantity</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:21:22</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">emerging from the inside; that is divergence. If we integrate this value with respect to the entire volume, it should be the same as the amount going out from the surface or going in from the surface. So just integrate over the surface; what happens inside does not matter, okay? Only the surface</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:21:53</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">value matters. If we integrate all the surface values, then this value should be equal, okay? So this is Gauss&#x27;s theorem. Shall we use this theorem for the governing equation? Right, let us see the one-dimensional heat conduction equation. The equation that we need to solve is this one. The second derivative term is a very simple one, but just apply the same Gauss theorem to this</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:22:23</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">equation. So first, before we discretize, shall we apply Gauss&#x27;s theorem, meaning that we integrate this second-derivative term with respect to the control volume, okay? The control volume is this one, the governing equation is this one, so we need to integrate this term with respect to this volume, right? So then if we integrate it, we can denote it in this form.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:22:55</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Right, so the second derivative of T with respect to x is integrated with respect to this control volume. The right-hand side is the same. Then we consider how we can express this term, okay? On the left-hand side, okay, just write the same form, yeah, but the second derivative</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:23:26</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">with respect to the control volume. But here, the control volume is dx, right?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:23:57</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">In the x direction, we have a distance. So this is the same as integration with respect to x. Then by Gauss&#x27;s theorem, if we integrate this, we can reduce it into a first-order</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:24:36</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">derivative of T. Here it is second order, right?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:25:10</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">But if we integrate it, theoretically, we can reduce it to first order. But we have to take the value at the surface. Gauss&#x27;s theorem means that we need to take surface values. So in this case it is one-dimensional, so there is no actual surface, but we have to take the boundary values. Then here the boundaries are defined as the east side of the control volume, E, denoted by E, and the west side on the other side, W, denoted by W.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:25:40</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So we need to take the values at this position and this position. We denote them by E and W. Then we can reduce the order from second to first, but instead we need the boundary values of the first-order derivative. So theoretically the equation is changed into this form, just taking the difference of the boundary slope values,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:26:17</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">totally based on Gauss&#x27;s theorem. Actually that is everything for FVM. We just apply the same method to any other term if we want to derive an equation, okay? Then the remaining thing is that we have to evaluate these terms. This means the slope at this position and the slope at this position.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:27:00</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then we need to take the difference. So once we evaluate these slopes using the grids, then we can get, let us say, the discretized form. At the east side, shall we start from the east side? So the</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:27:32</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">slope at the east side, all right, should be here, right? The slope,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:28:05</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">temperature at this position. We may have many different ways to express this slope, but the simplest way is to use the value here and the value here and take the distance between these two nodes, right? Right. Then this value can be evaluated like this: the temperature difference is Ti+1 minus Ti, the difference between the two nodes, and the distance is half of the grid at position i and half of the grid at</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:28:42</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">position i+1. So then we divide the value by 0.5 times delta x i+1 plus delta x i, very simple. If this is uniform, of course this is Ti+1 minus Ti divided by delta x. But to keep it in general form, we keep delta x i+1 and i.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:29:15</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then I want to show the schematic as well. You can understand the rest now, so please write the equation at the west side. The temperature difference should be Ti minus Ti-1, divided by one-half of delta x i plus delta x i-1.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:29:56</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Again, if a uniform grid is used, then this becomes Ti minus Ti-1 divided by delta x. But in general form, it can be expressed like this. This is the process. In the same way, shall we apply the control-volume integral on the right-hand side term?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:30:32</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">The q divided by lambda term, integrated with respect to this control volume. We are assuming that the energy source, or energy sink, is a constant value in the control volume. So q and lambda are constants over this portion. Then this is simply changed into multiplication by the grid size. So q divided by lambda times delta x i.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:31:03</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then we have these three terms, and we have the original equation. You can see the original governing equation is the first one, the integrated form. So by writing all the terms in one equation, what we get is like this: Ti+1 minus Ti divided by 0.5(delta x i+1 plus delta x i). This is the value from the east side.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:31:38</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">And minus the west-side value, but to change the order of Ti and Ti-1, we can change this sign to plus and put this one first, Ti-1</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:32:23</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">and Ti, divided by 0.5(delta x i-1 plus delta x i), right? Then this should balance with the source term q divided by lambda times delta x i, right? Yeah, then this is the discretized form of the</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:32:58</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">equation. We are almost there, right? Right. Then many textbooks use coefficient notation. We do not use exactly that notation, but we use it to make the equation simple, right? So then we define this coefficient.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:33:33</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">We define this coefficient as CE, because this is coming from the east side. And the next coefficient as CW, okay, because that is coming from the west side, okay? So then we define, of course, these are coefficients. It is the same form, but the</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:34:08</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">coefficients can be defined like 1 over 0.5(delta x i+1 plus delta x i), and C west is the same, 1 over 0.5(delta x i-1 plus delta x i), like this, just rewriting the same thing by using coefficients. And then after this,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:34:46</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">we want to solve the equation with respect to Ti, because Ti is the variable we want. So we want to get the equation expressing Ti using the other terms. If we group Ti, Ti appears here and CW is multiplied here and CE is multiplied here. So just group them and move them to the other side. Then we get the equation for Ti, and we have CE plus CW here. So we define this summation as another coefficient CO.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:35:21</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">CO. Then the final form that we get is Ti is equal to 1 over CO. For the east side, the positive side, Ti+1 is multiplied by the east-side coefficient CE. And the west-side coefficient is in the minus-one direction, so the variable Ti-1 is multiplied by CW. All right. Then the remaining part is the source</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:36:05</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">term or sink term. So then q over lambda times delta x i. And then this is the equation that we want to get. So it is the equation for Ti.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:36:42</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So this is the discretized form based on FVM, the finite volume method. The process looks almost the same, but the original derivation is different. When we use the same grid resolution and grid size, for example a uniform grid, the final form that we get is actually the same between FDM and FVM. But once we use a different type of mesh or different mesh structure, then the derived form is different.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:37:25</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So from the beginning, based on the governing equation, we need to derive the equation in FVM form. I want you to understand the difference between these two. Then I showed the derivation of how we get this one. All right? Once we get this equation, then we can partially understand how the temperature is determined. You can see Ti+1 is here and Ti-1 is here. Then temperature Ti is determined by this temperature and this one by multiplying some coefficients coming from the grid.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:38:02</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So in the schematic, you can imagine it. Let me copy this one, let me move this one. The meaning of the equation is like this: this is position i and this is position i-1,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:38:45</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">and this is position i+1. Then we want to get the value of Ti, right? Ti, right? So this is the value that we want. This value Ti is somehow an inclusive term of Ti+1 here, right? Ti+1, Ti+1 times this one, this term here, and also Ti-1 here.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:39:19</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Ti-1, Ti-1, Ti-1, and the coefficients from both sides are multiplied to them. CE is multiplied and CW is multiplied, right? Then once we get this value, then by multiplying the coefficients we can get this one. Once we get this value, then we can get this, and then we can repeat this process. We are almost there, but you may notice that when</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:39:53</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">we try to get this value, we do not have this value yet. If we start calculation from this side, we have this value but not this one. If we start from the other side, again we are missing one of the needed values. But we need it to determine this, so that means that we need to</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:40:26</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">introduce some numerical method, okay? And that is the iterative method. This is actually a set of equations. We have three variables, then three variables. This is one equation for Ti. But the same equation can also be applied for Ti+1 by using Ti and Ti+2. So that equation is repeated.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:40:58</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So if we start from one side, it is very easy to understand. If we apply the same equation for T1, T1, see the equation. Then the equation is 1 over C0, and CE. Then Ti+1 is 2, right? So CE times T2. Then CW and C0. And this.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:41:29</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">And if we apply the equation to T2, what we get is CE times T3 plus CW times T1 minus q over lambda times delta x2. In this form we can repeat it. Then, once we reach TN, the equation is CE times TN+1 plus CW times TN−1 minus q over lambda times delta xN.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:42:00</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So this means we have N equations. Then you can see here T0,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:42:35</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">okay, and TN+1. These two are boundary conditions, so they are given values, right? T0 and TN+1 are boundary conditions, so we do not need to determine them. The</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:43:06</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">actual values that we need to determine are T1 to TN. We have N equations about T1 until TN, so this means that this is a set of equations. We can solve this equation, yeah, but we need a special treatment to fix the equations, okay? Yeah, then it is written here: the number of unknowns</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:43:37</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">is Ti to TN, so N, right? And the number of discretized equations is also for T1 to TN, so this is N. So theoretically we can solve it. But this kind of form is called the implicit form, which means that the variable we want to solve, for example here,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:44:16</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">the variable that we want to solve is included implicitly. In that case, we need to use an iterative method, in which the numerical calculation is repeated until we can get the solution, okay? I do not mention the detailed theoretical background,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:44:46</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">but just follow this procedure to get the solution. It is a general form, but assume that we have some function g(x), g(x), this one. Then if this form is an implicit form, in that case we need this method, the iterative method, okay? The implicit form means, for example, this kind of</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:45:18</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">equation, yeah, this one. We want to solve the equation, and in this case the variable to solve is one, x. But we cannot change the form into x is equal to something. We do not have any general analytical solution for this, but this is the implicit form. Still it should have</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:45:53</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">a solution, right? It should have a solution because there is one variable and one equation. This is also the same: x plus log x is equal to zero. This can be solved numerically, but it is an implicit form.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:46:26</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Okay, this as well, okay? So in this form we have a numerical solution</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:46:56</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">method, a numerical calculation method. So we first arrange the original equation with respect to x to write it in this form, okay? For example, if you want, this one is simple, maybe this one: g(x) is equal to x plus log x is equal to 0. We can change it into any form, but just change it to</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:47:31</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">x is equal to something. In this case x is equal to minus log x, in this form. Then assume any value to solve this equation. We start from some random value. Let us say the initial value is x0, and calculate the next x by using this equation,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:48:10</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">just substituting the value. So by using x0, we can get x1. This is the iterative method. Then we imagine that x1 is closer to the solution than x0. x0 is a random value, but that value is substituted into the function coming from the original governing equation. Then we can get some closer value than x0. That is x1.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:48:50</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then if we substitute x1 into the equation again, we can get x2. Then we imagine that this value is much closer to the solution than x1 or x0. We are not sure, but we can repeat that process. Then once we repeat the process many times, what we can write is x(i+1) is equal to f(xi).</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:49:20</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then we repeat all the processes until we get the same value for xi and x(i+1). If these two are the same, it means that x(i+1)</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:49:54</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">satisfies the original equation, right? Then at least it satisfies the original equation.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:50:26</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So then this is the solution of this implicit-form equation. This method is called the Jacobi method. Jacobi method is a type of iterative method. In Japanese, `hanpukuho`. This is a numerical solution method.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:51:02</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So when the equation is implicit, we have to use this form. Based on this, we apply the same idea to the Ti equation because Ti is in implicit form. When we calculate the Ti</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:51:49</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">value, we need Ti−1 and Ti+1, but we assume we do not have those values yet, okay? So we use predicted values, prediction values. Then the governing equation that we need to use is like this: Ti is equal to 1 over C0 and</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:52:21</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">CE times, originally this was Ti+1, but we replace it with the predicted value, Ti+1^P, prediction. Then the next term is CW times Ti−1 prediction. Originally it should be Ti−1, but we do not know this value, so we use the predicted value. The remaining term is okay because this is a known value, a given value.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:53:10</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">So we can use it. Then we repeat this calculation until i is equal to 1 to n, okay? Then all the values are calculated first. Then we can get T1 to TN, right? Then we compare these two values. If they are the same, it is a solution, right? If they are different, we need to repeat the same calculation. So Ti is again substituted into the equation. Then we can get the next Ti.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:53:42</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then we repeat the whole process again until we get the solution. Yeah, this is the process, yeah, the whole process. So for some of you this may be the very first time writing program code to calculate something. So let me draw a flowchart. A flowchart usually, of course, starts from Start.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:54:56</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Okay, I don&#x27;t know whether I need this one, but yes. First we need to define variables, variable definition. For example, in the discretized form in our handwriting we define Ti or delta x i, for example, right? But in numerical code, in a numerical simulation code, we need to define something like T0</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:55:27</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">starting from 0 to n+1. In Python, the actual size is</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:56:14</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">n plus two, right? In the same way, CW for example, it can be constant, but to make it very general, just put it in the same form. For example, in this way, delta cannot be used, so just use dx, but define it in the same form, okay, like this. Then for example dx0 is 0, then dx1 is</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:56:50</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">L over n for a uniform grid, okay? dx0 is the value at node 0, the boundary, so a fake value is included as 0. Like this we need to define the variables. This is the first process, okay. Once you define these values, then we need to define initial conditions. Now we do not have</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:57:20</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">any physical initial condition for the iterative method,</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:57:54</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">yeah, but we need to define initial conditions and boundary conditions. So the temperature value at all nodes is the ambient temperature, TL. And the boundary value, the boundary is defined as T of 0. Then this value is TL, boundary at the low temperature side, right?</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:58:26</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">And the other boundary is N+1. The value is TH, the high temperature. Like this. So we need to define these values in the program, okay? That is the process. Only that. Then we need to calculate. So the next process is calculation.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:58:57</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">We already have the equation for T. Ti is equal to 1 over C0, and CW times T... so this is the equation for node i, and the west side is... sorry, the east side is positive, so this is Ti+1, but we need to use the prediction value, not the original one, so we need another variable to represent the prediction value.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">00:59:33</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">And in the same way, for the west side, use the prediction value at node Ti−1, minus q over lambda times delta x i. So this is the equation for Ti. Of course, this should be repeated from i equal to 1 to n. So we need this calculation process. We have one loop here to calculate them.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:00:06</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then once we complete the whole calculation order, we need a convergence check. Convergence here. By comparing Ti and Tpi. So we need to compare them. If they are the same, it means a solution.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:00:37</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then if they are a bit different, it means we need to do the calculation again. So if the values are different, we need to replace the prediction value with the newly updated value Ti, okay? So we need this process and then go back to calculation again. So then the arrow should be here, here.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:01:07</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then again, we calculate and go back to the convergence check. Once we get the same value, this means not only one value, but I represent from 1 to N, right? Sorry, 1 to N. Then all N values should be compared here. i is equal to 1 to N. If all values from 1 to N between T and TP are the same, then it means the calculation can be finished because it has already converged.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:02:27</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Then we can go to End. So the overall structure is important, so let me show this once again. Yeah.</p>
+</article>
+<article class="transcript-entry">
+<div class="transcript-meta">
+<span class="transcript-chip">01:07:55</span>
+<span class="transcript-chip">Speaker: [Ikegaya, Naoki]</span>
+</div>
+<p class="transcript-body">Is this plus here?</p>
+</article>
+</div>
+</article>
+    </main>
+
+    <footer class="footer">
+      <p>Created: 2026-04-24 09:58:56 JST</p>
+      <p class="footer-note"><a href="html.md">Source instructions</a></p>
+    </footer>
+  </body>
+</html>

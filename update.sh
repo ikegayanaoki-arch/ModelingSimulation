@@ -3,7 +3,8 @@
  cp index.html _bk
 
  #DATE=20260410-01
- DATE=20260417-02
+ #DATE=20260417-02
+ DATE=20260424-03
  cp -r ../lec/$DATE/html ./$DATE
 
  codex exec --skip-git-repo-check \

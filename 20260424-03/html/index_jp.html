@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>会議概要</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="lang-switcher">
+      <a href="index_jp.html" class="current">日本語</a>
+      <a href="index_en.html">English</a>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">Lecture Record</p>
+        <h1>会議概要</h1>
+        <p class="lead">講義サマリーとトランスクリプトを、日本語と英語で参照できるように整理した記録ページです。</p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <div class="card-header">
+          <h2>講義情報</h2>
+        </div>
+        <div class="card-body meta-grid">
+          <div class="meta-item"><span class="meta-label">日時</span><div>2026-05-01 08:41:16</div></div>
+<div class="meta-item"><span class="meta-label">場所</span><div>[場所を挿入]</div></div>
+<div class="meta-item"><span class="meta-label">講師</span><div>[氏名を挿入]</div></div>
+<div class="meta-item"><span class="meta-label">作成日</span><div>2026-05-05 16:19:04 JST</div></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>サマリー</h2>
+        </div>
+        <div class="card-body summary-text">
+          <h3 class="summary-part-title">Part I</h3>
+<p class="summary-line">05-01 講義: 1次元および2次元の定常熱伝導方程式</p>
+<p class="summary-line strong">日時: 2026-05-01 08:41:16</p>
+<p class="summary-line strong">場所: [場所を挿入]</p>
+<p class="summary-line strong">講師: [氏名を挿入]</p>
+<h4 class="summary-label">概要</h4>
+<p class="summary-line">この講義では、まず先週扱った1次元の定常熱伝導方程式と、有限体積法（FVM）による離散化の流れを復習し、その後、理論解と数値解が一致する3つのケース、すなわち断熱、一定の熱損失、位置依存の熱損失を確認した。続いて主題である2次元の定常熱伝導方程式へ拡張し、2次元の支配方程式を定義し、ディリクレ条件やノイマン条件を含む3種類の境界条件を設定して、数値シミュレーションの準備を行った。最後に、2次元領域を離散化するための制御体積、グリッド、ノードの定義を説明した。この一連の流れは、より一般的なポアソン方程式の解法にもつながる重要な基礎である。</p>
+<h4 class="summary-label">知識点</h4>
+<p class="summary-line strong">1. 1次元定常熱伝導方程式の復習</p>
+<p class="summary-line">有限体積法（FVM）による離散化</p>
+<p class="summary-line">  先週学んだ1次元定常熱伝導方程式を、有限体積法（FVM）で離散化する手順を復習した。</p>
+<p class="summary-line">対象領域をノードに分割し、各ノードは体積の中心に置かれ、その位置の温度を代表する。</p>
+<p class="summary-line">支配方程式を制御体積に対して積分し、ガウスの定理を使って2階微分項を1階微分項に変換し、東側（E）と西側（W）の境界で評価する。</p>
+<p class="summary-line">境界での温度勾配は、隣接ノード間の温度差を距離で割ることで近似する。</p>
+<p class="summary-line">これらを積分方程式へ代入して整理することで、ノード i の温度 Ti を隣接ノード Ti+1、Ti-1 から計算する離散化方程式を導出する。</p>
+<p class="summary-line">この式は反復法で解き、予測値（ランダムな初期値や前ステップの値）から始めて収束するまで繰り返す。</p>
+<p class="summary-line">3つのシミュレーションケースと結果</p>
+<p class="summary-line">  1次元熱伝導について3つのケースを検討した。</p>
+<p class="summary-line">ケース1: 完全断熱</p>
+<p class="summary-line">  理想的な条件で、温度分布は線形になる。理論演習には向くが現実的ではない。</p>
+<p class="summary-line">ケース2: 一定の熱損失</p>
+<p class="summary-line">  位置によらず一定の熱損失を仮定する。温度は一様値にはならない。</p>
+<p class="summary-line">ケース3: 位置依存の熱損失</p>
+<p class="summary-line">  表面温度に応じて熱損失が変化する。最も現実的であり、以前にNHKの映像で見た、ある位置からほぼ一定になる温度分布と質的に一致する。</p>
+<p class="summary-line">どのケースでも理論解（破線）と数値解（赤線）は完全に一致し、手法の妥当性が確認された。</p>
+<p class="summary-line strong">2. 2次元定常熱伝導方程式への拡張</p>
+<p class="summary-line">2次元熱伝導の概要</p>
+<p class="summary-line">  1次元の考え方を、より現実的な2次元の正方形平板における熱伝導へ拡張する。</p>
+<p class="summary-line">温度は位置の関数 T(x, y) として表され、定常状態なので時間 t は含まれない。</p>
+<p class="summary-line">目的は、2次元定常熱伝導方程式をFVMで離散化し、数値シミュレーションを行うことである。</p>
+<p class="summary-line">支配方程式</p>
+<p class="summary-line">  一般的な熱伝導の支配方程式は、熱の蓄積項、熱伝導項（ラプラシアン）、熱源・熱吸収項から構成される。</p>
+<p class="summary-line">    ρCp * ∂T/∂t = λ * (∂²T/∂x² + ∂²T/∂y²) + Q</p>
+<p class="summary-line">α = λ / (ρCp) は熱拡散率である。</p>
+<p class="summary-line">定常状態では ∂T/∂t = 0 なので、</p>
+<p class="summary-line">  ∂²T/∂x² + ∂²T/∂y² = -Q / λ</p>
+<p class="summary-line">この形はポアソン方程式として知られ、熱伝導だけでなく多くの物理現象に現れるため、その解法を学ぶことが重要である。Q = 0 の場合はラプラス方程式になる。</p>
+<p class="summary-line">2次元シミュレーションの3つのケース</p>
+<p class="summary-line">  ケース1: 固定温度条件（ディリクレ条件）</p>
+<p class="summary-line">    上辺を高温 TH、他の3辺を低温 TL に固定する。熱は上辺から他の辺へ伝わると予想される。熱損失 Q は一様と仮定する。</p>
+<p class="summary-line">ケース2: 別の固定温度条件（ディリクレ条件）</p>
+<p class="summary-line">  左右の2辺を高温 TH、上下の2辺を低温 TL に固定する。熱は左右から内側へ伝わると予想される。Q は一様と仮定する。</p>
+<p class="summary-line">ケース3: 対流による熱損失（ノイマン条件）</p>
+<p class="summary-line">  4辺すべてで対流熱損失を考える。周囲の空気温度は TH と仮定する。</p>
+<p class="summary-line">表面熱流束（フーリエの法則）と対流による熱損失（ニュートンの冷却則 Q = h * (T_surface - T_air)）がつり合う条件を境界条件として用いる。この場合、境界上の値も未知数として解く必要がある。勾配で与えられる境界条件をノイマン条件という。</p>
+<p class="summary-line">2次元領域の離散化</p>
+<p class="summary-line">  FVM を適用する最初の段階として、2次元領域をグリッドに分割し、制御体積とノードを定義する。</p>
+<p class="summary-line">x 方向に n 分割、y 方向にも n 分割する。</p>
+<p class="summary-line">各要素の位置は (i, j) で表し、i を x 方向、j を y 方向の添字とする。</p>
+<p class="summary-line">温度 T はノード中心で定義され、Tij と書く。</p>
+<p class="summary-line">x 方向の制御体積の長さ Δxi、y 方向の長さ Δyj を定義する。</p>
+<p class="summary-line">このグリッドを用いて支配方程式の離散化を進めていく。</p>
+<h4 class="summary-label">質問</h4>
+<p class="summary-line">[質問・不明点を挿入]</p>
+<h4 class="summary-label">課題</h4>
+<p class="summary-line strong"> 1. ケース3の支配方程式を導出してみる。（興味のある学生向け）</p>
+<p class="summary-line strong"> 2. 2次元熱伝導シミュレーションのサンプルコードを実行し、結果を考察する。</p>
+<p class="summary-line strong"> 3. 離散化方程式を1次元から2次元へ、さらに3次元へどう拡張できるか考える。</p>
+<h3 class="summary-part-title">Part II</h3>
+<p class="summary-line">05-01 講義: 2次元熱伝導と有限体積法</p>
+<p class="summary-line strong">日時: 2026-05-01 10:00:13</p>
+<p class="summary-line strong">場所: [場所を挿入]</p>
+<p class="summary-line strong">講師: [氏名を挿入]</p>
+<h4 class="summary-label">概要</h4>
+<p class="summary-line">この講義では、有限体積法（FVM）を用いて2次元定常熱伝導方程式の離散化方程式を、段階を追って明確に導出した。講師は、支配方程式に体積積分を適用し、ガウスの定理によって微分の次数を下げ、隣接ノード（東、西、北、南）に対する係数を定義する方法を説明した。その考え方は1次元や3次元にも一般化できることが示された。最後に、Jacobi 法と Gauss-Seidel 法（緩和、すなわち SOR を含む）といった反復解法を紹介し、導出した式を Python で実装する演習へつなげた。さらに、Codex のような AI ツールでも類似のコードを生成できることを示しつつ、理論を理解していることの重要性を強調した。</p>
+<h4 class="summary-label">知識点</h4>
+<p class="summary-line strong">1. FVM による2次元離散化方程式の導出</p>
+<p class="summary-line">支配方程式と制御体積の設定</p>
+<p class="summary-line">  x 方向と y 方向の偏微分を含む一般的な2次元支配方程式から出発する。</p>
+<p class="summary-line">支配方程式を制御体積上で積分することで FVM を適用する。</p>
+<p class="summary-line">制御体積はノード (i, j) を中心に持ち、大きさは Δxᵢ と Δyⱼ である。</p>
+<p class="summary-line">隣接ノードを、西 (i-1, j)、東 (i+1, j)、北 (i, j+1)、南 (i, j-1) と定義する。</p>
+<p class="summary-line">制御体積の各面を、西 (W)、東 (E)、北 (N)、南 (S) と名付ける。</p>
+<p class="summary-line">ガウスの定理の適用と各項の離散化</p>
+<p class="summary-line">  ガウスの定理を用いて、2階微分を制御体積面での1階の流束表現へ変換する。</p>
+<p class="summary-line">x 方向の項: x に関する2階微分の積分は、東面と西面での勾配差にセル高さ Δyⱼ を掛けた形になる。</p>
+<p class="summary-line">  東面の勾配 ≈ (Tᵢ₊₁,ⱼ - Tᵢ,ⱼ) / (0.5Δxᵢ₊₁ + 0.5Δxᵢ)</p>
+<p class="summary-line">西面の勾配 ≈ (Tᵢ,ⱼ - Tᵢ₋₁,ⱼ) / (0.5Δxᵢ + 0.5Δxᵢ₋₁)</p>
+<p class="summary-line">y 方向の項: 同様に、y に関する積分は北面と南面の勾配差にセル幅 Δxᵢ を掛けた形になる。</p>
+<p class="summary-line">  北面の勾配 ≈ (Tᵢ,ⱼ₊₁ - Tᵢ,ⱼ) / (0.5Δyⱼ₊₁ + 0.5Δyⱼ)</p>
+<p class="summary-line">南面の勾配 ≈ (Tᵢ,ⱼ - Tᵢ,ⱼ₋₁) / (0.5Δyⱼ + 0.5Δyⱼ₋₁)</p>
+<p class="summary-line">熱源項: 一定熱源 q を体積で積分すると qΔxᵢΔyⱼ となる。</p>
+<p class="summary-line">最終的な代数方程式の構成</p>
+<p class="summary-line">  離散化した各項をまとめて1本の代数方程式にする。構造をそろえるため、西項と南項は順序を反転して符号を正にそろえる。</p>
+<p class="summary-line">隣接係数として Cₑ（東）、Cw（西）、Cₙ（北）、Cs（南）を定義する。</p>
+<p class="summary-line">  Cₑ = Δyⱼ / (0.5Δxᵢ + 0.5Δxᵢ₊₁)</p>
+<p class="summary-line">Cw = Δyⱼ / (0.5Δxᵢ₋₁ + 0.5Δxᵢ)</p>
+<p class="summary-line">Cₙ = Δxᵢ / (0.5Δyⱼ₊₁ + 0.5Δyⱼ)</p>
+<p class="summary-line">Cs = Δxᵢ / (0.5Δyⱼ + 0.5Δyⱼ₋₁)</p>
+<p class="summary-line">簡略化した式は次のようになる:</p>
+<p class="summary-line">  Cₑ(Tᵢ₊₁,ⱼ - Tᵢ,ⱼ) + Cw(Tᵢ₋₁,ⱼ - Tᵢ,ⱼ) + Cₙ(Tᵢ,ⱼ₊₁ - Tᵢ,ⱼ) + Cs(Tᵢ,ⱼ₋₁ - Tᵢ,ⱼ) = -qΔxᵢΔyⱼ/λ</p>
+<p class="summary-line">中心係数は C₀ = Cₑ + Cw + Cₙ + Cs。</p>
+<p class="summary-line">これを Tᵢ,ⱼ について解くと、</p>
+<p class="summary-line">  Tᵢ,ⱼ = (1/C₀)[CₑTᵢ₊₁,ⱼ + CwTᵢ₋₁,ⱼ + CₙTᵢ,ⱼ₊₁ + CsTᵢ,ⱼ₋₁] - (qΔxᵢΔyⱼ)/(λC₀)</p>
+<p class="summary-line">となる。</p>
+<p class="summary-line">この式は、Tᵢ,ⱼ が周囲の温度の重み付き平均として表され、その重みを各係数が与えていることを示している。</p>
+<p class="summary-line strong">2. 一般化と反復解法</p>
+<p class="summary-line">1次元、2次元、3次元への一般化</p>
+<p class="summary-line">  この導出手順は次元をまたいで体系的に拡張できる。</p>
+<p class="summary-line">1次元の場合: Tᵢ は東側 (i+1) と西側 (i-1) のみで決まる。</p>
+<p class="summary-line">  Tᵢ = (1/C₀)[CₑTᵢ₊₁ + CwTᵢ₋₁]</p>
+<p class="summary-line">2次元の場合: 導出した通り、東、西、北 (j+1)、南 (j-1) を用いる。</p>
+<p class="summary-line">3次元の場合: さらに右 (R, k+1) と左 (L, k-1) が加わる。C₀ は6方向の和、すなわち Cₑ + Cw + Cₙ + Cs + Cᵣ + Cₗ になる。係数の定義も同様に拡張され、例えば Cᵣ の分子には ΔxᵢΔyⱼ が現れる。</p>
+<p class="summary-line">反復解法</p>
+<p class="summary-line">  Jacobi 法: 右辺に現れる未知数には、すべて前反復の予測値（上付き P）を用いる。単純だが収束が遅いことがある。</p>
+<p class="summary-line">Gauss-Seidel 法: その反復内で得られた最新値を使うことで Jacobi 法を改良する。i、j のループで計算する場合、西側 (i-1) と南側 (j-1) は更新済み値を使い、北側 (j+1) と東側 (i+1) は予測値を使う。</p>
+<p class="summary-line">逐次過緩和法（SOR）: Gauss-Seidel 法と組み合わせて収束を速めたり安定化したりするためによく使われる。まず一時値 Tᵢ,ⱼ* を計算し、それと前の値の重み付き平均で新しい Tᵢ,ⱼ を更新する。重みは緩和係数 β（0〜1）で与える。</p>
+<p class="summary-line strong">3. 実装演習と現代的ツール</p>
+<p class="summary-line">プログラミング演習</p>
+<p class="summary-line">  Moodle から Python スクリプト `2d.py` を開く。</p>
+<p class="summary-line">導出した係数（Cₑ、Cw、Cₙ、Cs）と、Tᵢ,ⱼ の更新式を実装する。</p>
+<p class="summary-line">上辺を加熱し、残り3辺を冷却したケースをシミュレーションすると、上側ほど温度が高くなる分布が得られるはずである。</p>
+<p class="summary-line">AI によるコード生成の実演</p>
+<p class="summary-line">  講師は「Codex」を使って2次元熱伝導問題の Python コードを生成してみせた。</p>
+<p class="summary-line">簡単なプロンプトと境界条件だけでも、動作するスクリプトが得られる。</p>
+<p class="summary-line">ただし、FVM を明示しないと有限差分法で実装されることがある。</p>
+<p class="summary-line">一方、Cₑ、Cw などの係数と Jacobi 法を明示して FVM を指定すると、講義で導出した式に沿ったコードが生成される。</p>
+<p class="summary-line">重要なのは、AI ツールは強力だが、生成されたコードを検証し、修正し、適切に自分の研究へ応用するには、基礎理論の理解が不可欠だという点である。</p>
+<h4 class="summary-label">質問</h4>
+<p class="summary-line">[質問・混乱した点を挿入]</p>
+<h4 class="summary-label">課題</h4>
+<p class="summary-line strong"> 1. 配布された `2d.py` に、導出した係数（Cₑ、Cw、Cₙ、Cs）と温度更新式（Tᵢ,ⱼ）を実装して Python 演習を完成させる。</p>
+<p class="summary-line strong"> 2. （推奨）配布された3次元の図を使って、3次元係数（Cₑ、Cw、Cₙ、Cs、Cᵣ、Cₗ）を自習として導出する。</p>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>トランスクリプト</h2>
+        </div>
+        <div class="card-body">
+          <div class="note transcript-note">原文のトランスクリプトには話者名の明記がないため、各発言は「発言者未記載」として表示しています。</div>
+          <div class="transcript">
+            <h3 class="transcript-part-title">Part I</h3>
+<article class="transcript-entry"><div class="transcript-time">00:00:07</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">はい、おはようございます。時間になりましたので、始めましょう。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:02:02</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">もし追加が必要なら印刷できますが、印刷版を使いたい人はいますか。ただし持ち帰りはできませんので、必要ならここで印刷します。他の学生は iPad やタブレットを使ってください。資料をここから PDF でダウンロードしてください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:02:43</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">それから、先週は講義を休講にしてしまってすみませんでした。教授や研究者の集まりのようなものがありました。皆さんは今こうした授業を受けながら学んでいる途中ですよね。そして研究活動に基づいて、いろいろな学会にも参加するようになると思います。修士の学生にとって必須ではありませんが、特に意欲の高い学生は、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:03:15</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">本当に多くの学会に参加したがります。国際会議ですね。私の学生のうち何人かも国際会議に参加していますが、それは皆さんにとってとても良い経験になります。そして、それは卒業して終わりではありません。会社に入ってからもいろいろな集まりがあります。知識を共有するための会合やブリーフィングのようなものです。先週、私もそういう、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:03:46</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">いろいろな大学の教授が集まるブリーフィングに参加しました。実はそれは皆さんにとっても興味深いことだと思います。皆さんは学生で、私は教授ですが、皆さんが私から何かを学んでいるのと同じことが、私にも起きています。そうした集まりでは、私も学生のような立場で参加し、そこには大先生たちがいて、研究の進み具合などについて質問し、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:04:16</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">大先生たちからたくさん助言をもらいます。そういう過程はずっと続いていくのかもしれません。さて、それでは記憶を呼び起こすために、先週やったことを復習するのが良いスタートでしょう。1ページ目に復習のパートがあると思います。先週は1次元熱伝導方程式を学びましたよね。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:04:49</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">それから支配方程式を導出しましたし、皆さんのうち何人か、いや全員が、計算のためのプログラミングも試したはずです。最初の段階では、もちろん前回のノートも参照してよいですし、私の書いた記録もここにありますから使って構いません。ただし自分でも勉強してください。少し時間をあげます。では最初に復習があります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:05:21</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">レビュー1番です。これを読んで、式を書いてください。1ページだけです。大きな問いは、1次元熱伝導方程式はこのように書かれ、1番は先週学んだ FVM、有限体積法を使って、この方程式の制御体積に関する体積積分を定義することです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:05:54</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">全体の流れはこのページに書かれています。式自体はすでにここに書いてありますが、重要なのは、この式を FVM を使ってどう離散化するかです。図を見ながら記憶を思い出して、この3つの式を書いてください。そして最後に、この紙に書ける最終形の式としてまとめてください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:06:25</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">はい、ではやってみましょう。5分あげます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:07:44</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">今来た学生は、演習の1ページ目をやってみてください。Moodle から資料をダウンロードして、前回の学習を思い出してください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:09:42</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">小さいので、大きく並んだ方がいいのかな。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:10:27</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">MBCニュースのキム・ソンヒョンです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:12:14</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">よし、では一緒に見ていきましょう。これは復習ですが、今日の内容を理解するうえで重要です。実際、ほとんど同じです。先週は1次元をやりましたよね。今週はそれを2次元へ拡張します。基本的な考え方は同じです。ですから、この手順が理解できれば、少なくとも理論部分はそれほど難しくありません。先週やったのは1次元熱伝導方程式を解くことでしたが、定常状態なので、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:12:46</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">理論解はとても簡単に得られます。ただし、私たちは数値シミュレーションでこの方程式を解いてみました。この制御体積を考えました。1次元の制御体積です。思い出してください。領域をノードと呼ばれる小さな部分に分け、各ノード、各体積が温度を代表します。そして番号を付けました。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:13:19</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">各部分には大きさがあり、位置を示す ID がありました。そして制御体積をこのように定義し、境界を西 W、東 E と定義しました。ノードは各部分の中心に置かれます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:13:52</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">したがってノード位置は、両側の格子端から半分の長さの位置にあります。これが定義です。そして FVM は、まず方程式を積分して離散化方程式を得る方法でした。元の方程式はこの連続体の形です。最初にこの方程式を制御体積について積分します。それが手順でした。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:14:25</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この場合、支配方程式を x について積分します。1次元なので x 方向だけです。ガウスの定理に基づいて、この2階微分は1階微分に落とせます。ただし両境界での値を取る必要があり、それを E と W で表しました。東と西です。元は2階微分でしたが、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:14:55</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">境界、この位置とこの位置での通常の1階微分に変わります。右辺のこの項は定数値なので、単に Δx_i を掛ければよいです。これは制御体積について積分するのと同じです。これが基本的な考え方です。これが分かれば、ほとんど全部分かったようなものです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:15:27</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">後半は数値的なテクニックです。東と西の境界での値をどう評価するか、ということです。では見てみましょう。まず東側の値、東側の傾きです。ここでいう傾きの意味を理解してください。傾きは温度勾配のことです。東側での傾きはこの2点の温度差を距離で割ったものです。したがって温度差は T_{i+1} - T_i と取ります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:16:04</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">距離は両方の格子サイズの半分ずつ、つまり Δx_{i+1} と Δx_i の半分の和です。難しくありません。同じ話が西側にも成り立ちます。西側では、もう一度図を見て、温度差と距離を考える必要があります。距離は左右それぞれ半分ずつで、温度差は T_i - T_{i-1} です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:16:44</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">それを 0.5Δx_i + 0.5Δx_{i-1} で割ります。これだけです。これで式が得られます。これらの項を元の式に代入すると、(T_{i+1} - T_i) を距離 Δx_{i+1} + Δx_i で割った項になります。さらに2つ目の項は引き算ですが、順序をひっくり返して符号を変えれば、(T_{i-1} - T_i) を対応する距離で割った形にできます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:17:42</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">そしてこれが右辺の項と釣り合います。つまり q / λ に Δx_i を掛けたものです。はい、それだけです。残りは項の整理だけです。ここで係数を C_e と C_w と定義します。すると式はとても簡単な形になります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:18:18</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">C_e(T_{i+1} - T_i) + C_w(T_{i-1} - T_i) = q / λ · Δx_i という形です。とても簡単です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:18:51</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">このようになります。係数の細かい形は覚えていなくても構いません。でもここで規則に気づけます。E は東側、つまり正の方向です。だから差分は正側の 1 引く 0 のような形になります。西は負の方向なので、負側の項が出てきます。この規則を一度覚えれば、式を書くのはかなり簡単です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:19:26</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">それから、私たちが解きたいのは T_i です。ノード i の値 T_i を計算したいわけです。ですから、T_i に掛かる係数を1つにまとめます。すると (C_e + C_w)T_i と C_eT_{i+1}、C_wT_{i-1} が現れ、右辺は同じ形になります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:20:04</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">では、これを C_0 と定義しましょう。最終的に使う式は 1/C_0 によって表される形になります。C_eT_{i+1} と C_wT_{i-1} があり、すみません、ここは符号がマイナスでした。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:20:35</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この項を右辺へ移し、他の項を左辺へ移してから C_0 で割ると、このような式になります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:21:36</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この式を導出できれば、すべてのノードに適用できます。i は 1 から N までですから、1 から N まで計算を繰り返せば温度が求まります。ただしここには未知値がありますので、反復法を使わなければなりません。プログラムでは、これらは予測値、例えばランダムな値や前ステップの値です。そしてループを繰り返して収束値を得ます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:22:21</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">これが先週やったことでした。この場合はかなり単純な定常状態シミュレーションですから、理論解もあります。思い出してほしいのは、私たちは3つの異なるケースを考えたということです。1つは完全断熱で、残り2つは表面からの熱損失を考えるケースでした。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:22:53</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ケース1は断熱ですから、方程式は線形になります。ケース2とケース3では表面からの熱損失を考えますが、その熱損失の扱い方が異なります。思い出してもらうために、先週の内容を見せます。3つのケースを考えました。そう、ケース1は完全断熱でした。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:23:29</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ケース2では熱損失を考えますが、その熱損失は一定と仮定しました。したがって位置には依存しません。これがケース2です。ケース3では熱損失は位置の関数、つまり表面温度に依存するものとしました。こちらの方がより現実的です。では数値シミュレーションの結果を手短に見てみましょう。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:24:04</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ファイルも Moodle にあるはずです。プログラム資料のところです。先週のトピックはこの 1 次元の定常熱伝導方程式でした。これが前回やった演習ですが、ここで見せたいのは3つのケースの比較です。ケース1、ケース2、ケース3。ケース1は断熱、ケース2は一様な熱損失、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:24:37</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">資料には source と書いてありますが、ここは heat loss の意味です。ケース3は位置に依存する熱損失です。以前 NHK の映像を見ましたよね。温度分布が測定されていました。それは位置の関数で、だんだん減少してある位置からほぼ一定になっていました。とても定性的ではありますが、そのグラフと今の結果を比べると、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:25:10</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">位置依存の熱損失を考えたケース3が最もよい解、つまり以前見た結果に最も近い解だと分かります。ケース2も熱損失は考えていますが、その量が位置に依存しないので、温度は一様な値にはならず、まだ徐々に変化します。こうした違いがシミュレーションで見えます。またケース1は、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:25:42</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">とても理想的なケースです。学部レベルの理論演習としてはよいのですが、現実的ではありません。したがって、このような熱伝導や温度分布は実際にはあまり見られません。はい、これが結果です。とても分かりやすいです。この場合は理論解があります。破線が理論、赤線が数値シミュレーション結果です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:26:12</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">完全に一致しています。3つのケースすべてで一致しています。つまり、ここで考えた3つのケースには理論解があるということです。普通は理論解がないから数値シミュレーションをするのですが、この演習では理論解と直接比較できます。前回の内容について質問はありますか。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:26:46</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">では今日の内容に入りましょう。1つだけ飛ばした部分があります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:27:25</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ケース3では支配方程式が少し異なりますが、かなり細かい話です。興味があれば後で講義ノートに補足しておきます。ぜひ導出してみてください。形が少し違いますが、かなり細かい内容です。理解の確認として、興味があればやってみてください。では始める前に確認したいのですが、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:28:00</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">本当に日本語が分からない学生はどれくらいいますか。日本語話者でない人で、日本語が全く分からない人はいますか。1人、2人。日本語がわからない人がほとんどですが。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:28:38</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">おはようございます。日本語でお伝えしたいと思います。多くの学生には日本語で説明しています。では。今日のトピックは実際には先週と本当に同じですが、より現実的な2次元への拡張です。理論的には今回は3次元シミュレーションまではしませんが、理論的には、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:29:14</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">3次元にも拡張できます。方程式を導く手順を一度理解すれば、他の次元への拡張も実際には同じです。どの次元にも拡張できます。とても面白い先生がいて、名前だけ知っているのですが、その人は</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:29:44</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">立方体ブロックまわりの非常に単純な空気流れを解きました。立方体ブロックはもちろん3次元です。しかし理論的には 1、2、3 と拡張できますし、今日やる定式化もまずは2次元ですが、理論上は 4 次元、5 次元、それ以上にも拡張できます。その先生は4次元の立方体ブロックまわりの流れのシミュレーションまで解きました。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:30:17</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">理論的には、実際の3次元現象と理想的な4次元現象の違いを見るのは非常に面白いです。そういうことも可能です。ですから、今日の2次元への拡張を理解すれば、きちんと理解できるはずです。では模式図を見てください。とても単純ですが、今日扱う対象です。2次元熱伝導で、温度分布を</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:30:53</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">2次元の板の上に仮定します。座標は x と y、水平と鉛直です。簡単のため長さは同じにして、正方形板とします。この板の上の温度を計算します。温度は T(x, y) という2変数で表します。T は温度、x と y は位置です。定常状態を考えるので関数は x と y だけで、時間 t は含みません。また、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:31:29</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">どこかに熱源または熱損失があると仮定します。今日の目的は、これまで学んだ FVM の概念を2次元場へ拡張することです。そして同じ方法で2次元定常熱伝導方程式を離散化し、先週と同じように数値シミュレーションも試します。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:32:00</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">サンプルコードをいくつか渡すので、できれば結果も考えてみてください。さらに、熱伝導方程式の離散化方程式を 1D から 2D へ、さらに 3D へと拡張することも考えてください。では始めましょう。出発点はいつも同じで、まず支配方程式を考えます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:32:31</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">これを支配方程式と呼びます。定義はここに書いてあります。時間は t、座標は x と y、温度はここにあります。一般性のため、温度 T を t, x, y の関数として書いています。熱損失は Q(x, y)、長さは L、T_L は低温、T_H は高温です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:33:05</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ρC_p は体積比熱です。では支配方程式はここに書けます。ノートに書いてください。一般形の支配方程式です。熱の蓄積項と、もし書けるなら今すぐ書き始めてください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:33:39</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">熱の蓄積項とラプラシアンの熱伝導項が釣り合います。したがって支配方程式は ρC_p と T の時間微分、そして熱伝導項との釣り合いになります。λ は熱伝導率で、T の x と y に関する2階偏微分が入ります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:34:16</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">これが出発点です。また、この式を導くときには熱損失や熱吸収を考えていませんでしたが、一般的には熱源や熱吸収を表す項を追加できます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:35:07</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ここで言っているのは熱のことです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:35:43</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">それから α はもちろん λ / (ρC_p) です。単位は m^2/s で、これは熱拡散率と呼ばれます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:36:15</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">これは温度伝導、熱伝導がどれくらい効率よく起こるかを表します。もちろん値が大きいほど熱の伝わり方は速くなります。これがより一般的な形です。そしてこれを拡張すると、この項はラプラシアンですから、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:36:51</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">任意次元では通常、ラプラシアンを使ってこのように書けます。T の時間微分は、拡散率 × ラプラシアン × T の形です。この方が式を覚えやすいです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:37:23</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">皆さんの多くは、もしかすると覚える必要はないかもしれません。例えば私も、皆さんの背景がいろいろ違うように、マクスウェル方程式は研究で使いません。磁場を解くことはありません。ですからマクスウェル方程式をすぐには思い出せません。同じことで、これに慣れていなくても全く問題ありません。ただ、簡単な形で覚えるのは良いことです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:37:54</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">とにかく今日の出発点はここです。もちろん定常状態を考えるので、温度は時間で変化しません。したがって ∂T/∂t の項を落とせます。すると式はこのようになります。T の x と y に関する偏微分だけです。とても簡単です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:38:24</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">すみません。q の項を反対側へ移せば、q / λ の形になります。とても似ていますよね。前回は1次元でしたから、x に関する2階微分だけでした。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:38:55</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">しかし今は2項あります。そこが違いです。前回のものは ODE、常微分方程式と呼ばれますよね。でもこちらは変数が2つ、独立変数が2つあります。ですからこれは、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:39:27</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">常微分方程式ではなく、偏微分方程式、PDE です。偏微分方程式です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:40:06</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">では今日はこれを解きます。これが今日の目標です。前回と同じように、いくつかのケースを考えましょう。数値シミュレーションでは条件を変えるのが簡単だからです。次のページにケース1、ケース2、ケース3があります。実際の現象に対応するもっと良い境界条件を設定したかったのですが、ここでは良い例がなかったので、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:40:38</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">少しランダムなケースですが、基礎を理解するには十分です。ケース1は境界で温度を固定する条件です。上側は T_H に保ちます。模式図に T_H とあります。残りの辺、正方形なのであと3辺ありますが、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:41:10</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">それらはすべて低温 T_L に保ちます。図の通りです。ここが高温で、こちらが低温、低温、低温です。そうすると熱はここからこの方向へ、そしてこちらの方向へ伝わると予想されます。数値シミュレーションでこのように値そのものを固定する条件は、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:41:41</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ディリクレ条件と呼ばれます。日本語でもディリクレ条件と言います。英語での正しい発音は分かりませんが、変数の値が一定のときです。たぶん書いてありますね。いや書いていないかな。境界条件にはもう1種類あって、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:42:11</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">それがノイマン条件です。Neumann、つづりは N-E-U-M-A-N-N だったと思います。もう一つの境界条件です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:42:46</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">傾き、つまり勾配が定義される場合、それをノイマン条件と呼びます。また、このケースでは熱損失 Q は一様な値だと仮定します。したがってどんな値でも構いません。繰り返しになりますが、支配方程式はすでに分かっています。この場合、この式ですね。なぜこんなに埋める場所が多いのか分かりませんが。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:43:16</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ここは大丈夫ですよね。では同じです。境界条件はこの4辺です。上側は一定値なので、x は何でもよく、y = L のとき温度は T_H です。下側は x が何でもよく、y = 0 のとき、そして左右両側では x = 0 または x = L のとき、任意の y に対して低温になります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:44:07</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">これが境界条件です。このシミュレーションではこの条件を入れます。これをケース1としましょう。では次、ケース2です。これも境界で温度を固定するケースで、ほとんど同じですが、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:44:39</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">境界条件が違います。上辺と下辺を T_L に保ち、左右両側を高温 T_H に保ちます。すると熱はこのように伝わるでしょう。これを見てみます。熱損失 q は一定です。支配方程式は同じなので省略します。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:45:10</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">方程式は同じで、境界条件だけが違います。左右両側、つまり x = 0 および x = L の任意の y で温度は高温 T_H です。そして上下、つまり y = 0 および y = L の任意の x で温度は低温 T_L です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:45:53</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">これが別の境界条件です。さらにもう1つ、ケース3は対流による熱損失を考えるケースです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:46:31</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">先ほどまでは表面からの熱損失を、表面温度固定という形で与えていました。つまり境界温度が固定されていました。しかしここでは、対流による熱損失を別のパラメータで表します。すると境界上の値も解くべき未知変数になります。これが考える条件です。4辺すべてで対流熱損失を仮定し、周囲温度、ambient つまり空気の温度は</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:47:03</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">T_H と仮定します。つまり、金属板が空気中にあると考えるわけです。周囲は空気で、その空気温度は一定です。空気と板の間で対流による熱損失が起こる、という条件です。思い出してほしいのは、対流は表面温度と空気温度の差による熱損失だということです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:47:33</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">対流ですね。その熱損失は、表面温度 minus 基準温度 T_air に比例します。この差に基づいて熱損失を決めます。これを考える条件です。では私たちが解く対象はこれです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:48:07</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">条件が変わっても支配方程式自体は変わりません。ですから同じ方程式をもう一度書く必要はありません。ただし境界条件は変わります。どんな境界条件を使うか見てみましょう。各辺からの対流熱損失 Q は、Q = h(T - T_H) という式で表されます。h は熱移動の効率を表す係数です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:48:39</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この h を熱伝達係数と呼びます。表面近傍では、これは金属、こちらは空気で、T_H が空気温度です。対流による熱移動が Q で表されます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:49:15</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">そしてその熱損失は、表面での熱伝導とつり合わなければなりません。ここでは heat flux と書いてありますが、意味としては表面での熱伝導です。表面での熱流束は、熱伝導率を使ったフーリエの法則で表されます。したがって、表面での熱流束を考えると、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:50:02</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">x = 0 や x = L の近傍では x 方向の温度勾配、y 方向なら y 方向の温度勾配を取る必要があります。ですから λ ∂T/∂y、すみません、x = 0 や x = L、あるいは y = 0 や y = L で、考える方向に応じて熱伝導は温度勾配で表されます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:50:38</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">つまり、表面からの熱伝導が対流による熱損失とつり合う、これが新しい境界条件になります。境界条件は4つ必要で、熱伝導項と熱損失項を釣り合わせます。対流による熱損失は h × 温度差です。x = 0 の面では、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:51:20</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">熱伝導はこの向きで、Q_d はこの向き、Q はこの向きです。Q_d 側にはマイナスが付くので、-λ ∂T/∂X を使います。向きが反対だからです。そして h を掛けます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:51:51</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">さらに温度差を考える必要があります。ここでの表面温度は x = 0、任意の y の T です。したがって温度差は T(0, y) - T_H です。空気温度は T_H です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:52:24</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">反対側は逆になります。図で描くと、x がこちらで L がこちら、壁はここです。対流はこの向き、熱伝導もこの向きです。したがって表面位置 x = L, y の温度を使います。ここでは熱伝導側の符号が正になり、温度差 T(L, y) - T_H が熱損失になります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:53:22</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">同じように、下側の面も考えてみましょう。y はこの方向で、下側の面はここです。温度は任意の x に対する T(x, 0) です。熱伝導も対流もこの方向ですから、ここでは -h × 温度差の形になります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:53:53</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この面での温度は任意の x に対する y = 0 の値で、そこから T_H を引きます。もう1つは上側、y = L の面で、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:54:31</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">対流と熱伝導の向きはこの方向です。どう表せるか考えてみてください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:55:54</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">これが解きたい条件です。したがってこの3つのケースを考えます。次のステップは、これらの式を離散化することです。今解いている支配方程式は実は全部同じですよね。3つのケースすべてで同じ式を解いています。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:56:27</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">とても簡単すぎると思うかもしれませんが、実は非常に重要な方程式です。ここに補足があるのはそのためです。一般にこの形で表される式は、ラプラス、いやポアソン方程式と呼ばれます。これはスカラー量の場に対する方程式です。位置に応じて決まるスカラー場 φ のようなものです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:57:24</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">このような式は多くの現象に現れます。だからこれを解くことは非常に基礎的で重要です。熱伝導だけでなく、流体シミュレーション CFD でも同じ式が出てきます。圧力のポアソン方程式を解く必要があります。したがって、これを解くことは非常に基本的で重要です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:57:58</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">特別な場合として、右辺が 0 のときはラプラス方程式と呼ばれます。これもいくつかの場面で現れますが、一般形はポアソン方程式です。Poisson はこれを導いた人の名前ですね。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:58:30</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ですから今日の背景的な目的は、このポアソン方程式を解くことです。対象は熱伝導方程式ですが、実際の狙いはより一般的に、数学的にポアソン方程式を解くことです。そこが学びたいポイントです。では次へ進みましょう。理論部分はかなり簡単で、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:59:03</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">実際には前回と同じですが、どう離散化するかを見てみましょう。離散化方程式を導く過程は、まずグリッドを定義し、前回は1次元でしたが今回は2次元へ拡張し、FVM を用いて元の支配方程式を積分し、境界での勾配を評価して離散化方程式を得る、という流れです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:59:41</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">そして C4 は小さな部分ですが、反復法を適用し、最後にプロットを描いてプログラムにします。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:00:16</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">では最初の部分を見ましょう。最初に、模式図を使って制御体積、グリッド、ノードを定義する必要があります。ここが実は最も重要です。休憩に入る前に、この点を理解してください。前回は1次元の領域を n 個に分けましたよね。今回は2次元ですから、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:00:49</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この2次元の対象を n × n 個に分けます。x 方向に n 個、y 方向にも n 個の小片に分け、位置を表すために2つの番号を付けます。それを i と j とします。x 方向が i、y 方向が j で、位置 (i, j) の要素を ij と表します。これが定義です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:01:26</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">x 方向の大きさも同じように Δx_i、Δx_1、Δx_2 … Δx_n と表し、y 方向も Δy_1、Δy_2 … Δy_n とします。位置 (i, j) の区画は Δx_i と Δy_j で表されます。これが定義です。そしてここで、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:02:02</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この領域を制御体積として定義します。いま考えている制御体積です。この制御体積での温度は、もちろん2つの添字を使って T_ij と表します。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:02:36</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">i は x 方向のノード番号、j は y 方向のノード番号です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:03:18</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">少し変な感じがするかもしれませんが、x = 0 の境界では i = 0、同様に y = 0 の境界では j = 0 とします。つまり境界は 0 と定義します。反対側の境界は n + 1 です。図には出ていませんが、こちら側にも別のノードがあります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:03:49</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">例えば x = 0, y = 1 のような点があり、反対側には x に関して n + 1 の境界値があります。つまり 0 と n + 1 が境界の値です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:04:33</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">T_ij はもちろんノード ij における温度です。2次元なので、位置と温度を表すのに2つの添字を使います。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:05:11</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">前回は小文字を使っていたかもしれませんし、一貫していなかったかもしれません。前回は i+1 や i-1 で表していましたが、今回は意図的に別の書き方を使っています。この講義のかなり最後の方で学ぶ話ですが、多くの流体シミュレーションではスタガード格子系を使います。その系では、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:05:58</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">制御体積はさまざまな添字で表されます。中心にあるノードは大文字 I, J で表し、境界にある値は小文字を使うことが多いです。このように大文字と小文字の組み合わせで異なる位置を表現します。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:06:30</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">だから文字を使い分けています。今は温度計算のためのノードを中心点で定義しているので、意図的に大文字 I, J を使っています。Δx_i は制御体積 ij の x 方向の長さです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:07:13</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">Δy_j は制御体積 ij の y 方向の長さです。そして n は x 方向の分割数、各方向の総ノード数です。したがって総ノード数は n × n になります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:07:50</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">等間隔格子なら、単に長さを n で割ったものです。ではこのグリッド系を使って方程式を導きますが、その前にいったん</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:08:22</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">最後まで一気に行くより、ここで短い休憩を取りましょう。そのあとすぐ再開します。</p></div></article>
+<h3 class="transcript-part-title">Part II</h3>
+<article class="transcript-entry"><div class="transcript-time">00:00:02</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">では、始めましょう。この部分から、離散化方程式を導きます。ここが今日の講義で実は最も重要な部分です。20分ほどで、この手順全体を理解しましょう。これが分かれば、通常の</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:00:32</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">数値シミュレーション、流体シミュレーションでも、ほぼ同じ理論と導出で対応できます。だから理解してください。見てきたように、一般形の支配方程式はあの式です。T の偏微分が x と y の2方向にあります。手順は同じで、この式に FVM を適用します。つまり必要なのは体積積分です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:01:04</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この形の方程式を体積積分します。2次元なので x と y の両方向で積分します。前回は1次元だったので x 方向だけでした。ここに図の拡大版があります。考えている制御体積は中心にあり、その周囲に近傍点があります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:01:34</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">中心は i, j で表し、定義上この長さが Δx_i、この長さが Δy_j です。この体積について積分したいわけです。そして周囲の値も必要なので、x 方向と y 方向を定義します。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:02:04</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">x 方向では左が i-1、右が i+1、y 方向では上が j+1、下が j-1 です。これが定義です。さらに、それぞれの隣接セルのサイズ Δx_{i-1}, Δx_{i+1}, Δy_{j-1}, Δy_{j+1} も定義します。前回はこの方向だけでしたが、今回は y 方向にも広がっています。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:02:38</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">これが定義です。そしてガウスの定理を使って、2階偏微分を1階偏微分に落とします。そのため境界値が必要で、制御体積の境界を同じように定義します。左側を West、右側を East、上側を North、下側を South とします。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:03:10</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">North と South は今回新しく出てくる点です。この dV による制御体積積分は、x と y の両方向への積分を意味します。そこが違いです。では1つずつ見ていきましょう。まず左辺の x に関する項はこのように書けます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:03:48</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">最初の項、つまりこの2階微分項を考えましょう。x と y で積分し、ガウスの定理を x 方向に使うと次数を1つ落とせます。つまり1階微分になります。ただし x 方向の境界値を考えなければなりません。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:04:21</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">x 方向に積分するので、取るべき値はこの境界値です。したがって East の値 minus West の値となり、さらに y 方向について積分するので、単に側面長 Δy_j を掛けます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:04:52</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">これがこの式の意味です。つまり境界 E での値から境界 W での値を引き、Δy_j を掛ける。2階の項なので両方向で積分しており、そのため Δy_j が付いています。では両側の勾配をどう評価するか考えましょう。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:05:32</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">East における ∂T/∂x は、図を見るとこの側です。ここが T_{i+1,j}、ここが T_{i,j} ですから、温度差は T_{i+1,j} - T_{i,j} です。2次元なので添字が2つ必要です。そして勾配はこの2点間の距離で割ったものです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:06:08</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">同じように距離は、0.5Δx_{i+1} + 0.5Δx_i です。これが East 位置での勾配です。同じように、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:06:42</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">West 側も考えてみましょう。ノートに書いてみてください。同じやり方です。West 側ではこの2点の勾配を考えます。こちらが T_{i,j}、もう一方が T_{i-1,j} です。したがって温度差は T_{i,j} - T_{i-1,j} です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:07:25</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">距離は 0.5Δx_i + 0.5Δx_{i-1} です。前回と全く同じですが、両方向を考える必要があるだけです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:08:10</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">では2つ目の項、y 方向の項も同じようにやってみましょう。この項は x と y の両方で積分しますが、図では縦方向に積分することになります。したがって、やはり1階微分へ落とし、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:08:40</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">こちらとこちらの境界値を取って、側面方向の長さを掛けます。つまり y に関する1階微分で、North と South の値を取り、制御体積の幅を掛ける形になります。この意味も同じで、North 側の勾配と South 側の勾配です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:09:23</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">では少し時間をあげるので、North と South の勾配の離散化形を、今やったのと同じようにノートに書いてみてください。理解確認のためです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:10:00</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">両方見ながらで構いません。同じように、これら2つの項の値を使って勾配を表します。方程式そのものではなく、勾配を表す項です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:10:36</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">何か分からなければ手を挙げてください。こちらから行きます。そんなに深刻な内容ではないので、とにかくやってみてください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:11:20</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">これが分からないと、この先は全部分からなくなります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:12:52</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">分からない人はいますか。大丈夫ですか。小泉さんが「理解したくない人を理解させることはできない」と言っていたのを思い出します。菅直人さんも演説で「なぜ民営化、民営化しなければならないのか」と言っていました。YouTube で見ました。小泉さんは長い間何度も説明していたけれど、理解したくない人を理解させることはできない、と。今の私はまさにその状況です。皆さんが理解しようとしないと分かりません。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:13:24</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">まあ、それは皆さん次第です。大丈夫ですか。今これを録音しているので、あとで全部翻訳してウェブに載せます。変なことは言えませんね。終わりましたか。はい、では続けましょう。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:14:30</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">その距離は y 方向で、0.5Δy_{j+1} + 0.5Δy_j です。難しくありませんよね。同じように South 境界でも、もう図を見なくてもよいと思います。中心から下側の点までを考えればよいです。下側は負の方向なので j-1 です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:15:06</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">したがって距離は 0.5Δy_j + 0.5Δy_{j-1} です。これだけです。とても簡単です。右辺は定数値なので、そのまま Δx_iΔy_j を掛ければよいです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:15:45</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">はい、それで終わりです。これで4つの項を導きました。あとはそれらをまとめるだけです。1つの式に要約しなければなりません。1次元のときと同様に、符号をそろえるために項の順序をひっくり返します。ここにたくさん式を書きましたが、皆さんは今導いた項を</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:16:25</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">整理して考える必要があります。まず x 方向は (T_{i+1,j} - T_{i,j}) でした。距離は 0.5Δx_{i+1} + 0.5Δx_i です。少し小さいですが、この2点がつながっていることを思い出してください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:16:55</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この点とこの点がつながっています。ですから、常にどの方向を考えているのかを意識してください。East は正の方向です。West 側では順序を反転して T_{i-1,j} - T_{i,j} とします。距離も同様に、どこにノードがあるかを考えて</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:17:26</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">0.5Δx_{i-1} + 0.5Δx_i です。そして元の式ではこれに Δy_j が掛かっていました。これが x 方向の項です。y 方向も同じで、North と South を考えます。North は正の方向なので、T_{i,j+1} - T_{i,j} を</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:18:06</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">対応する距離で割ります。距離は 0.5Δy_{j+1} + 0.5Δy_j です。South 側では順序を変えて T_{i,j-1} - T_{i,j} とし、距離は</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:18:42</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">0.5Δy_{j-1} + 0.5Δy_j で、これに Δx_i を掛けます。簡単ですよね。すべてとても系統的です。導出を理解すれば難しくありません。これが熱源項と釣り合います。つまり右辺は Δx_iΔy_j に比例します。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:19:27</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">そして、この係数もほとんど同じ形になります。係数は4つです。では C_E、C_W、C_S、C_N と定義しましょう。同じやり方で定義できます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:19:58</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">もちろん C_E は East 側、つまり正の方向です。West 側が C_W、North 側が C_N、South 側が C_S です。覚えられますよね。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:20:30</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">すると簡略化した式はこのように書けます。ここでも同じく非常に系統的な規則が見えます。East 側の値 minus 現在の位置、West 側も同様、North 側も current を引く形です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:21:01</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">North は正、South は負という関係が見えます。とても系統的です。係数の値も、例えば C_E は、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:21:31</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この黄色の部分を見ると、Δy_j を 0.5Δx_i + 0.5Δx_{i+1} で割ったものです。他も同じです。C_W もそうですし、C_S もそうです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:22:08</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ここは重要なので、混乱を避けるために書いておきます。あとでプログラムに入力する必要があるからです。元の式を見れば簡単に書けますし、East と West がどちらとつながっているかを見れば分かります。West 側では</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:22:41</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">分母には Δx_{i-1} が入り、North 側では分子は Δx_i、分母には上側なので Δy_{j+1} が入ります。South 側は負の方向なので、Δx_i を</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:23:19</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">0.5Δy_j + 0.5Δy_{j-1} で割ったものです。色も付けておきました。これで係数が得られれば、プログラムに打ち込んで計算できます。では、もう少しです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:23:54</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ここで変数を全部定義しました。次に解きたいのは T_{i,j} に関する式です。4方向すべてに T_{i,j} が含まれているので、まとめなければなりません。すると C_E + C_W + C_N + C_S が T_{i,j} に掛かる係数になります。これを右辺へ移します。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:24:24</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">したがって係数は C_E + C_W + C_S + C_N です。これが T_{i,j} に掛かります。ほかの項は右辺へ移り、それぞれ対応する隣接ノードの値に係数が掛かる形になります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:25:03</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">C_E は East 側ノードの値に掛かるので T_{i+1,j}、C_W は T_{i-1,j}、North は y の正方向なので T_{i,j+1}、C_S は T_{i,j-1} です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:25:44</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">そして右辺にはマイナスが付きます。はい、これが式です。1次元のときと同じように、これらの和を C_0 と定義します。つまり C_E + C_W + C_N + C_S = C_0 です。では全体を C_0 で割れば、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:26:15</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">最終的に、(1/C_0)[C_ET_{i+1,j} + C_WT_{i-1,j} + C_NT_{i,j+1} + C_ST_{i,j-1}] - qΔx_iΔy_j/(λC_0) となります。これが今日最も重要な式です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:27:49</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ではこの式の意味を手短に見ましょう。4つの係数を定義しましたね。そしてそれぞれにノード値が掛かります。図と見比べると、今求めたいのはこの T_{i,j} です。この値がどう決まるかが分かります。例えばこの部分、これは T_{i+1,j} です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:28:23</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">つまり隣の温度が T_{i,j} の値に影響します。その重みが C_E です。East 側だからです。同じように、反対側の T_{i-1,j} も C_W によって T_{i,j} に影響します。North 側も</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:29:03</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">C_N によって、South 側も C_S によって影響します。つまり各ノードは、格子解像度やメッシュサイズの定義に応じて、考えているノード値に部分的に影響を与えます。これがここで導いたシステムです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:29:57</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">1次元の場合も思い出してください。T_i がここにあり、T_{i-1} がこちら、T_{i+1} がこちらでした。この値は C_E によって、こちらの値は C_W によって T_i に影響しました。式は 1/C_0 に</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:30:31</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">C_ET_{i+1} + C_WT_{i-1} を掛ける形でした。これは書かなくていいですが、要するに同じことです。この影響関係が2次元に拡張されただけです。ではこのシステムが分かれば、一般化できます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:31:05</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">1D から 3D までどう書けるか考えてみましょう。1D は前に導いた通りです。C_E は East 側、つまり正の方向の値、C_W は West 側、負の方向の値です。ここでは熱源項は省略します。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:31:36</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">温度だけ考えるとこのような式になります。2次元で2つの添字に慣れた今なら、1次元はずっと簡単です。先週は少し難しかったかもしれませんが、今は East と West を考えるだけです。2次元もまったく同じで、係数で割り、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:32:08</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">4方向を考えればよいわけです。C_ET_{i+1,j}、C_WT_{i-1,j}。East は正、West は負です。そして縦方向では、North と South からの熱移動を考えます。North は正方向なので j+1、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:32:45</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">South は負方向なので j-1 です。熱源項を無視すれば、このように非常に系統的です。これをしっかり理解すれば、もちろん3次元にも拡張できます。書くのは少し時間がかかりますが、考えてみましょう。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:33:15</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">3次元でも、まだ式自体は導いていませんが、やることは同じです。East と West、North と South に加えて、もう1方向があります。ここでは R と L で表します。その方向も考えればよいだけです。C_E は i の正方向です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:33:47</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">3次元になると j, k の2つの添字も付きます。C_W は負方向、North は j+1、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:34:20</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">South は j-1 の方向です。ここまでは2次元と同じで、ただもう1つ添字が増えるだけです。そして追加されるのがもう1方向で、係数 C_R を定義して、正の方向なら T_{i,j,k+1}、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:34:57</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">負の方向なら C_LT_{i,j,k-1} です。このように、意味とルールを理解していれば3次元にも拡張できます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:35:32</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">さらに言えば、コンピュータ上では4次元や5次元にも拡張できます。1次元と2次元は導出しましたが、3次元はしていません。ただ、確認のために係数の定義だけ一部書いておきました。C_0 は単にすべての係数の和です。2次元のときもそうでした。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:36:08</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">つまり C_E、C_W、C_N、C_S、C_R、C_L の和です。これが C_0 です。2次元で係数をどう定義したかを思い出せば、3次元でも想像できます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:36:40</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">3次元では X, Y, Z で積分することを想像してください。手順は同じです。x 方向の項なら、残る積分は y と z なので、分子には Δy_jΔz_k が来ます。距離の定義は同じで、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:37:20</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">0.5Δx_{i+1} + 0.5Δx_i です。同じようにして他の係数も導けます。あとでやってみてください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:37:50</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">そして C_R と C_L は新しく加わる係数です。考えるべき項は z に関する偏微分項で、それを X, Y, Z で積分します。そうすると分子には、z が落ちて残りの</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:38:27</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">Δx_i と Δy_j が入ります。距離は正方向なら 0.5Δz_{k+1} + 0.5Δz_k です。この形で他の係数も定式化できます。C_L や C_S、C_N、C_W もやってみてください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:39:02</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">次のページには、式を導くのを助ける模式図があります。頭の中で数値格子がイメージできないなら、それを見れば大丈夫です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:39:49</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">よろしいですか。これで3次元への拡張の追加部分は終わりです。ただ、今考えているのは2次元なので、2次元へ戻って式の書き方を仕上げましょう。式を導いたあとの最後のステップは、反復法の形へ直すことです。さっきの式をもう一度見てください。T_{i,j} はこのように書けます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:40:49</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ただしこの式にはまだ未知の項があります。前回は Jacobi 法を学び、未知数には予測値を使いました。予測値は例えば上付き P を付けて T^P_{i+1,j} のように表します。すると Jacobi 法では 1/C_0 に</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:41:26</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">C_ET^P_{i+1,j}、C_WT^P_{i-1,j}、C_NT^P_{i,j+1}、C_ST^P_{i,j-1} を使います。まだこれらの値は分からないので、予測値を使うわけです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:42:06</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">これが Jacobi 法です。ここで別の方法も紹介します。前回はこれを学びましたが、今回は Gauss-Seidel 法も見せたいと思います。これは商用ソフトでも非常によく使われます。Jacobi 法は収束解を得るまでに時間がかかるので、基本的にはあまり使われません。しかし Gauss-Seidel 法は多くの場合で今でも使われています。知っておくとよいです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:42:42</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この式を見ると、計算は i = 1 から n、j = 1 から n へループして進むことが想像できます。i はこの方向、j はこの方向へ進んで、最終的に n, n に達します。そうすると、ある点の値を計算するとき、ループはこの側から来ているので、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:43:15</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">負の側にある必要な値は、すでに決まっています。T_{i,j} を計算するとき、正の側の値、つまりこのあたりの値はまだ計算されていませんが、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:43:45</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">負の側、つまりこちらやこちらの値はループの中ですでに求まっています。だからそこには更新済みの値を使えます。一方で正の側はまだなので予測値を使います。この組み合わせが Gauss-Seidel 法です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:44:23</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">式の中では、最初の項、正の側はまだ確定していないので予測値を使います。しかし2つ目の West 側、負の側は前のループですでに確定しているので、これはもう予測値ではなく、その場の計算値 T_{i-1,j} を使います。y 方向でも同じです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:44:55</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">North は正の側なのでまだ確定していません。だから予測値を使います。South は下側なので、J-1 の更新済み値を使えます。さらにもう1つテクニックがあります。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:45:31</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">この2つが Gauss-Seidel 法で組み合わされます。基本の考え方は、すでに決まった値を使うということです。つまりその項はもう予測値ではありません。ただし計算の発散を避けるために、緩和法も使います。これらを用いて計算した値を一時値 T*_{i,j} とします。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:46:02</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">そしてその一時値と、予測に使っていた値との重み付き平均を取ります。β は 0 から 1 の係数です。もし β = 1 なら後ろの項は消えて、新しく計算した値だけを使うことになります。もし β = 0.5 なら、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:46:36</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">新しく計算した値の半分と、予測値の半分を次の値として使います。こうして β を変えることで、滑らかに値を更新できます。これは収束解を得るための数値テクニックです。この β は緩和係数と呼ばれます。商用ソフトでもこの値の設定を見ることができます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:47:09</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">例えば OpenFOAM や ANSYS Fluent では、緩和係数がどれくらいに設定されているかを見ることができます。Gauss-Seidel という名前は見えないかもしれませんが、通常これは SOR、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:47:39</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">つまり逐次過緩和法と呼ばれます。SOR という言葉を見たら、緩和係数を決めるパラメータがあるはずです。ここまでの導出について何か質問はありますか。大丈夫ですか。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:48:11</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">質問があれば構いません。では残り20分くらいで、またプログラムをやってみましょう。基本式はすでに導きました。簡単なのは Jacobi 法です。サンプルプログラムにこの式を実装してください。では Moodle のサイトへ行って、program material を開いてください。ちなみに、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:49:05</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ここに講義ノートがあり、講義で話している内容の文字起こしも全部あります。必要なら使ってください。日本語訳もありますし、前回分だったと思いますが、要約も載っています。理解を確認するために使ってください。必須ではありませんが、理解を早めるのに役立ちます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:49:35</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">今日のものは、たしか Lesson 4、Two-Dimensional Steady-State Heat Conduction です。ここへ行ってください。そうするとこのページが見えます。答えはすでにここにありますが、これはダウンロードしないでください。ダウンロードするのは `2d.py` です。この `2d.py` に演習部分があります。ここは飛ばします。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:50:24</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">クリックするとどこかにダウンロードされます。どこへ保存されたか確認してください。今ダウンロードされました。これを開くと、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:51:08</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">Q1 から Q6 までの演習があります。基本構造はすでに Python で書いてあるので、それを使って構造をすばやく理解し、コードを更新できます。主に足りないのは、今日導いた係数 C_E, C_W, C_N, C_S の定義と、T_{i,j} の式です。そこを正しく書いてください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:51:43</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">Q3 から Q6 は発展的です。少し難しいかもしれません。ですから Q1 と Q2 に集中してください。正しい式を書けばよいです。ここにその項がありますが、まだ書かれていません。947、40行目、いや 48 行目あたりです。正確ではないかもしれませんが、このあたりです。例えば C_E, C_W, C_N, C_S はすでに変数としてありますが、式が正しくありません。更新してください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:52:27</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">さらに T_{i,j} の計算部分もダミーの式になっています。温度分布が得られるように式を更新してください。その前に、まずプログラムを一度走らせて、エラーがないことを確認してください。実行すると図が出ると思いますが、正しくありません。上側だけが高温になっているはずです。可視化の確認のために見てください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:53:04</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">それではコード更新を始めてください。10分か20分ほど取りましょう。質問があれば手を挙げてください。技術的な質問でも構いませんし、必要なら友達と話しても大丈夫です。英語、日本語、中国語、どれでも構いません。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">00:53:51</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">質問があれば手を挙げてください。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:09:15</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">では Q1 と Q2 の基本部分、コードへの実装方法だけ説明します。まずこれが定義した係数です。理論的な導出に基づいてこの係数を決めました。そして最後にこの式を得ました。これが最終形です。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:09:45</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ですから、単にこれをコードに入れればよいです。係数については、もともと1つだけ入っていました。y を割るところは半分にする必要がありますね。つまり 2 倍にするような形です。それから、これはあまり良くなくて、2次元の規則なのに係数が</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:10:16</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">1次元として定義されています。そこを更新してください。今は x 方向も y 方向も一様格子なので、同じ係数でも結果は変わりませんが、正しくはありません。ここではこの係数を使っていますが、本来は2次元の係数であるべきです。そして式全体とも整合していなければなりません。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:10:47</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">そしてこの部分に、さっきの式を入れます。East 側の値、West 側の値、North 側では j が正、South 側では j が負、という形です。そこが理解できれば実装できます。今は上側境界がヒーターで、他の3辺は同じ温度です。実行すると、このような温度分布が得られます。上がヒーターです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:11:17</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">残り3辺は冷やされています。直感どおりの分布になりますよね。では補足として、皆さんの世代では最近 AI の発展がとても大きくて、非常に速いですよね。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:11:47</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">教授たちもみんな驚いています。ちょっと共有します。皆さんがこの演習をしている間に、同じコードを書くよう Codex に頼んでみました。Codex は、MacOS でも Windows でも、ターミナルで起動できます。私が出した指示は、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:12:22</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">「2次元定常熱伝導方程式を解く Python コードを書いて、結果をグラフで可視化し、この境界条件を使うこと」というだけです。私たちは式の導出に2時間くらい使いましたが、Codex はすぐにコードを書き始めます。良い点は、単にコードを書くのではなく、ファイルそのものを生成することです。そして生成されたのがこのファイルで、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:12:58</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">サンプルコードで見たものとほとんど同じです。実行すると少し遅いですが、このような分布が得られます。境界条件の値は明示していないので少し違いますが、基本的なコードは非常に簡単に生成されます。ただし重要なのは中身を理解することです。開くと支配方程式が見えますが、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:13:29</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">すぐには理解できないかもしれません。ただ、ここで使っている支配方程式は少し違う形です。たしかこれは有限差分法を使っています。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:14:00</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">式の導き方にはいくつか流儀があります。特に指定しなければ、こういう結果になることがあります。見た目はほとんど問題なく、分布も同じですが、少なくとも中身は理解する必要があります。そのあと、もう1つ別の指示も出しました。どこだったかな、手法を指定したものです。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:15:12</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">はい、これです。「今のものは残したまま、典型的な C_W, C_E などの係数を使った有限体積法ベースの新しいコードを書いてほしい」と指定しました。すると生成されたのがこれです。これは本当に、私たちが導出したのと同じ形になっています。4つの係数を使って、</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:15:44</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">West、East、South、North の各項がこのように表されています。つまりこの演習でやったことと本当に整合しています。さらに Jacobi 法で書くようにも指定しました。結果は実際には同じです。しかし、このようなコードは非常に速く作れます。もちろん使ってよいですが、少なくとも</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:16:15</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">ここに何が書かれているかをよく理解していなければ、自分の研究の中で修正したり更新したり実装したりはできません。プログラムについて何か質問はありますか。なければ、少し早いですがここで終わりにしましょう。残ってプログラムを試したい人はもちろんどうぞ。技術的なところは手伝えます。</p></div></article>
+<article class="transcript-entry"><div class="transcript-time">01:16:46</div><div><span class="transcript-speaker">発言者未記載</span><p class="transcript-dialog">しばらくここにいますので。</p></div></article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>作成日: 2026-05-05 16:19:04 JST</p>
+      <p><a href="html.md">作成指示</a></p>
+    </footer>
+  </body>
+</html>

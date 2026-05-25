@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lecture Record</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="lang-switcher">
+      <a href="index_jp.html">Japanese</a>
+      <a href="index_en.html" class="current">English</a>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">Lecture Archive</p>
+        <h1>May 15, 2026 Lecture Record</h1>
+        <p class="lead">A static archive that preserves the full summaries and transcripts for each lecture session.</p>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="toc">
+        <p class="toc-title">Contents</p>
+        <ul><li><a href="#session-1">Session 1: 05-15 Lecture: 1D Unsteady Heat Conduction - Explicit vs. Implicit Methods</a></li><li><a href="#session-2">Session 2: 05-15 Lecture: Explicit vs. Implicit Methods in Heat Conduction</a></li></ul>
+      </section>
+
+      <section id="session-1" class="card">
+        <div class="card-header">
+          <h2>05-15 Lecture: 1D Unsteady Heat Conduction - Explicit vs. Implicit Methods</h2>
+        </div>
+        <div class="card-body">
+          <div class="meta-grid"><div class="meta-item"><span class="meta-label">Date Time</span><p class="meta-value">Date Time: 2026-05-15 08:51:06</p></div><div class="meta-item"><span class="meta-label">Location</span><p class="meta-value">Location: [Insert Location]</p></div><div class="meta-item"><span class="meta-label">Instructor</span><p class="meta-value">Instructor: [Insert Name]</p></div></div>
+          <div class="note">
+            <p><strong>Summary</strong></p>
+            <p class="summary-text">This lecture provides a comprehensive review of the 2D steady-state heat conduction equation using the Finite Volume Method (FVM), followed by an in-depth introduction to the numerical simulation of the 1D unsteady heat conduction equation. The main focus is on tracking the temporal development of temperature distribution in a 1D metal bar. The lecture introduces and contrasts two fundamental numerical methods for solving unsteady problems: the explicit method and the implicit method. It details the discretization of the governing equation, including the new storage term, and explains how the choice of time step for spatial difference terms leads to either the explicit or implicit formulation. The lecture concludes by tasking students with creating flowcharts for both methods to solidify their understanding.</p>
+          </div>
+        </div>
+      </section>
+      <section class="card" aria-labelledby="summary-1">
+        <div class="card-header">
+          <h2 id="summary-1">Detailed Summary</h2>
+        </div>
+        <div class="card-body">
+          <div class="summary-text">Knowledge Points
+1. Review of 2D Steady-State Heat Conduction
+  Governing Equation
+  The lecture revisits the steady-state 2D heat conduction equation previously solved:   ∂²t/∂x² + ∂²t/∂y² = S  , where   t   is temperature and   S   is a source term. A typo in the slide (  t   instead of   ∂²t  ) was noted.
+  Finite Volume Method (FVM) Discretization
+  The process involves defining a grid where a point is denoted by indices (i, j). The temperature at this point is   T(i,j)  .
+The governing equation is integrated over a control volume.
+Using Gauss&#x27;s theorem, the second-order partial derivatives are reduced to first-order derivatives evaluated at the control volume faces (e.g., east, west, north, south).
+The final discretized equation for the temperature at a node T(i,j) is expressed as a function of its neighboring nodes (T(i+1,j), T(i-1,j), T(i,j+1), T(i,j-1)) and a source term, with coefficients CO, CE, CW, CN, CS representing the influence of each node.
+  Previous Case Studies
+  A brief review of three conditions previously simulated:
+    Case 1:     One side heated (top), with the other three sides at a low temperature.
+Case 2: Two sides heated (left and right), with the top and bottom at a low temperature.
+Case 3: A heat convection condition where the surrounding air temperature is constant, and boundary temperatures are calculated.
+The resulting temperature distributions for these cases were shown, illustrating heat transfer from high to low-temperature regions.
+2. 1D Unsteady Heat Conduction Simulation
+  Problem Definition
+  The lecture shifts focus from steady-state to unsteady (time-dependent) problems.
+The simulation is simplified to one dimension.
+The goal is to track how temperature T changes with both position x and time t. Temperature is a function T(x, t).
+  Governing Equation
+  The 1D unsteady heat conduction equation includes a storage term to account for the change in temperature over time.
+The equation is: ρ * Cp * (∂T/∂t) = λ * (∂²T/∂x²).
+  ρ * Cp * (∂T/∂t)   is the storage term.
+λ * (∂²T/∂x²) is the diffusion term.
+ρ (rho) is density, Cp is specific heat, and λ (lambda) is heat conductivity.
+  Boundary and Initial Conditions
+  Boundary Conditions (BC):   The temperatures at both ends of the 1D bar are fixed. One end is at a low temperature   TL   (  T(x=0, t) = TL  ), and the other is at a high temperature   TH   (  T(x=L, t) = TH  ).
+Initial Condition (IC): An initial temperature distribution must be prescribed. For this problem, the initial temperature at time t=0 is uniform and equal to the low temperature TL for all x (T(x, t=0) = TL).
+  Expected Temperature Development
+  The simulation will track the temperature profile as it evolves from the flat initial condition (  t=0  ) towards the linear steady-state solution (  t → ∞  ).
+At intermediate times, the temperature profile will show a gradual change, respecting the fixed boundary conditions.
+3. Discretization of the 1D Unsteady Equation
+  Grid and Node Definition
+  The 1D bar is divided into   N   control volumes.
+Nodes are defined at the center of each control volume, indexed by i. Temperature at node i is Ti.
+A new discretization parameter is introduced: the time step, Δt.
+  Integrating the Governing Equation
+  Using FVM, the governing equation is integrated over the control volume   Δx  .
+Diffusion Term (Right-Hand Side): Discretization is identical to the steady-state case, resulting in terms involving temperature differences with neighboring nodes (Ti+1, Ti, Ti-1).
+Storage Term (Left-Hand Side):
+  The time derivative   ∂T/∂t   is discretized using a first-order forward difference:   (T(n+1) - T(n)) / Δt  , where   n   is the time step index.
+After integrating over the control volume Δxi, the discretized storage term becomes ρ * Cp * ( (Ti(n+1) - Ti(n)) / Δt ) * Δxi.
+  General Discretized Equation
+  Combining the terms gives the general equation:   CO * (Ti(n+1) - Ti(n)) = CE * (T(i+1) - Ti) + CW * (T(i-1) - Ti)  .
+The coefficients are defined as:
+  CO = ρ * Cp / Δt   (Note: The instructor&#x27;s formula in the transcript appears to have missed   Δxi  , which is part of the integrated volume).
+CE = λ / (0.5 * (Δx(i+1) + Δxi)).
+CW = λ / (0.5 * (Δxi + Δx(i-1))).
+4. Explicit vs. Implicit Methods
+  Core Concept
+  The key difference lies in the time step (  n   or   n+1  ) at which the spatial difference terms (diffusion term) are evaluated.
+  Explicit Method
+  Definition:   The spatial gradients are evaluated at the previous time step,   n  .
+Equation: The temperature at the next time step Ti(n+1) is calculated explicitly using only known values from the previous time step n.
+  Ti(n+1)   =   (1/CO) * [ CE*Ti+1(n) + CW*Ti-1(n) + (CO - CE - CW)*Ti(n) ]
+Characteristics:
+  Computationally efficient per time step as it&#x27;s a direct calculation.
+Does not require an iterative solver. The next state is determined in a single step from the previous state.
+As visualized, the value at (i, n+1) depends on the values at (i-1, n), (i, n), and (i+1, n).
+  Implicit Method
+  Definition:   The spatial gradients are evaluated at the   current   (unknown) time step,   n+1  .
+Equation: The equation for Ti(n+1) now involves unknown temperatures of its neighbors at the same n+1 time step (Ti+1(n+1) and Ti-1(n+1)).
+  Ti(n+1) = (1/CD) * [ CE*Ti+1(n+1) + CW*Ti-1(n+1) + CO*Ti(n) ]  , where   CD = CO + CE + CW  .
+Characteristics:
+  This forms a system of simultaneous linear equations for all nodes at time   n+1  .
+An iterative method (like Gauss-Seidel, used in steady-state problems) is required to solve for the temperatures at n+1 because Ti(n+1) depends on Ti+1(n+1) and Ti-1(n+1), which are also unknown.
+As visualized, the value at (i, n+1) depends on the value at (i, n) and the unknown values at (i-1, n+1) and (i+1, n+1).
+  Announcements
+  The lecture on May 22, 2026, is canceled.
+A mini-quiz will be held on May 29, 2026, to assess understanding of the material.
+The quiz is for comprehension check, not for grading, to evaluate the effectiveness of the teaching.
+Questions
+[Insert Question/Confusion]
+Assignments
+ 1. Draw a flowchart for the explicit method, showing the computational loop for time development.
+ 2. Draw a flowchart for the implicit method, incorporating the iterative loop needed to solve for the temperature at each time step.
+ 3. Understand the difference between the explicit and implicit methods, including how the temperature at the next time step is determined in each case.
+ 4. Review the lecture content in preparation for the mini-quiz on May 29, 2026.</div>
+        </div>
+      </section>
+      <section class="card" aria-labelledby="transcript-1">
+        <div class="card-header">
+          <h2 id="transcript-1">Transcript</h2>
+        </div>
+        <div class="card-body">
+          <div class="transcript-list">
+            <article class="transcript-entry">
+              <div class="transcript-meta">
+                <span class="transcript-badge">Time: 00:00:08</span>
+                <span class="transcript-badge transcript-speaker">Speaker: Instructor</span>
+                <span class="transcript-badge">#001</span>
+              </div>
+              <p class="transcript-text">I&#x27;m going to turn the air conditioner on.
+00:01:17
+Then, let me start from here. The first part is the review, so you, I think, hopefully you put in the equations. Okay, just to recall your memory, please refer to your previous notebook, okay? What we have done last week is solving this equation, steady state two-dimensional equation. Sorry, there is a typo here, so it should be t. t should be here. The second partial derivative of t with respect to x and y is equal to some source term.
+00:01:49
+This is the equation that we are solving. Then, first we define this kind of grid to denote the temperature at some point. That is described as t i j, okay? The point here is i and j, okay? In the horizontal axis, the next neighboring point is the position i minus one, and the other one is i plus one. So, of course, here is T i plus 1, j. The same thing goes in the vertical direction.
+00:02:22
+Center is j, okay? Then one above, one grid above is j plus 1, and the bottom is j minus 1. This is the definition. Then in FVM, first we integrate this equation with respect to this control volume, and that&#x27;s the procedure, okay? So we need to integrate this one. So then let&#x27;s see the equation. If we integrate this equation with respect to x and y, we can reduce this order and this order like this, okay, based on Gauss&#x27;s theorem, okay?
+00:02:56
+That&#x27;s okay, right? The integral with respect to x of the second derivative goes to the first-order derivative, right, reduced by one order. And the second term is the derivative with respect to y and the integral with respect to y, so then we can reduce it to the first-order derivative. Then the latter part is just evaluating these two terms.
+00:03:27
+I don&#x27;t write everything, but the first term is enough, right? So then each part is this side, so the derivative is always the slope. So then simply t, the east side is the positive side, so t i plus 1 j minus t i j. Then the distance is half of two grids, so delta x i plus delta x i plus 1.
+00:04:06
+Yeah, that&#x27;s it. Then the other terms are also the same, so please write them by yourself. Then, if we derive all the terms, we can get the equation with respect to this term, T i j. So the final form of T i j is T i j is equal to 1 over C O. C O was the coefficient based on each node.
+00:04:39
+Then the other terms are neighboring terms. So E is the east side, so that is i plus 1, j. And the west side is the negative side, so minus 1, j. And C N, north, is positive with respect to y, so the j direction, so j plus 1. Then C S, i, j minus 1, S is the south part.
+00:05:19
+I think that is it. And also, we have a source term, so it depends on whether we define a source or not. But in a general form, if we define a source term, we need to add it. Right. This is what we did last week. It&#x27;s a very simple steady-state condition, but it&#x27;s a fundamental part to understand FVM. So please understand the procedure very well. You don&#x27;t need to memorize the equation, but at least please understand the meaning or how to derive these equations.
+00:05:56
+Okay? Right. Right. Then, shall we briefly recall what we did? So last time, we defined these three different conditions. So, for the two-dimensional steady-state heat conduction equation, there are three conditions. One is the one-side heated condition: the top is heated, and the surroundings are at low temperature.
+00:06:26
+The other one is almost the same, but the heated positions are different. Both sides are heated, and the top and bottom are at low temperature. Then the last one is the heat convection condition. So we assume the surroundings have a constant temperature, and then there is heat convection between the solid surface and the surrounding air. These are the three conditions that we considered. Then you can briefly see the results, this kind of result.
+00:07:09
+So case one, case two, case three, case four, case five, case six, case seven, case eight, case one, case two, and case three. Case one has the high temperature at the top, and the three sides are low temperature, right? Heat transfer occurs between this high-temperature position and the low-temperature position. So then this shows, by the way, the temperature distribution, of course, temperature distribution. So the temperature gradually changes in both directions.
+00:07:41
+The same thing happens for case two. In case two, the top and the bottom have low temperature, and both sides have high temperature. So then heat transfer is from these both sides to the lower side. So then the distribution may become this. Then case three has the same temperature from the outside, so then we are not sure how much temperature we observe at the boundaries, so the boundary temperature needs to be calculated based on the condition.
+00:08:12
+What we defined is the surrounding air temperature. The air temperature is fixed, and the edge temperature is also calculated based on this equation, then we can see this kind of distribution. Right. Okay. As for last week&#x27;s content so far, do you have any questions?
+00:08:44
+Is everything okay? Okay? Okay. Okay, then, shall we see today&#x27;s contents? Today, during the last two times, we only considered steady-state conditions, right? So the original equation is a partial differential equation with respect to T, x, and y, right?
+00:09:21
+T, x, y. But we only considered spatial distribution. So the temperature is a function of x or a function of x and y, the two cases that we considered already. So then, this week, we are going back to one-dimensional numerical simulation, one-dimensional. But we consider temperature distribution changing with time, okay, time. So this time, the temperature is a function of t and x, t and x, right? So then today&#x27;s topic is the numerical simulation of the one-dimensional unsteady heat conduction equation.
+00:09:57
+So, in the steady-state condition, what we get is just one distribution pattern under the steady-state condition. So when time is infinite, we can get some distribution. That was solved by the numerical calculation. But this time, we track how the temperature is changing with time. At the beginning, temperature has the initial condition. Then from the initial condition, gradually, the temperature reaches the steady-state condition. So we will track that development of temperature distribution.
+00:10:30
+That is the unsteady heat conduction equation. So recall the video clip I showed you last time, or maybe two times before. We are thinking about this kind of one-dimensional metal bar and how the temperature is transferred in this metal bar. Previously it was constantly the same situation as number two. That was the steady-state condition. But this time, we include time. So the temperature is changing with time. It is not written, but it is important.
+00:11:02
+Temperature changes with time, with time, right? That is the most important thing, with time. In the temperature distribution, T is a function of x and t. Capital T is temperature, small t is time. So it is a function of two variables, right? So then, as a boundary condition, we assume that one side is heated continuously.
+00:11:34
+The other side has low temperature. Then we can see how the temperature is changing with time. So then, the boundary condition is fixed here and here. We assume the initial condition is a constant value with the low temperature. So at time equal to zero, the temperature distribution is like this, t is equal to zero. And we already derived the steady-state solution.
+00:12:07
+That is a linear function. So then if t goes to infinity, what we can get is this one, the steady-state solution. Then we will track how this temperature is changing and approaching this line today. Okay, so of course we can see this distribution where one side is heated.
+00:12:38
+And the other side is at a constant low temperature, then it approaches this one. Also we are tracking a physical process, so the temperature cannot become a very strange pattern. It should change gradually. So with a very small time period, if we see t is equal to 1, t is equal to t1, for example, then it gradually approaches the steady state with both boundary conditions fixed as the given boundary condition.
+00:13:17
+So then we can expect this kind of change, right? This kind of change with the increase of time. Time goes up, right? All right? Do you understand? So then shall we see? We can calculate this. We can see this time development of temperature.
+00:13:51
+Again, this is a very simple one-dimensional unsteady simulation. But actually, it is not necessary to do simulation, because we have the theoretical solution for this case. I think in the undergraduate course, you learned it. But this time, we will try it using numerical simulation, right? Then today&#x27;s purpose is listed here. We need to understand the essence of unsteady simulation.
+00:14:21
+So we have two different, two new methods, two new categories, jargons that we need to understand, technical words that we need to understand: explicit and implicit, okay? Explicit methods and implicit methods. Technically, we can define these two different methods to solve the governing equations in numerical simulation. So we need to understand the exact meaning of these.
+00:14:51
+Explicit and implicit. Many students, even those doing research based on numerical simulation, cannot differentiate these two, unfortunately. Even specialists sometimes. But today, please understand explicit and implicit. In Japanese, just as a supplement: these are the explicit method and the implicit method. This is very important. The explicit method, the implicit method. The details are fine, but if you want to understand what is different, you need to understand explicit and implicit.
+00:15:22
+Okay, and also we understand how to discretize the governing equation for one-dimensional unsteady heat conduction. So there is a new term, the temporal development term, so we need to consider that. And we will try, I will give you some time to think about the numerical simulation, and then try the simulation to see the temperature distribution, all right?
+00:15:55
+All right? Okay, then shall we see number one in the same procedure as last week&#x27;s content, so we can understand simply. Before we start, let me announce one thing. I think next week&#x27;s lecture will be canceled, okay?
+00:16:34
+Then on the next lecture day, May 29, I want to do some mini-quiz, not an examination, but a quiz based on your understanding. I request all of you to write it on the question sheet. So then today&#x27;s content is actually new, but hopefully you can understand it. If you understand today&#x27;s content very well, you can extend that knowledge to next week&#x27;s content. So please understand today&#x27;s content well.
+00:17:06
+Next, let me announce it in Japanese as well.
+00:17:54
+The mini-quiz is not used to score your grade, okay? It is to confirm your understanding, to confirm whether I could make you understand, okay? Then, if your answer is very perfect, it means my lecture is very nice, okay? Then, if you cannot answer, it means I could not make you understand at least, right? So it means I get a failing evaluation. So please answer on the sheet. I do not use that for your grading. I do not use that for evaluation. Okay.
+00:18:26
+All right. Then. Okay. Today&#x27;s contents. So from the beginning, it is the same procedure: we will see the governing equation and the discretized equation and introduce some new techniques, explicit and implicit. Then we can try numerical simulation. That is the overall process today. Okay. Shall we see from the beginning? So the governing equation already we mentioned, yeah, but shall we record it? So we consider material properties: specific heat, rho Cp, and lambda, thermal conductivity.
+00:19:03
+Okay? These parameters. And the definitions are written here: time is t, coordinate is x, temperature is T of t and x. Capital T is temperature, small t is time, and x is position. L is the length, the length of the metal, the total length, and TL and TH are the temperatures at both sides, the boundary-condition values. All right. As for the governing equation, please write it. You understand it well already, right? So it is one-dimensional but unsteady.
+00:19:33
+So we need to consider the temperature storage term. The storage term is how the temperature changes with time. rho Cp partial T partial t. This is the storage term. Previously, this was zero. But this time, we need to consider it. Then this should balance with the diffusion term. So the right-hand side should be the second partial derivative of T with respect to x. This is the equation. So what we have done already is this one, right?
+00:20:07
+The steady-state equation, 1D, and the steady-state condition, 2D. Then today is the extended version, considering the temperature change with time. It is quite easy. And then just confirm the boundary condition. The boundary condition at both sides, both sides, is TL, low temperature.
+00:20:41
+And at the other side, the temperature is high temperature, so TH. This is a bit confusing, sorry. But this means low, and this is high. And this L is length, so it is a bit confusing, but we use this as the definition. And also for the unsteady simulation, we need another condition. That is called the initial condition. We need to prescribe what the original temperature distribution was.
+00:21:14
+And that is called the initial condition. So at any x position, at time t equal to 0, the temperature should be uniform at the low temperature. So this is the initial condition. Then it starts from this distribution and gradually changes with time.
+00:21:48
+So then we already know the final state, right? The final state is the steady-state solution. In this one-dimensional case with both boundaries fixed, that becomes a linear distribution. What we want to calculate today is the development from the initial condition to that final linear distribution.
+00:22:20
+Then, to derive the numerical equation, we use exactly the same process as before. First, define the control volume around node i. Then the east side is between i and i plus 1, and the west side is between i and i minus 1. The length of each control volume is delta x i.
+00:22:52
+Then we integrate the governing equation over the control volume. The difference from the steady-state case is that now there is the storage term on the left-hand side. So we need to discretize not only the diffusion term but also the temporal term.
+00:23:25
+The right-hand side is the same as before. The diffusion term is converted into the heat flux difference at the east face and west face. So that part is not new. The new part is the left-hand side, where the temperature changes with time.
+00:23:58
+So in order to represent time, we introduce another index, n. This n means the time step. At the beginning it is zero, then one, then two, and so on. The actual time values are 0, delta t, 2 delta t, 3 delta t, in that form.
+00:24:30
+At each time step, we want to obtain the temperature distribution in space. So T i n means the temperature at node i and time step n. And T i n plus 1 means the temperature at the next time step.
+00:25:32
+So then it can be written like this. The storage term, the temperature development term, is integrated with respect to the control volume. And also the diffusion term is integrated over the control volume. Then shall we see how we can derive the equation? The difference in the equation in the one-dimensional heat conduction equation is the existence of this term.
+00:26:05
+This term is called the storage term. This is different. Then the derivation of the precise form of the right-hand side is really the same as before, okay? So the form is the same, right? This equation is the same, right? So the derivation is also the same. Since it is one-dimensional, and you already understand the two-dimensional and one-dimensional cases, it must be quite easy. So this can be reduced to
+00:26:37
+lambda times the first-order derivative with respect to x at the east side and west side. And dV is the same as dx in this one-dimensional case, so then this can be evaluated as a slope at the east side and a slope at the west side.
+00:27:10
+Because dV is dx, and partial T partial x at e is the east-side value, and partial T partial x at w is the west-side value. If you cannot imagine it, just draw the figure. i is here, east is here, west is here. And this is i plus 1, this is i minus 1. Always draw this figure if you cannot understand.
+00:27:46
+Okay, then we already did the evaluation of these two terms, right? partial T partial x is here, right? Yeah, this slope, this slope. So then it is T i plus 1 minus T i divided by half of the grid size.
+00:28:19
+delta x i plus 1 plus delta x i. Quite easy. And the west side is the negative side. So again it is the same. Note that the order is different: T i minus T i minus 1 should be used. Then half of the grid size.
+00:28:50
+delta x i plus delta x i minus 1. Very, very same. This is okay. Then the difference is only this side, right? If you discretize the left-hand side... left-hand side, okay, left-hand side, define the discretized value of time as t is equal to n delta t. So this time we need to consider how the temperature is changing in time, right?
+00:29:25
+So one step is delta t. Each step is delta t. At every delta t time step, we can derive the temperature distribution, the process. So then shall we define another index, n, to denote this time step? In this direction, t is a continuous value, but n is the discretized value. At the beginning, it is zero. The first step is, of course, one.
+00:29:56
+The second step is two, and more precisely, the actual time step should be delta t, 2 delta t, and 3 delta t in this form. Gradually, time is changing. So that is denoted by n. So then, if we integrate this term, we can calculate this term.
+00:30:30
+So then, this partial T partial t is the slope with respect to t, right? In the t direction. The simplest gradient can be estimated by the temperature difference at the two different time steps, T n plus 1 and T n, during some period delta t, based on the first-order Taylor series expansion.
+00:31:00
+And we are integrating this term with respect to the control volume. So assuming that the temperature at each volume is constant, we can just multiply delta x i by this term. To supplement Taylor series: T plus delta t is equal to T of t plus dT dt times delta t.
+00:31:38
+Then we want to estimate this one based on the discretized form. So just subtract this and divide it by delta t. Okay, then that&#x27;s all actually. Then we have this term, right? Term 1 and term 2 are on the right-hand side. Term 3 is on the left-hand side. But then we can combine them simply.
+00:32:14
+So, rho Cp divided by delta t, and the temperature difference. Sorry, it is not written here, but it should be at node i. We are thinking about the temperature at node i. So this should be T i, and n plus 1 minus T i, n. This is the storage term. Then this should balance with term 1 and term 2, and number 1 minus number 2, right?
+00:32:50
+And they need to multiply lambda. So then just simplify it: lambda divided by 0.5 times delta x i plus 1 plus delta x i multiplied by the temperature difference T i plus 1 minus T i. Then the other term on the west side, if we just reflect the sign so that we can get T i minus 1 minus T i, then we can put the sign positive here.
+00:33:33
+So lambda divided by 0.5 delta x i plus delta x i minus 1 and temperature difference T i minus 1 minus T i. Right, it is a very simple equation. Previously, we only had this piece, and this was equal to 0. But we need to add this one.
+00:34:04
+Then we need to consider T i, n plus 1. In the same manner, we can define each coefficient by using C O, C E, C W. So let&#x27;s say this one is rho Cp divided by delta t as C O. Then lambda divided by 0.5 and the length is C E, because it is coming from each side. This term is C E.
+00:34:37
+And another one, the coefficient coming from the west side, is C W. This is C W. Then we can get a very similar, very, very similar equation.
+00:35:16
+Then each coefficient, just in case, so that you can simply write the program, shall we define each coefficient clearly. So C O is the term with respect to T n plus 1, so it is defined as rho Cp divided by delta t. C E is actually the same as in the steady-state condition, lambda divided by half of the length, and C W as well.
+00:35:54
+Let me write it here. lambda divided by half of the length and half of the length, okay? Then of course if we use a uniform grid, this becomes simply lambda divided by the length, lambda divided by the length, and these two are the same value except for boundaries.
+00:36:27
+Except for boundaries, just to make it more precise. This is more general, considering all the different nodes. Right, right. It is not that difficult, right? Very, very easy. Maybe if you want to understand the basics,
+00:37:00
+in the same way that we derived the equation of T i, this time we want to derive an equation about T i, n plus 1, okay? We want to get the temperature at time n plus 1, right? n plus 1. So then we need to derive the equation of T i, n plus 1, okay?
+00:37:30
+Then from here we will introduce explicit and implicit, okay? What we derived is this form, right? This form. Shall we see it again? It is a very important part, so we will see this again. So then this is the storage part, right? The temperature at time n plus 1 and the temperature at time n, meaning the temperature difference in the time direction, times some coefficient. These two terms are spatial differences at node i plus 1 and i, and i minus 1 and i.
+00:38:08
+So then when we consider time development, there are two choices for the time step of them. There is no index here, right? We have not defined the time step of them. But reasonably, we can select n, the previous time step, or we can define them at n plus 1, the current time. There is no rule about how to define them, but that choice defines whether the method is implicit or explicit, okay? All right.
+00:38:48
+Just let me supplement in Japanese as well. This is the most important part. Here, you may use time step n, or you may use time step n plus 1. When it is taken at n, we call it the explicit method. When it is taken at n plus 1, we call it the implicit method. So the choice itself is free, and depending on that choice, the name of the calculation method changes. Right. Then, the first one is the explicit method.
+00:39:23
+The explicit method. Then, the explicit method is defined as taking T i plus 1 and T i at time step n. Time step n. So just write the equation below. Then the equation becomes C O times T i, n plus 1 minus T i n is equal to C E times T i plus 1, n minus T i n plus C W times T i minus 1, n minus T i n.
+00:40:07
+At least if these two are defined at the same time step, that is fine. It is a spatial gradient, so any single time step is fine. So shall we take time step n? Then you can see the same time appears here, at i and n, so we can make them one group.
+00:40:44
+And this term is the actual term that we want to derive, right? We want to predict the temperature at the next time step. So that is the term that we want to derive. So then, just grouping T i n and rearranging the equation with respect to T i n plus 1, C O is multiplied, so of course we have to divide all the terms by C O. And you can see C E is here.
+00:41:19
+C E is multiplied by T i plus 1, n. C W is multiplied by T i minus 1, n. So it is the same rule as before. So then C E times T i plus 1, n plus C W times T i minus 1, n. Then the yellow one, the marked yellow one, is T i n. So then we can see the coefficient. We have C O and C E and C W. And C O should be moved to the right-hand side. So then C O minus C E minus C W times T i n.
+00:42:08
+This is the explicit method. It means the next-time-step temperature, T i n plus 1, is determined by the previous-time-step temperature.
+00:42:42
+So that is the difference. Then once you understand this very well, you can understand the implicit method as well. Going back to the original equation, then shall we see how the equation changes? The original equation is C O times T i, n plus 1 minus T i, n is equal to something, right?
+00:43:16
+Then here, for the implicit method, we will take the temperature as n plus 1. So this is changed to n plus 1. C E times T i plus 1, n plus 1 minus T i, n plus 1 plus C W times T i minus 1, n plus 1 minus T i, n plus 1, okay?
+00:43:55
+That is the difference. You can see the difference between these. Mostly it is the same, but this time we take the time step at n plus 1. Do not confuse this by combining different time steps in the spatial gradient. These should be at the same time step because it is the spatial transport term. This is coming from the diffusion term, the spatial diffusion term. At least the time step should be the same.
+00:44:31
+Okay, then this time we can see a slight difference. Sorry, this should be plus 1, sorry. A slight difference. So this term is originally the term that we want to derive, right? T i, node i, at time step n plus 1, so the next-time-step temperature. This is what we want to solve. But in this equation, we can notice that there are other terms representing the temperature at node i
+00:45:02
+at time step n plus 1, these three terms, because of the implicit method. So what we have to do is group them into one term. This one is the term that we want to derive, this as well, this one. So we need to group them into one. We see that the coefficients C E and C W are multiplied, and the signs are negative. So then we can group them as T i, n plus 1.
+00:45:36
+The coefficient is C O plus C E plus C W. Then the remaining terms are C E times T i plus 1, n plus 1, plus C W times T i minus 1, n plus 1.
+00:46:08
+Then also there is another term, C O times T i n. So we define this coefficient here as C D. Then finally, in the same manner, what we want to get is the equation with respect to T i n plus 1. So just rearrange the equation in that form.
+00:46:43
+So then T i n plus 1 is 1 over C D times all these terms: C E times T i plus 1, n plus 1 plus C W times T i minus 1, n plus 1 and C O T i n.
+00:47:21
+All right, this is the equation for the implicit method. Slightly different, right? This is the equation that we derived for the explicit method. This is the implicit one. Then you can clearly see the difference between these two. In the explicit method, the next-time-step temperature is determined by the previous-time-step temperature. Then once we get some distribution, the next time step is determined by that temperature.
+00:47:54
+And the next one is determined by that temperature. That is the explicit method. The implicit one is a bit confusing. This is the current time step plus one. The previous-time-step temperature affects the current temperature distribution, but also the surrounding temperature at the current time step determines the temperature at the current time. That is the difference.
+00:48:28
+All right, on the next page, I think you have a diagram. Basically, to make sure that you correctly understand, let me just copy this too. This is the explicit one and this is the implicit one.
+00:49:32
+Okay, then we can see how this temperature is determined. In this chart, the vertical axis means time, right? The horizontal axis is space, time and space, time and space. Then this position is defined as i, and the surroundings are i plus 1 and i minus 1. Then it gradually develops in this direction, in the same way for implicit and explicit. Then T i n plus 1 is the temperature that we want to predict.
+00:50:03
+So it is here. The time step is n plus 1, and the position is i. So we want to derive the equation for this. Then this has the distribution in this direction, a spatial distribution, okay? But we just pick up position i. Then we can see in this equation, this term is determined by the temperature at i plus 1 and i minus 1 and i at the previous time step n, right?
+00:50:37
+So then it means that the temperature at the previous time step at node i plus 1, this one, and node i minus 1, and node i, this one, these three determine the next-time-step temperature. This is the explicit method, right? This is what the equation says. In the same way, for the implicit one, we can see that we have the term i plus 1, but it is the current temperature, right?
+00:51:14
+Current temperature. And i minus 1 at the current temperature, and i of the previous temperature. So the previous temperature somehow determines it, and this is what we want to predict. Then this is the previous-time-step temperature. But in the implicit method, the temperature is coming from the surrounding temperature at the same time step, this one and also this one. So that is the huge difference, right?
+00:51:57
+So in the same way, for the steady-state case, we do not need to consider time development. There is no time distance. So then we only consider this relation. So then we use an iterative method to solve that equation. But for the time-development method, we have a more efficient numerical calculation method. There is no need to do any iterative method
+00:52:30
+because this temperature is determined by the previous temperature only. So only one step is necessary to get the next time step. And to go to the next time step, again, we can use this to get the next one and the next one. So the explicit method is basically more efficient in terms of numerical simulation. The implicit one, on the other hand, needs to use the current temperature, which is not determined yet. So then we need an iterative method here by using the previous temperature as well.
+00:53:03
+But that is the difference. So then for the implicit method only, we need to use an iterative method. Because when we try to get this value, these two are not determined yet. So then we need to use prediction values for them. Then the final form for the implicit method is the expression for the predicted temperature at node i plus 1.
+00:53:41
+So the equation is T i n plus 1 is equal to 1 over C D, and here is the same C E T i plus 1, but we have not obtained this one, so we replace it with the prediction T p, the predicted value. The same for the west side and T i minus 1; this is also a predicted value.
+00:54:23
+But please clearly understand, this is not a prediction value. This is previous-time-step temperature, previous-time-step temperature. So this is a known value; this value is known. This is unknown, which we have to solve.
+00:55:28
+All right, then at the end, to clearly understand these two methods, please draw a flowchart. I will give you some hints. So before taking a short break, please finish this one. Both start from start, start. Then definition.
+00:56:01
+Sorry, maybe. So first, in both programs, we need to define delta x i and delta t, for example, and T i, and also C O, C W. This is the same process, right? C E, et cetera. We have this process. Then, based on the equation that we derived, we determine this one.
+00:56:33
+So, T i n plus 1 is some function f, a general function, and this is a function of T i plus minus 1 and n, and T i n, right, in this form.
+00:57:05
+Then, to repeat the calculation, we will update T i n to the calculated value T i n plus 1.
+00:57:37
+Then it goes to the end. But there is a loop to calculate the time development. So please think how we can connect this flowchart. For the implicit method as well, it is the same. So delta x something. And T i n plus 1 is a function of T i plus 1, minus 1,
+00:58:12
+and the prediction, T i n. So this calculation is actually the same. Then we need something here that we need to think about. And once we get the converged value, we can update the value to this one.
+00:58:46
+And finally, it can go to n. These two, okay. So then, these two processes, okay, both are the same. But between them, think about how we can connect these calculations so that we can get the temperature distribution properly in a time-development manner.
+00:59:27
+I will give you five minutes, so please think and please draw figures. It is the same for this one, but in this case, we need to calculate the convergence, so there should be another loop, isn&#x27;t it?
+01:00:05
+Please think about where the loop goes. Let&#x27;s take a break.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+      <section id="session-2" class="card">
+        <div class="card-header">
+          <h2>05-15 Lecture: Explicit vs. Implicit Methods in Heat Conduction</h2>
+        </div>
+        <div class="card-body">
+          <div class="meta-grid"><div class="meta-item"><span class="meta-label">Date Time</span><p class="meta-value">Date Time: 2026-05-15 10:06:12</p></div><div class="meta-item"><span class="meta-label">Location</span><p class="meta-value">Location: [Insert Location]</p></div><div class="meta-item"><span class="meta-label">Instructor</span><p class="meta-value">Instructor: [Insert Name]</p></div></div>
+          <div class="note">
+            <p><strong>Summary</strong></p>
+            <p class="summary-text">This lecture explains the differences between explicit and implicit methods for solving one-dimensional unsteady heat conduction problems. The instructor illustrates the procedural differences using flowcharts, emphasizing that the explicit method is a simple one-loop process, while the implicit method introduces an inner iteration loop to ensure convergence at each time step. A central theme is the theoretical analysis of numerical stability via convergence criteria. The lecture derives the diffusion number (R) and shows that the explicit method is &quot;conditionally stable,&quot; requiring R &lt; 0.5, which tightly constrains the time step (Δt) relative to the spatial step (Δx). In contrast, the implicit method is &quot;unconditionally stable,&quot; converging regardless of time step size. The lecture also clarifies that numerical stability does not guarantee accuracy and concludes with a programming exercise for implementing both methods in Python.</p>
+          </div>
+        </div>
+      </section>
+      <section class="card" aria-labelledby="summary-2">
+        <div class="card-header">
+          <h2 id="summary-2">Detailed Summary</h2>
+        </div>
+        <div class="card-body">
+          <div class="summary-text">Knowledge Points
+1. Comparison of Explicit and Implicit Methods
+Fundamental Procedural Difference
+  The explicit method computes the temperature at the next time step (n+1) directly from the temperatures at the current time step (n). It does not require iteration to achieve convergence at each time step.
+The implicit method computes the temperature at the next time step (n+1) based on temperatures at that same future time step (n+1), necessitating an iterative process at each time step to converge before proceeding.
+Flowchart and Loop Structure
+  Explicit Method:   Uses a simple, single-loop process: calculate terms, update values to the next time step, and repeat this time loop until reaching steady state or a predefined end time.
+Implicit Method: Employs nested loops. An outer time loop advances time, while an inner iteration (convergence) loop at each time step repeatedly updates temperatures until the solution converges (i.e., the change between iterations is sufficiently small).
+
+2. Numerical Stability and Convergence Criteria
+Concept of Convergence Criteria
+  Determines whether a numerical method yields a stable, converged solution or diverges.
+The analysis examines the coefficient multiplying the previous time step temperature (Tᵢⁿ) in the geometric series formed by repeated time-step updates.
+Explicit Method: Conditional Stability
+  Derivation:   The next-step temperature (Tᵢⁿ⁺¹) is proportional to   (1 - 2R) * Tᵢⁿ  , where   R   is the diffusion number.
+Diffusion Number (R): A key dimensionless parameter, R = A * Δt / (Δx)², with A the thermal diffusivity (λ / (ρ * c_p)), Δt the time step, and Δx the grid spacing.
+Stability Condition: For convergence, (1 - 2R) must lie between -1 and 1, yielding 0 &lt; R &lt; 0.5.
+Practical Implication: Time step constraint: Δt &lt; (Δx)² / (2A). Halving Δx forces Δt to be reduced by a factor of four, increasing computation time.
+Name: &quot;Conditionally stable,&quot; as stability depends on specific Δt and Δx choices.
+Implicit Method: Unconditional Stability
+  Derivation:   The next-step temperature (Tᵢⁿ⁺¹) is proportional to   (1 / (1 + 2R)) * Tᵢⁿ  .
+Stability Condition: 1 / (1 + 2R) lies between 0 and 1 for any positive R (since A, Δt, and Δx are positive).
+Practical Implication: Numerically stable for any Δt or Δx.
+Name: &quot;Unconditionally stable.&quot; Its robustness makes it common in commercial simulation software, allowing users to set parameters without deep numerical expertise and still obtain stable solutions.
+Stability vs. Accuracy
+  Numerical stability and accuracy are distinct.
+An unconditionally stable implicit method avoids divergence but may still be inaccurate.
+Accuracy for both methods requires sufficiently small Δt and Δx to reduce discretization error and closely approximate the continuous solution. Even the implicit method needs fine Δt for high accuracy.
+
+Questions
+[Insert Question/Confusion]
+
+Assignments
+ 1. Download the Python exercise files 1dexplicit.py and 1dimplicitimp.py from the MUDO site.
+ 2. In 1dexplicit.py, replace dummy coefficient values according to the derivation (e.g., lambda / 0.5, dx).
+ 3. Correct the dummy equation inside the time and position loops in 1dexplicit.py to implement the explicit method formula.
+ 4. Run the corrected 1dexplicit.py and verify that it produces a correct visualization of temperature over time.
+ 5. If time permits, apply similar corrections for the implicit simulation in 1dimplicitimp.py.</div>
+        </div>
+      </section>
+      <section class="card" aria-labelledby="transcript-2">
+        <div class="card-header">
+          <h2 id="transcript-2">Transcript</h2>
+        </div>
+        <div class="card-body">
+          <div class="transcript-list">
+            <article class="transcript-entry">
+              <div class="transcript-meta">
+                <span class="transcript-badge">Time: 00:00:00</span>
+                <span class="transcript-badge transcript-speaker">Speaker: Instructor</span>
+                <span class="transcript-badge">#001</span>
+              </div>
+              <p class="transcript-text">All right, two different methods. So shall we see how they are different in the flowchart? The explicit method is, shall we see the equation again, okay? The explicit method is determined by the current known temperature, and at each step there is no necessity to repeat to get a converged solution. But in the implicit method, the next temperature is determined by the surrounding temperature, so we need an iterative method. That is the difference, okay? So then, for the explicit method, the right one,
+00:00:34
+sorry, the left one, once we calculate the terms like this, then we update the value to the next time step, right? Then, yes, any form is fine. We repeat until we can get the steady-state solution. If we want to repeat, we need to go back to the next calculation.
+00:01:06
+So then this line goes to here. Then after updating, we calculate T i n plus 1 again. Then we update T i n. Then repeat again. So this process is quite simple, just one loop process. One loop process. Then eventually, if t reaches some target value,
+00:01:39
+for example steady state, the time when we can get the steady-state solution, then we can end the simulation. Yes? That is the process. But for the implicit method, it is a bit different. So once we calculate this one, this value is still not the actual correct value. So we need to see whether the value is converged or not.
+00:02:13
+So then we need to compare them. We need to compare T i, n plus 1 and T i p. We need to compare whether they are the same or not. If the difference is sufficiently small, then we can go to the next time step.
+00:02:51
+But if not, let me write it again, T i p to confirm whether these two are the same or not. Then if yes, we can go to the next simulation, the next time step. But if no, this line needs to go back to this position.
+00:03:22
+They need to repeat the calculation. So this is the iteration loop, iteration loop. And then at some certain time step, we need to repeat this so that we can get a converged value. And once the value is converged, then we can go to the next time step. But then, in the same way as this, we need to repeat this to get the next-time-step value.
+00:03:53
+So there is another loop here. Another loop is to confirm whether t has reached the end, meaning whether t has already reached the time that we want to calculate. If yes, we can finish. If not, if no, we need to go back. So it is the same position as here.
+00:04:39
+This is also another loop, so this is the time-development loop, the time loop. This is a huge difference. So please understand this difference.
+00:06:06
+Okay. Then when you see the program, you can understand the difference. Looking at the two different groups, one is of course the time group, and another is the convergence group. Then you can better understand the difference. And of course, there is another loop here, right? For example, based on the position in the i direction, here as well. But that is the minor thing. Here is another loop to calculate all the nodal values. But the main difference is these two. There is one big loop representing the time step.
+00:06:38
+And in the implicit method, we have two large loops. One represents the time group, and one represents the convergence group. Right. Then, from here, for a more theoretical part, I just want to supplement why there are two different methods and what the difference between these two methods would be, more theoretically. So shall we go to the last page?
+00:07:11
+This is a bit advanced, but I think you can understand it very well if you differentiate the two different methods. So let&#x27;s see the explicit method first. We can see the convergence criterion. Actually, using the two different methods, in some cases we can get a converged solution, but in some cases we cannot. In that case, it diverges. The solution diverges to infinity, so it means we cannot get a solution.
+00:07:48
+So that criterion is called convergence, the convergence criterion. So let&#x27;s see the convergence criterion of the explicit and implicit methods. Okay, then just remember the original equation that you derived for the explicit method. So let me write it here again. T i n plus 1 is of course a function of T i plus minus 1 at n and T i n, right?
+00:08:21
+But the important point is the relationship between these two, T i n plus 1 and T i n, because these are repeated, right? Once you get this value, then we substitute this through here to get the next-time-step value. Again, we repeat the same process. Same process. So then that coefficient is very important.
+00:08:52
+So if we write the equation, I will skip the detailed equation, but just focus on the terms that we are evaluating. The term connected with T i n is C O minus C E minus C W times T i n.
+00:09:26
+You can write it. Here there is also C E times T i plus 1. But it is not important here. Just let me skip it. You do not need to write it. These are the two terms. But this relation is the most important. So then this equation means that T i n plus 1 is proportional to 1 over C O times C O minus C E minus C W, divided by C O, times T i n.
+00:10:19
+So somehow this coefficient determines the convergence of the solution. If this value is quite large, we can expect that it is going to become infinite. If it is small enough, then it can reach some converged value. So shall we see how this coefficient can be written? Of course, C O minus C E minus C W divided by C O
+00:10:51
+is equal to 1 minus C E plus C W divided by C O. C E and C W, in the simplest case, are lambda divided by the grid length, right?
+00:11:22
+If a uniform grid is used, C E and C W always become lambda divided by grid size. C O is the temporal development term, so it should be rho Cp delta x divided by delta t.
+00:11:53
+If you are confused, please see the original derivation, just the terms that we derived, okay? So this term is divided by that one. So then it becomes lambda divided by delta x divided by rho Cp delta x divided by delta t.
+00:12:26
+Then lambda over rho Cp times delta t divided by delta x squared. Sorry, two times, because C E is this one, lambda over delta x, and C W as well, lambda over delta x. So this is two times.
+00:12:56
+Then this term appears many times, lambda divided by rho Cp. This is denoted by a or alpha, meter squared per second. This is called diffusivity. Then by using this diffusivity, this term changes to 2 times a times delta t divided by delta x squared.
+00:13:45
+Recall your understanding. The original governing equation was like this, right? Then if you divide both terms by rho Cp, what you get here is the diffusivity. This term right here is the diffusivity. Then the important thing is that this term is the most important parameter in numerical simulation,
+00:14:16
+especially for the diffusion equation. So then we replace this term using R. R is equal to a times delta t divided by delta x squared. This is called the diffusion number, the diffusion number.
+00:15:07
+It is the most important parameter in the diffusion equation. If you learned any numerical simulation, you should know this parameter, diffusion number, right? So then we can understand that the original term becomes 1 minus 2r times T i n.
+00:15:40
+So then T i n plus 1 is proportional to 1 minus 2r times T i n. There is another term as well, so this is a rough estimation, but we can get the solution from here.
+00:16:13
+So then n is changing one by one, right? n starts from 0 and 1, 2, 3. So this process is repeated. So it gives a geometric series with parameter 1 minus 2r. Geometric series, in Japanese. It means this really determines the convergence as it approaches the end. n goes to infinity, n is the time step, so we can consider any time step approaching infinity to get the steady state. It is repeated many times, so then this term appears many times depending on the total number of steps. So then the convergence criterion of this geometric series
+00:17:17
+is that this value is larger than minus 1 and less than 1, right? So from this we can get the convergence criterion. Let us write this: minus 1 is less than 1 minus 2r is less than 1.
+00:17:52
+So this means these two inequalities. Then the first equation gives r less than one-half. Then the second equation gives r larger than 0, right? r is larger than 0. Okay, based on these two criteria,
+00:18:23
+r, the diffusion number in the numerical simulation, should be in this range, right? Remember this r is a function of diffusivity and delta t and delta x squared, right?
+00:18:56
+So those are the values that you define in the numerical simulation. We define delta t depending on how much resolution we want to get, and delta x as well. These are the numerical setting parameters to discretize the region. So depending on that value, sometimes the solution can be good and sometimes the solution cannot be good. So it is very important.
+00:19:28
+Yes, you understand a bit, right? So it means that because delta t and delta x are positive values, only the first equation is important. So just substituting the original definition, a times delta t divided by delta x squared
+00:20:02
+is r, and r must be less than one-half. So from here we can get the necessary condition for delta t. delta t is not an arbitrary value, but we have to satisfy this equation, otherwise we cannot get any solution. So delta t should be less than delta x squared divided by 2a.
+00:20:33
+Only when we satisfy this condition can we get the solution. In other words, delta x should be determined by how much mesh you want in the simulation, right? So this is a one-meter metal bar that we divide into 100 pieces or 1,000 pieces, depending on your demand. Then based on that, we need to determine delta t so that this value is less than that value. And also, it is very important.
+00:21:12
+It means that if delta x is changed into half, that is, if the spatial resolution is doubled, then delta t should be less than the square of that, right? So this means delta t should be one-fourth of the original value. A much finer resolution is necessary for the time step.
+00:21:43
+So then if you use very, very fine resolution in space so that you can represent the temperature dispersion in much more detail, it means that you need a much finer delta t in the numerical simulation. So using the explicit method, we can get some solution. But that depends on this convergence criterion. So that is why this is called a conditionally stable scheme
+00:22:15
+or a conditionally stable method. Conditionally stable, method or scheme, etc.
+00:23:03
+Okay then, all right, then in the same way you can expect that we will do the same thing for the implicit method, right? So shall we remember the original equation for the implicit method? T i n plus 1 is equal to 1 over C D, and there are several terms. Then the previous term is C O times T i n.
+00:23:35
+Here we have T i plus minus 1 at n plus 1 or something, right? There are several terms, but in the same way we can see how T n plus 1 and T n are related to each other. So then based on this, in the implicit method, we understand that T i n plus 1 is proportional to C O over C D times T i n.
+00:24:13
+C D is the summation of C O plus C E plus C W. So based on these parameters, we can see how the values are converging. So then it is the same. We already did this. C E is lambda divided by delta x. C O is rho Cp delta x divided by delta t.
+00:24:51
+For C D, maybe we do not need to derive everything. So just calculate C O divided by C D, which appears here. This becomes C O divided by C O plus C E plus C W.
+00:25:25
+And just divide numerator and denominator by C O, so it becomes 1 over 1 plus C E divided by C O plus C W divided by C O. We already calculated C E plus C W divided by C O; that is 2r by using the diffusion number again.
+00:26:03
+So then eventually this term becomes 1 over 1 plus 2R. In the previous case, for the explicit method, 1 minus 2R was multiplied, right?
+00:26:40
+But for the implicit method, T i n plus 1 is proportional to 1 over 1 plus 2R. This is the difference. This is the huge difference. Huge difference. Then R is a positive number, right? R is a positive number. It can be represented like this. So in the same way, this is a geometric series,
+00:27:12
+also a geometric series. So the convergence criterion is shown there. You can guess that it always converges, right? So the convergence criterion is that this quantity is larger than 0 and less than 1. But r is always positive. So this condition is always fulfilled.
+00:27:50
+Then just remember r is equal to a delta t divided by delta x squared. So it cannot become negative in a numerical simulation. So it means the implicit method is always converging. A solution can always be obtained by using the implicit method.
+00:28:21
+So then, this is called unconditionally stable. I forgot to mention the Japanese name.
+00:28:55
+The other one is called conditionally stable. So we call this one unconditionally stable.
+00:29:39
+So then most commercial software actually employs an implicit method, because it is very stable. You can imagine that you become a software user but you do not know anything about numerical simulation. There are many parameters that you can specify, delta t, delta x, and so on. Then you randomly put some number for delta t, for example. Even then, with the implicit method, you can get a solution. It is more stable, numerically stable. So commercial software basically
+00:30:11
+employs the implicit method because of the numerical stability. But for the explicit method, as we saw, we always have to fulfill this condition. Otherwise, if you randomly set some value and let it be larger than this one, then you cannot get the solution. So that is the huge difference between these two. So please understand that. And also, there is another important thing.
+00:30:43
+The last note is here, so please refer to that. Stability, numerical stability, and the accuracy of numerical simulation are totally different. Even if a calculation is very stable, sometimes the predicted value is not correct. So numerical stability and accurate simulation are totally different. The implicit method can give a numerically stable solution, but it is not always accurate.
+00:31:16
+It depends on how large delta t you used and how large delta x you used. Then if we compare the explicit and implicit methods, we can understand that discretization always has errors. That is the important thing. The original system is in continuous form. The differential equation is in continuous form.
+00:31:48
+Artificially, we define delta t and delta x, okay? Then if we use a very fine delta t and a very fine delta x, of course the estimated value, the numerical simulation results, are close to the actual true value. That is naturally true. But at the same time, we also need to consider numerical stability in terms of practical use. That is why we have these two different methods, implicit and explicit. If you want a very stable solution numerically,
+00:32:20
+you need to select the implicit method, okay? But if you want very accurate data, an accurate result, then you need to use very fine delta x and delta t, regardless of method, okay? Even if you select the implicit method, you need to use a very fine delta t to get a very accurate solution. This is very, very important. Please understand.
+00:32:51
+This is all for the explanation part. The last part is the practice part based on the program. So far, about the background and theories, do you have any questions? If you have them, during the exercise, please raise your hand, then I can help you in terms of the theoretical part. All right, then today&#x27;s programming exercise is this one, L5. I prepared one-dimensional explicit simulation code
+00:33:26
+and implicit simulation code. So based on the flowchart that you drew, please go to the MUDO site and see this one, MUDO, and then go to lecture material here.
+00:34:17
+Then go down, and you can see today&#x27;s content, I think, yes, this one, one-dimensional unsteady heat conduction. Please go there. Then these are the sample programs, so please see them, there are many. I think the exercise is this one, `1dexplicit.py` and `1dimplicitimp.py`.
+00:34:51
+So please download them. These are the answers, so the answers are answers, so please do not download them. But download these two. Then currently, it is a wrong program like this, so let me show you. Once you download them, you can see the explicit and implicit files.
+00:35:38
+And then you can start from the explicit one. Maybe it is the easier one. Let me just stop it. It is only one exercise, so that is good for you. So define the coefficients and equation for the explicit simulation. Explicit simulation. And it is the same form as before, but presently incomplete.
+00:36:18
+And I think the coefficients are like this. It is a dummy value. The coefficients are dummy values, so update them based on this derivation: lambda divided by 0.5 and half size, and half size. Then dx is defined somewhere here. Yes, dx is defined, so you can use it to define them.
+00:36:48
+And also the equation is currently a dummy one. So for the explicit method, you can see there are two loops. Yes, this one. Line 79 is the time loop, and line 80 is the position loop in the i direction. So there is an equation here, but it is a wrong one. We derived the equation, right? So preserve the data. Then before you start running, please see whether you can recognize the visualized image
+00:37:19
+of the wrong answer. This is a wrong one, right? Temperature is changing. The horizontal axis is position, the vertical axis is temperature, and they are changing. But it is very wrong, so please update it. Then the implicit one is the same. If you have time, please try the implicit one, all right? Understand? Okay. I will give you maybe 10 or 20 minutes, so please see the program and try. And if you have any questions, I will help you.
+00:37:50
+So please raise your hand. Okay? Okay.
+00:39:10
+Okay, sorry.
+00:39:53
+Only in the grid, only when the grid changes, the R will change. In all the things now, with the balanced grid, so the delta x is logical. Yes, in fact, I noticed in some situations that the delta x is naturally the key. Then we have the logic.
+00:40:26
+Yes, yes. Okay, and first I have to know that if every time the R...
+00:41:04
+Yes, I can change it, but I do not need to change it every time to make it an algorithm. The algorithm will not become more complex. Yes, I can change it every time.
+00:41:48
+For more information, please visit www.fema.org.
+00:43:36
+Um, do, dee, eh, do, do.
+00:46:22
+Thank you very much. Thank you.
+00:50:12
+I uploaded today&#x27;s lecture note here, so if you need it, please download it.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Created: May 25, 2026</p>
+    </footer>
+  </body>
+</html>
